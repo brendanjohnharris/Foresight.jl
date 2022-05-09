@@ -3,6 +3,9 @@ module FourSeas
 using Makie
 using Colors
 using Random
+using Images
+using ImageClipboard
+using FileIO
 
 # * Some nice colors
 const cornflowerblue = colorant"#6495ED"; export cornflowerblue
@@ -58,5 +61,12 @@ function demofigure()
     end
     return f
 end;
+
+function clip(fig=Makie.current_figure(), fmt=:png; kwargs...)
+    tmp = tempname()*"."*string(fmt)
+    Makie.save(tmp, fig; kwargs...)
+    img = load(tmp)
+    clipboard_img(img)
+end; export clip
 
 end
