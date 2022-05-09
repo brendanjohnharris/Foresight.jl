@@ -67,6 +67,7 @@ function clip(fig=Makie.current_figure(), fmt=:png; kwargs...)
     Makie.save(tmp, fig; kwargs...)
     img = load(tmp)
     clipboard_img(img)
+    return tmp
 end; export clip
 
 end
