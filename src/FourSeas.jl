@@ -7,15 +7,26 @@ using Images
 using ImageClipboard
 using FileIO
 
-# * Some nice colors
+
 const cornflowerblue = colorant"#6495ED"; export cornflowerblue
+const _cornflowerblue =  colorant"#3676E8"; export _cornflowerblue
 const crimson = colorant"#DC143C"; export crimson
+const _crimson = colorant"#ED365B"; export _crimson
 const cucumber = colorant"#77ab58"; export cucumber
+const _cucumber = colorant"#5F8A46"; export _cucumber
 const california = colorant"#EF9901"; export california
-#const copper = colorant"#c37940"; export copper
+const _california = colorant"#FEB025"; export _california
+const copper = colorant"#c37940"; export copper
+const _copper = colorant"#9E6132"; export _copper
 const juliapurple = colorant"#9558b2"; export juliapurple
+const _juliapurple = colorant"#7A4493"; export _juliapurple
 const keppel = colorant"#46AF98"; export keppel
+const _keppel = colorant"#66C2AE"; export _keppel
 const darkbg = colorant"#282C34"; export darkbg
+const _darkbg = colorant"#3E4451"; export _darkbg
+const greyseas = colorant"#cccccc"; export greyseas
+const _greyseas = colorant"#eeeeee"; export _greayseas
+
 
 # * A good font
 fourseasfont() = :cmu
