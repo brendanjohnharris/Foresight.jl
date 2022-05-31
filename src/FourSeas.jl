@@ -26,6 +26,7 @@ const darkbg = colorant"#282C34"; export darkbg
 const _darkbg = colorant"#3E4451"; export _darkbg
 const greyseas = colorant"#cccccc"; export greyseas
 const _greyseas = colorant"#eeeeee"; export _greayseas
+const cyclical = cgrad(:cyclic_mygbm_30_95_c78_n256_s25); export cyclical
 
 
 # * A good font
