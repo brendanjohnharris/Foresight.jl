@@ -6,6 +6,11 @@ using Random
 using Images
 using ImageClipboard
 using FileIO
+using Requires
+
+function __init__()
+    @require Plots="91a5bcdd-55d7-5caf-9e0b-520d859cae80" @eval include("Plots.jl")
+end
 
 
 const cornflowerblue = colorant"#6495ED"; export cornflowerblue
