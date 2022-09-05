@@ -3,7 +3,7 @@ module FourSeas
 using Makie
 using Colors
 using Random
-using Images
+# using Images
 using ImageClipboard
 using FileIO
 using Requires
@@ -79,6 +79,9 @@ function demofigure()
     return f
 end;
 
+"""
+Copy a Makie figure to the clipboard
+"""
 function clip(fig=Makie.current_figure(), fmt=:png; kwargs...)
     tmp = tempname()*"."*string(fmt)
     Makie.save(tmp, fig; kwargs...)
@@ -86,5 +89,15 @@ function clip(fig=Makie.current_figure(), fmt=:png; kwargs...)
     clipboard_img(img)
     return tmp
 end; export clip
+
+"""
+Hacky way to import all symbols from a module into the current scope. Really only a half-good idea in the REPL, for debugging.
+"""
+macro importall(mdl)
+    fullname = Symbol(eval(mdl))
+    exp = names(eval(mdl))
+    [eval(:(import $fullname.$e)) for e in exp]
+    return nothing
+end
 
 end
