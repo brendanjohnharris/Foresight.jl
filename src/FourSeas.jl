@@ -95,8 +95,9 @@ Hacky way to import all symbols from a module into the current scope. Really onl
 """
 macro importall(mdl)
     fullname = Symbol(eval(mdl))
-    exp = names(eval(mdl))
-    [eval(:(import $fullname.$e)) for e in exp]
+    exp = names(eval(mdl), all=true)
+    exprs = [:(import $fullname.$e) for e in exp]
+    eval.(exprs)
     return nothing
 end
 
