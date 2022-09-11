@@ -30,7 +30,7 @@ const _keppel = colorant"#66C2AE"; export _keppel
 const darkbg = colorant"#282C34"; export darkbg
 const _darkbg = colorant"#3E4451"; export _darkbg
 const greyseas = colorant"#cccccc"; export greyseas
-const _greyseas = colorant"#eeeeee"; export _greayseas
+const _greyseas = colorant"#eeeeee"; export _greyseas
 const cyclical = cgrad(:cyclic_mygbm_30_95_c78_n256_s25); export cyclical
 const sunset = cgrad([crimson, juliapurple, cornflowerblue], [0, 0.6, 1]); export sunset
 
@@ -96,9 +96,10 @@ Hacky way to import all symbols from a module into the current scope. Really onl
 macro importall(mdl)
     fullname = Symbol(eval(mdl))
     exp = names(eval(mdl), all=true)
-    exprs = [:(import $fullname.$e) for e in exp]
+    exprs = [:(import $(esc(fullname.$e))) for e in exp]
     eval.(exprs)
     return nothing
 end
+export @importall
 
 end
