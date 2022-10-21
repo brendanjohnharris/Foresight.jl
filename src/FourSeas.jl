@@ -10,6 +10,7 @@ using Requires
 
 function __init__()
     @require Plots="91a5bcdd-55d7-5caf-9e0b-520d859cae80" @eval include("Plots.jl")
+    # @require DimensionalData="0703355e-b756-11e9-17c0-8b28908087d0" @eval include("DimArrays.jl")
 end
 
 
@@ -35,7 +36,8 @@ const cyclical = cgrad(:cyclic_mygbm_30_95_c78_n256_s25); export cyclical
 const sunset = cgrad([crimson, juliapurple, cornflowerblue], [0, 0.6, 1]); export sunset
 
 # * A good font
-fourseasfont() = :cmu
+fourseasfont() = "TeX Gyre Heros"
+# fourseasfont_bold() = "Helvetica Bold"
 
 """
 Slightly widen an interval by a fraction δ
@@ -47,7 +49,6 @@ function widen(x, δ=0.05)
 end
 
 include("./theme_fourseas.jl")
-include("./theme_fourseasdark.jl")
 
 function demofigure()
     Random.seed!(32)
@@ -94,10 +95,18 @@ end; export clip
 Hacky way to import all symbols from a module into the current scope. Really only a half-good idea in the REPL, for debugging.
 """
 macro importall(mdl)
-    fullname = Symbol(eval(mdl))
+    mdl = eval(mdl)
+    fullname = Symbol(mdl)
     exp = names(eval(mdl), all=true)
-    exprs = [:(import $(esc(fullname.$e))) for e in exp]
-    eval.(exprs)
+    for e in exp
+        symb = :(esc(import $fullname.$e))
+        dump(symb)
+        try
+            eval(symb)
+        catch err
+            @warn "Failed to import $fullname.$e"
+        end
+    end
     return nothing
 end
 export @importall
