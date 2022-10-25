@@ -103,22 +103,15 @@ end; export clip
 
 """
 Hacky way to import all symbols from a module into the current scope. Really only a half-good idea in the REPL, for debugging.
+Use this as `importall(module) .|> eval`
 """
-macro importall(mdl)
+function importall(mdl)
     mdl = eval(mdl)
     fullname = Symbol(mdl)
     exp = names(eval(mdl), all=true)
-    for e in exp
-        symb = :(esc(import $fullname.$e))
-        dump(symb)
-        try
-            eval(symb)
-        catch err
-            @warn "Failed to import $fullname.$e"
-        end
-    end
-    return nothing
+    return [:(import $fullname.$e) for e in exp]
 end
-export @importall
+export importall
+
 
 end
