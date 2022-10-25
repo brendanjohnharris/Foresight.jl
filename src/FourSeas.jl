@@ -75,10 +75,20 @@ function demofigure()
     for i in 1:6
         data = randn(1)
         barplot!([i], data)
-        rangebars!([i], data .- 0.2, data .+ 0.2)
+        rangebars!([i], data .- 0.2, data .+ 0.2, color=:gray41)
     end
     return f
 end;
+
+
+freeze!(anything) = ()
+function freeze!(ax::Union{Axis, Axis3})
+    limits = ax.finallimits.val
+    limits = zip(limits.origin, limits.origin .+ limits.widths)
+end
+freeze!(f::Figure) = freeze!.(f.contents)
+export freeze!
+
 
 """
 Copy a Makie figure to the clipboard

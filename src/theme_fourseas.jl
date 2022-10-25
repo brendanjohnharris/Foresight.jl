@@ -1,11 +1,32 @@
+palette = (
+    patchcolor = [      (cornflowerblue, 0.7),
+                        (crimson, 0.7),
+                        (cucumber, 0.7),
+                        (california, 0.7),
+                        (juliapurple, 0.7)],
+    color = [           (cornflowerblue, 0.7),
+                        (crimson, 0.7),
+                        (cucumber, 0.7),
+                        (california, 0.7),
+                        (juliapurple, 0.7)],
+    strokecolor = [       (cornflowerblue, 0.7),
+                        (crimson, 0.7),
+                        (cucumber, 0.7),
+                        (california, 0.7),
+                        (juliapurple, 0.7)])
+
+
+
 function theme_fourseas(; globalfont=fourseasfont())
-    Theme(
+    Theme(;
         colormap = :turbo,
         strokewidth = 10.0,
         strokecolor = :black,
         strokevisible = true,
         font = globalfont,
-        Axis = (
+        palette,
+        linewidth = 5.0,
+        Axis = (;
             backgroundcolor = :white,
             xgridcolor = :gray88,
             ygridcolor = :gray88,
@@ -33,22 +54,7 @@ function theme_fourseas(; globalfont=fourseasfont())
             ygridwidth = 1.5,
             xlabelpadding = 3,
             ylabelpadding = 3,
-            palette = (
-                patchcolor = [      (cornflowerblue, 0.7),
-                                    (crimson, 0.7),
-                                    (cucumber, 0.7),
-                                    (california, 0.7),
-                                    (juliapurple, 0.7)],
-                color = [           (cornflowerblue, 0.7),
-                                    (crimson, 0.7),
-                                    (cucumber, 0.7),
-                                    (california, 0.7),
-                                    (juliapurple, 0.7)],
-                strokecolor = [       (cornflowerblue, 0.7),
-                                    (crimson, 0.7),
-                                    (cucumber, 0.7),
-                                    (california, 0.7),
-                                    (juliapurple, 0.7)]),
+            palette,
             titlefont = string(globalfont)*" bold", # "times serif bold",
             xticklabelfont = globalfont,
             yticklabelfont = globalfont,
@@ -56,14 +62,14 @@ function theme_fourseas(; globalfont=fourseasfont())
             ylabelfont = globalfont,
             titlesize = 20,
         ),
-        Legend = (
+        Legend = (;
             framevisible = false,
             padding = (0, 0, 0, 0),
             patchcolor = :transparent,
             titlefont = string(globalfont)*" Bold",
             labelfont = globalfont,
         ),
-        Axis3 = (
+        Axis3 = (;
             xgridcolor = :gray81,
             ygridcolor = :gray81,
             zgridcolor = :gray81,
@@ -84,8 +90,9 @@ function theme_fourseas(; globalfont=fourseasfont())
             ylabelfont = globalfont,
             zlabelfont = globalfont,
             titlesize = 20,
+            palette
         ),
-        Colorbar = (
+        Colorbar = (;
             tickcolor = :white,
             tickalign = 1,
             ticklabelcolor = :black,
@@ -94,7 +101,7 @@ function theme_fourseas(; globalfont=fourseasfont())
             ticklabelfont = globalfont,
             labelfont = globalfont,
         ),
-        Textbox = (
+        Textbox = (;
             font = globalfont,
         )
     )
@@ -142,9 +149,39 @@ function setall!(thm::Attributes, attribute, value)
     end
 end
 
+transparent = Makie.RGBA(0, 0, 0, 0)
 function _theme_fourseas!(thm::Attributes, ::Val{:transparent})
-    setall!(thm, :backgroundcolor, Makie.RGBA(0, 0, 0, 0))
+    setall!(thm, :backgroundcolor, transparent)
+    setall!(thm, :yzpanelcolor, transparent)
+    setall!(thm, :xzpanelcolor, transparent)
+    setall!(thm, :xypanelcolor, transparent)
 end
 function _theme_fourseas!(thm::Attributes, ::Val{:dark})
-    setall!(thm, :strokecolor, :white)
+    gridcolor = :gray38
+    minorgridcolor = :gray51
+    strokecolor = textcolor = :white
+    setall!(thm, :strokecolor, strokecolor)
+    setall!(thm, :backgroundcolor, darkbg)
+    setall!(thm, :textcolor, textcolor)
+    setall!(thm, :xgridcolor, gridcolor)
+    setall!(thm, :ygridcolor, gridcolor)
+    setall!(thm, :zgridcolor, gridcolor)
+    setall!(thm, :xminorgridcolor, minorgridcolor)
+    setall!(thm, :yminorgridcolor, minorgridcolor)
+    setall!(thm, :zminorgridcolor, minorgridcolor)
+    setall!(thm, :xticklabelcolor, textcolor)
+    setall!(thm, :yticklabelcolor, textcolor)
+    setall!(thm, :zticklabelcolor, textcolor)
+    setall!(thm, :titlecolor, textcolor)
+    setall!(thm, :yzpanelcolor, darkbg)
+    setall!(thm, :xzpanelcolor, darkbg)
+    setall!(thm, :xypanelcolor, darkbg)
+    setall!(thm, :tickcolor, textcolor)
+    setall!(thm, :ticklabelcolor, textcolor)
+    thm[:Axis3][:xspinesvisible] = false
+    thm[:Axis3][:yspinesvisible] = false
+    thm[:Axis3][:zspinesvisible] = false
+    thm[:Axis3][:xticksvisible] = false
+    thm[:Axis3][:yticksvisible] = false
+    thm[:Axis3][:zticksvisible] = false
 end
