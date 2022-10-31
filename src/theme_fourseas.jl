@@ -9,7 +9,7 @@ palette = (
                         (cucumber, 0.7),
                         (california, 0.7),
                         (juliapurple, 0.7)],
-    strokecolor = [       (cornflowerblue, 0.7),
+    strokecolor = [     (cornflowerblue, 0.7),
                         (crimson, 0.7),
                         (cucumber, 0.7),
                         (california, 0.7),

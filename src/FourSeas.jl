@@ -86,7 +86,8 @@ function freeze!(ax::Union{Axis, Axis3})
     limits = ax.finallimits.val
     limits = zip(limits.origin, limits.origin .+ limits.widths)
 end
-freeze!(f::Figure) = freeze!.(f.contents)
+freeze!(f::Figure) = freeze!.(f.content)
+freeze!() = freeze!(current_figure())
 export freeze!
 
 
@@ -94,6 +95,7 @@ export freeze!
 Copy a Makie figure to the clipboard
 """
 function clip(fig=Makie.current_figure(), fmt=:png; kwargs...)
+    freeze!(fig)
     tmp = tempname()*"."*string(fmt)
     Makie.save(tmp, fig; kwargs...)
     img = load(tmp)
