@@ -4,10 +4,13 @@ using CairoMakie
 
 @testset "Importall" begin
     @test all(isnothing.(eval.(importall(Foresight))))
-    @test_nowarn save("./demo.png", demofigure())
+    @test_nowarn save("./demo_default.png", demofigure())
 end
 
 @testset "Demo figure" begin
+    @test_nowarn Makie.set_theme!(_foresight())
+    @test_nowarn save("./demo.png", demofigure())
+
     @test_nowarn Makie.set_theme!(foresight(:dark))
     @test_nowarn save("./demo_dark.png", demofigure())
 
