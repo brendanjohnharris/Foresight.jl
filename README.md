@@ -1,9 +1,9 @@
-# FourSeas.jl
+# Foresight.jl
 A Makie theme
 ## Usage
 ```
 using CairMakie
-using FourSeas
-Makie.set_theme!(theme_fourseas())
-fig = FourSeas.demofigure()
+using Foresight
+Makie.set_theme!(foresight())
+fig = Foresight.demofigure()
 ```

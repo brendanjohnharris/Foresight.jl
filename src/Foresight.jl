@@ -1,4 +1,4 @@
-module FourSeas
+module Foresight
 
 using Makie
 using Colors
@@ -8,9 +8,10 @@ using ImageClipboard
 using FileIO
 using Requires
 
+export foresight, importall, freeze!, clip
+
 function __init__()
     @require Plots="91a5bcdd-55d7-5caf-9e0b-520d859cae80" @eval include("Plots.jl")
-    # @require DimensionalData="0703355e-b756-11e9-17c0-8b28908087d0" @eval include("DimArrays.jl")
 end
 
 
@@ -36,8 +37,8 @@ const cyclical = cgrad(:cyclic_mygbm_30_95_c78_n256_s25); export cyclical
 const sunset = cgrad([crimson, juliapurple, cornflowerblue], [0, 0.6, 1]); export sunset
 
 # * A good font
-fourseasfont() = "TeX Gyre Heros"
-# fourseasfont_bold() = "Helvetica Bold"
+foresightfont() = "TeX Gyre Heros"
+# foresightfont_bold() = "Helvetica Bold"
 
 """
 Slightly widen an interval by a fraction δ
@@ -48,7 +49,7 @@ function widen(x, δ=0.05)
     return x .+ δ*Δ.*[-1, 1]
 end
 
-include("./theme_fourseas.jl")
+include("./foresight.jl")
 
 function demofigure()
     Random.seed!(32)
@@ -88,7 +89,6 @@ function freeze!(ax::Union{Axis, Axis3})
 end
 freeze!(f::Figure) = freeze!.(f.content)
 freeze!() = freeze!(current_figure())
-export freeze!
 
 
 """
@@ -101,7 +101,7 @@ function clip(fig=Makie.current_figure(), fmt=:png; kwargs...)
     img = load(tmp)
     clipboard_img(img)
     return tmp
-end; export clip
+end
 
 """
 Hacky way to import all symbols from a module into the current scope. Really only a half-good idea in the REPL, for debugging.
@@ -113,7 +113,5 @@ function importall(mdl)
     exp = names(eval(mdl), all=true)
     return [:(import $fullname.$e) for e in exp]
 end
-export importall
-
 
 end

@@ -13,7 +13,7 @@ function torgba(c::RGB, a::Real=1)
     Colors.RGBA(c.r, c.g, c.b, a)
 end
 
-fourseas_palette = torgba.([
+foresight_palette = torgba.([
     cornflowerblue,
     crimson,
     cucumber,
@@ -22,7 +22,7 @@ fourseas_palette = torgba.([
 ], (0.7,))
 
 
-fourseas = Plots.PlotThemes.PlotTheme(
+foresight = Plots.PlotThemes.PlotTheme(
     foreground_color_text = :black,
     fgguide = :black,
     fglegend = :black,
@@ -30,7 +30,7 @@ fourseas = Plots.PlotThemes.PlotTheme(
     legendtitlefontcolor = :black,
     titlefontcolor = :black,
     linewidth = 2.5,
-    palette = fourseas_palette,
+    palette = foresight_palette,
     colorgradient = :viridis,
     markerstrokecolor=:white,
     framestyle = :grid,
@@ -50,32 +50,32 @@ fourseas = Plots.PlotThemes.PlotTheme(
     legendtitlefontsize = 10,
     fontfamily = "Computer Modern",
     minorticks = 2,
-); # Plots.showtheme(:fourseas)
-Plots.PlotThemes._themes[:fourseas] = fourseas
-function fourseas!()
-    Plots.PlotThemes._themes[:fourseas] = fourseas
-    theme(:fourseas)
+); # Plots.showtheme(:foresight)
+Plots.PlotThemes._themes[:foresight] = foresight
+function foresight!()
+    Plots.PlotThemes._themes[:foresight] = foresight
+    theme(:foresight)
 end
-export fourseas!
+export foresight!
 
 
-fourseas_dark = NonstationaryProcesses.fourseas.defaults |> deepcopy
-fourseas_dark[:foreground_color_text] = :white
-fourseas_dark[:foreground_color_subplot] = darkbg
-fourseas_dark[:fgguide] = :white
-fourseas_dark[:fglegend] = :white
-fourseas_dark[:legendfontcolor] = :white
-fourseas_dark[:legendtitlefontcolor] = :white
-fourseas_dark[:titlefontcolor] = :white
-fourseas_dark[:gridlinewidth] = 1.0
-fourseas_dark[:foreground_color_minor_grid] = :gray25
-fourseas_dark[:foreground_color_grid] = :gray35
-fourseas_dark[:bg] = darkbg
-fourseas_dark[:bgcolor_inside] = darkbg
-fourseas_dark[:fontfamily] = "sans-serif"
-Plots.PlotThemes._themes[:fourseas_dark] = fourseas_dark |> Plots.PlotThemes.PlotTheme
-function fourseas_dark!()
-    Plots.PlotThemes._themes[:fourseas_dark] = fourseas_dark |> Plots.PlotThemes.PlotTheme
-    theme(:fourseas_dark)
+foresight_dark = NonstationaryProcesses.foresight.defaults |> deepcopy
+foresight_dark[:foreground_color_text] = :white
+foresight_dark[:foreground_color_subplot] = darkbg
+foresight_dark[:fgguide] = :white
+foresight_dark[:fglegend] = :white
+foresight_dark[:legendfontcolor] = :white
+foresight_dark[:legendtitlefontcolor] = :white
+foresight_dark[:titlefontcolor] = :white
+foresight_dark[:gridlinewidth] = 1.0
+foresight_dark[:foreground_color_minor_grid] = :gray25
+foresight_dark[:foreground_color_grid] = :gray35
+foresight_dark[:bg] = darkbg
+foresight_dark[:bgcolor_inside] = darkbg
+foresight_dark[:fontfamily] = "sans-serif"
+Plots.PlotThemes._themes[:foresight_dark] = foresight_dark |> Plots.PlotThemes.PlotTheme
+function foresight_dark!()
+    Plots.PlotThemes._themes[:foresight_dark] = foresight_dark |> Plots.PlotThemes.PlotTheme
+    theme(:foresight_dark)
 end
-export fourseas_dark!
+export foresight_dark!

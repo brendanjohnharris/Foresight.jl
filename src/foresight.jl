@@ -17,7 +17,7 @@ palette = (
 
 
 
-function _theme_fourseas(; globalfont=fourseasfont())
+function _foresight(; globalfont=foresightfont())
     Theme(;
         colormap = :turbo,
         strokewidth = 10.0,
@@ -106,39 +106,20 @@ function _theme_fourseas(; globalfont=fourseasfont())
         )
     )
 end
-四海 = theme_fourseas
-export theme_fourseas
 
-
-
-# # * A nicer looking histogram
-# @recipe(Histogram, x) do scene
-#     Theme(
-#         color => :red, # Why is this so hard
-#         # strokewidth => 5,
-#     )
-# end
-# argument_names(::Type{<:Histogram}) = (:x,)
-# function Makie.plot!(histogram::Histogram)
-#     hist!(histogram, histogram[:x]; normalization=:density)
-#     density!(histogram, histogram[:x]; color=RGBA(0, 0, 0, 0))
-#     histogram
-# end
-
-
-
-function theme_fourseas(options...; font=fourseasfont())
+function foresight(options...; font=foresightfont())
     if :serif ∈ options
-        thm = _theme_fourseas(globalfont=:CMU)
+        thm = _foresight(globalfont=:CMU)
     else
-        thm = _theme_fourseas(globalfont=font)
+        thm = _foresight(globalfont=font)
     end
     options = collect(options)
     options = options[options .!= :serif]
-    _theme_fourseas!.((thm,), Val.(options))
+    _foresight!.((thm,), Val.(options))
     return thm
 end
 
+四海 = 遠見 = 四看 = foresight
 
 function setall!(thm::Attributes, attribute, value)
     thm[attribute] = value
@@ -150,13 +131,13 @@ function setall!(thm::Attributes, attribute, value)
 end
 
 transparent = Makie.RGBA(0, 0, 0, 0)
-function _theme_fourseas!(thm::Attributes, ::Val{:transparent})
+function _foresight!(thm::Attributes, ::Val{:transparent})
     setall!(thm, :backgroundcolor, transparent)
     setall!(thm, :yzpanelcolor, transparent)
     setall!(thm, :xzpanelcolor, transparent)
     setall!(thm, :xypanelcolor, transparent)
 end
-function _theme_fourseas!(thm::Attributes, ::Val{:dark})
+function _foresight!(thm::Attributes, ::Val{:dark})
     gridcolor = :gray38
     minorgridcolor = :gray51
     strokecolor = textcolor = :white
