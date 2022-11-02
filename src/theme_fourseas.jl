@@ -17,7 +17,7 @@ palette = (
 
 
 
-function theme_fourseas(; globalfont=fourseasfont())
+function _theme_fourseas(; globalfont=fourseasfont())
     Theme(;
         colormap = :turbo,
         strokewidth = 10.0,
@@ -129,9 +129,9 @@ export theme_fourseas
 
 function theme_fourseas(options...; font=fourseasfont())
     if :serif ∈ options
-        thm = theme_fourseas(globalfont=:CMU)
+        thm = _theme_fourseas(globalfont=:CMU)
     else
-        thm = theme_fourseas(globalfont=font)
+        thm = _theme_fourseas(globalfont=font)
     end
     options = collect(options)
     options = options[options .!= :serif]

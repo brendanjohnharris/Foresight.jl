@@ -13,4 +13,6 @@ Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Requires = "ae029012-a4dd-5104-9daa-d747884805df"
 
 [compat]
-julia = "1.8"
+Makie = "0.16 - 0.18"
+ImageClipboard = "0.1"
+julia = "1.6 - 1.8"
