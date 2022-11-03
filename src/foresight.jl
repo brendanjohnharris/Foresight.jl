@@ -31,9 +31,9 @@ function _foresight(; globalfont=foresightfont())
             xgridcolor = :gray88,
             ygridcolor = :gray88,
             xminorgridcolor = :gray91,
-            xminorgridvisible = true,
+            # xminorgridvisible = true,
             yminorgridcolor = :gray91,
-            yminorgridvisible = true,
+            # yminorgridvisible = true,
             leftspinevisible = false,
             rightspinevisible = false,
             bottomspinevisible = false,
@@ -136,6 +136,11 @@ function _foresight!(thm::Attributes, ::Val{:transparent})
     setall!(thm, :yzpanelcolor, transparent)
     setall!(thm, :xzpanelcolor, transparent)
     setall!(thm, :xypanelcolor, transparent)
+end
+function _foresight!(thm::Attributes, ::Val{:minorgrid})
+    setall!(thm, :xminorgridvisible, true)
+    setall!(thm, :yminorgridvisible, true)
+    setall!(thm, :zminorgridvisible, true)
 end
 function _foresight!(thm::Attributes, ::Val{:dark})
     gridcolor = :gray38
