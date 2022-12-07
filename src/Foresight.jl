@@ -33,7 +33,8 @@ const darkbg = colorant"#282C34"; export darkbg
 const _darkbg = colorant"#3E4451"; export _darkbg
 const greyseas = colorant"#cccccc"; export greyseas
 const _greyseas = colorant"#eeeeee"; export _greyseas
-const cyclical = cgrad(:cyclic_mygbm_30_95_c78_n256_s25); export cyclical
+cyclical = cgrad([california, crimson, cornflowerblue, cucumber, california], [0, 0.2, 0.5, 0.8, 1])
+export cyclical
 const sunset = cgrad([crimson, juliapurple, cornflowerblue], [0, 0.6, 1]); export sunset
 
 # * A good font
