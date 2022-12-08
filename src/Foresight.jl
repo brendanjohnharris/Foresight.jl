@@ -8,7 +8,7 @@ using ImageClipboard
 using FileIO
 using Requires
 
-export foresight, importall, freeze!, clip
+export foresight, importall, freeze!, clip, hidexaxis!, hideyaxis!
 
 function __init__()
     @require Plots="91a5bcdd-55d7-5caf-9e0b-520d859cae80" @eval include("Plots.jl")
@@ -113,6 +113,18 @@ function importall(mdl)
     fullname = Symbol(mdl)
     exp = names(eval(mdl), all=true)
     return [:(import $fullname.$e) for e in exp]
+end
+
+function hidexaxis!(ax::Axis)
+    ax.xticksvisible = false
+    ax.xticklabelsvisible = false
+    ax.xlabelvisible = false
+end
+
+function hideyaxis!(ax::Axis)
+    ax.yticksvisible = false
+    ax.yticklabelsvisible = false
+    ax.ylabelvisible = false
 end
 
 end
