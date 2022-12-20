@@ -19,7 +19,7 @@ palette = (
 
 function _foresight(; globalfont=foresightfont())
     Theme(;
-        colormap = :turbo,
+        colormap = sunrise,
         strokewidth = 10.0,
         strokecolor = :black,
         strokevisible = true,
