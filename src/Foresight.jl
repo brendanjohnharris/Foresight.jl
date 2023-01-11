@@ -37,12 +37,12 @@ sunset = cgrad([crimson, juliapurple, cornflowerblue], [0, 0.6, 1]); export suns
 """
 Convert a color gradient into a transparent version
 """
-function transparent(C::Makie.PlotUtils.ContinuousColorGradient, start=0.5, stop=1.0)
+function seethrough(C::Makie.PlotUtils.ContinuousColorGradient, start=0.5, stop=1.0)
     colors = C.colors
     alphas = LinRange(start, stop, length(colors))
     return cgrad([RGBA(RGB(c), a) for (c, a) in zip(colors, alphas)], C.values)
 end
-export transparent
+export seethrough
 
 # * A good font
 foresightfont() = "TeX Gyre Heros"
