@@ -32,7 +32,7 @@ const greyseas = colorant"#cccccc"; export greyseas
 const _greyseas = colorant"#eeeeee"; export _greyseas
 cyclical = cgrad([california, crimson, cornflowerblue, cucumber, california], [0, 0.2, 0.5, 0.8, 1]); export cyclical
 sunrise = cgrad([crimson, california, cucumber, cornflowerblue], [0.2, 0.4, 0.6, 0.8]); export sunrise
-sunset = cgrad([crimson, juliapurple, cornflowerblue], [0, 0.6, 1]); export sunset
+sunset = reverse(cgrad([crimson, juliapurple, cornflowerblue], [0, 0.6, 1])); export sunset
 
 """
 Convert a color gradient into a transparent version
@@ -61,10 +61,14 @@ include("./foresight.jl")
 
 
 macro default_theme!(thm)
-    @set_preferences!("default_theme" => string(thm))
-    @info("Default theme set to $thm. Restart Julia for the change to take effect")
+    try
+        @set_preferences!("default_theme" => string(thm))
+        @info("Default theme set to $thm. Restart Julia for the change to take effect")
+    catch e
+        @error "Could not load theme. Reverting to Foresight.jl default"
+    end
 end
-export default_theme!
+export @default_theme!
 _default_theme = @load_preference("default_theme", default="foresight()")
 default_theme() = eval(Meta.parse(_default_theme))
 
