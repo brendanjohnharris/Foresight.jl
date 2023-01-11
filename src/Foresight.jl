@@ -51,14 +51,15 @@ include("./foresight.jl")
 
 
 function default_theme!(thm)
+    thm = Meta.quot(thm)
     @set_preferences!("default_theme" => thm)
     @info("Default teme set to $thm. Restart Julia for the change to take effect")
 end
-default_theme() = @load_preference("default_theme", default=foresight())
+default_theme() = @load_preference("default_theme", default=Meta.quot(foresight))
 
 
 function __init__()
-    @eval Makie.set_theme!(@load_preference("default_theme", default=foresight()))
+    @eval Makie.set_theme!(eval(@load_preference("default_theme", default=Meta.quot(foresight))))
     @require Plots="91a5bcdd-55d7-5caf-9e0b-520d859cae80" @eval include("Plots.jl")
 end
 
