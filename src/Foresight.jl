@@ -65,12 +65,17 @@ macro default_theme!(thm)
         @set_preferences!("default_theme" => string(thm))
         @info("Default theme set to $thm. Restart Julia for the change to take effect")
     catch e
-        @error "Could not load theme. Reverting to Foresight.jl default"
+        @error "Could not set theme. Reverting to Foresight.jl default"
     end
 end
 export @default_theme!
 _default_theme = @load_preference("default_theme", default="foresight()")
-default_theme() = eval(Meta.parse(_default_theme))
+function default_theme()
+    try
+        eval(Meta.parse(_default_theme))
+    catch e
+        @error "Could not load theme. Reverting to Foresight.jl default"
+    end
 
 function __init__()
     @eval Makie.set_theme!(default_theme())
