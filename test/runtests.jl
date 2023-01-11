@@ -8,7 +8,6 @@ using CairoMakie
 end
 
 @testset "Demo figure" begin
-    @test_nowarn Makie.set_theme!(_foresight())
     @test_nowarn save("./demo.png", demofigure())
 
     @test_nowarn Makie.set_theme!(foresight(:dark))

@@ -7,12 +7,9 @@ using Random
 using ImageClipboard
 using FileIO
 using Requires
+using Preferences
 
 export foresight, importall, freeze!, clip, hidexaxis!, hideyaxis!
-
-function __init__()
-    @require Plots="91a5bcdd-55d7-5caf-9e0b-520d859cae80" @eval include("Plots.jl")
-end
 
 
 const cornflowerblue = colorant"#6495ED"; export cornflowerblue
@@ -51,6 +48,19 @@ function widen(x, δ=0.05)
 end
 
 include("./foresight.jl")
+
+
+function default_theme!(thm)
+    @set_preferences!("default_theme" => thm)
+    @info("Default teme set to $thm. Restart Julia for the change to take effect")
+end
+default_theme() = @load_preference("default_theme", default=foresight())
+
+
+function __init__()
+    @eval Makie.set_theme!(@load_preference("default_theme", default=foresight()))
+    @require Plots="91a5bcdd-55d7-5caf-9e0b-520d859cae80" @eval include("Plots.jl")
+end
 
 function demofigure()
     Random.seed!(32)
