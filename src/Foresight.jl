@@ -75,7 +75,9 @@ function default_theme()
         eval(Meta.parse(_default_theme))
     catch e
         @error "Could not load theme. Reverting to Foresight.jl default"
+        return foresight()
     end
+end
 
 function __init__()
     @eval Makie.set_theme!(default_theme())
