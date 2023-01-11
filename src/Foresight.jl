@@ -32,7 +32,17 @@ const greyseas = colorant"#cccccc"; export greyseas
 const _greyseas = colorant"#eeeeee"; export _greyseas
 cyclical = cgrad([california, crimson, cornflowerblue, cucumber, california], [0, 0.2, 0.5, 0.8, 1]); export cyclical
 sunrise = cgrad([crimson, california, cucumber, cornflowerblue], [0.2, 0.4, 0.6, 0.8]); export sunrise
-const sunset = cgrad([crimson, juliapurple, cornflowerblue], [0, 0.6, 1]); export sunset
+sunset = cgrad([crimson, juliapurple, cornflowerblue], [0, 0.6, 1]); export sunset
+
+"""
+Convert a color gradient into a transparent version
+"""
+function transparent(C::Makie.PlotUtils.ContinuousColorGradient, start=0.5, stop=1.0)
+    colors = C.colors
+    alphas = LinRange(start, stop, length(colors))
+    return cgrad([RGBA(RGB(c), a) for (c, a) in zip(colors, alphas)], C.values)
+end
+export transparent
 
 # * A good font
 foresightfont() = "TeX Gyre Heros"
@@ -50,16 +60,16 @@ end
 include("./foresight.jl")
 
 
-function default_theme!(thm)
-    thm = Meta.quot(thm)
-    @set_preferences!("default_theme" => thm)
-    @info("Default teme set to $thm. Restart Julia for the change to take effect")
+macro default_theme!(thm)
+    @set_preferences!("default_theme" => string(thm))
+    @info("Default theme set to $thm. Restart Julia for the change to take effect")
 end
-default_theme() = @load_preference("default_theme", default=Meta.quot(foresight()))
-
+export default_theme!
+_default_theme = @load_preference("default_theme", default="foresight()")
+default_theme() = eval(Meta.parse(_default_theme))
 
 function __init__()
-    @eval Makie.set_theme!(eval(@load_preference("default_theme", default=Meta.quot(foresight()))))
+    @eval Makie.set_theme!(default_theme())
     @require Plots="91a5bcdd-55d7-5caf-9e0b-520d859cae80" @eval include("Plots.jl")
 end
 

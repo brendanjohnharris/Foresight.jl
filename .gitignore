@@ -36,3 +36,5 @@ data/**
 
 # VSCode workspace
 *.code-workspace
+
+LocalPreferences.toml

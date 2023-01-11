@@ -119,7 +119,7 @@ function foresight(options...; font=foresightfont())
     return thm
 end
 
-四海 = 遠見 = 四看 = foresight
+四海 = 遠見 = 四看 = fourseas = foresight
 
 function setall!(thm::Attributes, attribute, value)
     thm[attribute] = value
