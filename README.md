@@ -7,7 +7,7 @@ using Foresight
 foresight() |> Makie.set_theme!
 fig = Foresight.demofigure()
 ```
-![demo](./test/demo.png)
+![demo](PhD/Code/Vortices/Julia/Foresight.jl/test/demo.png)
 
 ## Theme options
 Any combination of the keywords below can be used to customise the theme.
@@ -16,18 +16,18 @@ Any combination of the keywords below can be used to customise the theme.
 foresight(:dark) |> Makie.set_theme!
 fig = Foresight.demofigure()
 ```
-![demo](./test/demo_dark.png)
+![demo](PhD/Code/Vortices/Julia/Foresight.jl/test/demo_dark.png)
 
 ### Transparent
 ```Julia
 foresight(:dark, :transparent) |> Makie.set_theme!
 fig = Foresight.demofigure()
 ```
-![demo](./test/demo_transparentdark.png)
+![demo](PhD/Code/Vortices/Julia/Foresight.jl/test/demo_transparentdark.png)
 
 ### Serif
 ```Julia
 foresight(:serif) |> Makie.set_theme!
 fig = Foresight.demofigure()
 ```
-![demo](./test/demo_serif.png)
+![demo](demo_serif.png)

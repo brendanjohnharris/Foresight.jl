@@ -46,6 +46,7 @@ export seethrough
 
 # * A good font
 foresightfont() = "TeX Gyre Heros"
+foresightfontsize() = 18
 # foresightfont_bold() = "Helvetica Bold"
 
 """
@@ -79,6 +80,9 @@ end
 function __init__()
     @eval Makie.set_theme!(default_theme())
     @require Plots="91a5bcdd-55d7-5caf-9e0b-520d859cae80" @eval include("Plots.jl")
+    @require CairoMakie="13f3f980-e62b-5c42-98c6-ff1f3baf88f0" begin
+        @require Gtk="4c0ca9eb-093a-5379-98c5-f87ac0bbbf44" @eval include("CairoMakie.jl")
+    end
 end
 
 function demofigure()
@@ -178,7 +182,7 @@ palette = (
 
 
 
-function _foresight(; globalfont=foresightfont())
+function _foresight(; globalfont=foresightfont(), globalfontsize=foresightfontsize())
     Theme(;
         colormap = sunrise,
         strokewidth = 10.0,
@@ -187,6 +191,7 @@ function _foresight(; globalfont=foresightfont())
         font = globalfont,
         palette,
         linewidth = 5.0,
+        fontsize=globalfontsize,
         Axis = (;
             backgroundcolor = :white,
             xgridcolor = :gray88,
