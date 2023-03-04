@@ -46,7 +46,7 @@ export seethrough
 
 # * A good font
 foresightfont() = "TeX Gyre Heros"
-foresightfontsize() = 18
+foresightfontsize() = 16
 # foresightfont_bold() = "Helvetica Bold"
 
 """
