@@ -162,23 +162,15 @@ end
 
 
 
-
+colororder = [      (cornflowerblue, 0.7),
+                    (crimson, 0.7),
+                    (cucumber, 0.7),
+                    (california, 0.7),
+                    (juliapurple, 0.7)]
 palette = (
-    patchcolor = [      (cornflowerblue, 0.7),
-                        (crimson, 0.7),
-                        (cucumber, 0.7),
-                        (california, 0.7),
-                        (juliapurple, 0.7)],
-    color = [           (cornflowerblue, 0.7),
-                        (crimson, 0.7),
-                        (cucumber, 0.7),
-                        (california, 0.7),
-                        (juliapurple, 0.7)],
-    strokecolor = [     (cornflowerblue, 0.7),
-                        (crimson, 0.7),
-                        (cucumber, 0.7),
-                        (california, 0.7),
-                        (juliapurple, 0.7)])
+    patchcolor = colororder,
+    color = colororder,
+    strokecolor = colororder)
 
 
 
@@ -269,7 +261,10 @@ function _foresight(; globalfont=foresightfont(), globalfontsize=foresightfontsi
         ),
         Textbox = (;
             font = globalfont,
-        )
+        ),
+        Scatter = (; palette),
+        Lines = (; palette),
+        Hist = (; palette),
     )
 end
 
