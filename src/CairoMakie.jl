@@ -17,9 +17,9 @@ function gtkshow(f::CairoMakie.Figure; name="CairoMakie", resolution=(1920, 1080
     drawonto(canvas, f)
     show(canvas)
 end
-gtkshow(f::CairoMakie.FigureAxisPlot; kwargs...) = gtkshow(f.figure; kwargs...)
+gtkshow(f::CairoMakie.Makie.FigureAxisPlot; kwargs...) = gtkshow(f.figure; kwargs...)
 export gtkshow
 
-Base.show(io::IO, f::CairoMakie.FigureAxisPlot) = gtkshow(f)
+Base.show(io::IO, f::CairoMakie.Makie.FigureAxisPlot) = gtkshow(f)
 Base.show(io::IO, f::CairoMakie.Figure) = gtkshow(f)
 Base.show(io::IO, f::CairoMakie.Scene) = gtkshow(f)
