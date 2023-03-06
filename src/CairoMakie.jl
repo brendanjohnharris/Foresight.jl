@@ -11,12 +11,16 @@ function drawonto(canvas, figure)
     end
 end
 
-function gtkshow(f; name="CairoMakie", resolution=(1920, 1080), kwargs...)
+function gtkshow(f::CairoMakie.Scene; name="CairoMakie", resolution=(1920, 1080), kwargs...)
     canvas = @GtkCanvas()
     window = GtkWindow(canvas, name, resolution...; kwargs...)
     drawonto(canvas, f)
+    show(canvas)
 end
+gtkshow(f::Figure; kwargs...) = gtkshow(f.scene; kwargs...)
+gtkshow(f::FigureAxisPlot; kwargs...) = gtkshow(f.figure; kwargs...)
 export gtkshow
 
 Base.show(io::IO, f::Makie.FigureAxisPlot) = gtkshow(f)
 Base.show(io::IO, f::Makie.Figure) = gtkshow(f)
+Base.show(io::IO, f::Makie.Scene) = gtkshow(f)
