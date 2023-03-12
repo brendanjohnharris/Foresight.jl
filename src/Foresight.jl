@@ -270,9 +270,9 @@ end
 
 function foresight(options...; font=foresightfont())
     if :serif ∈ options
-        thm = _foresight(globalfont=:CMU)
+        thm = _foresight(; globalfont="CMU")
     else
-        thm = _foresight(globalfont=font)
+        thm = _foresight(;globalfont=font)
     end
     options = collect(options)
     options = options[options .!= :serif]
