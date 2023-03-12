@@ -16,6 +16,6 @@ end
     @test_nowarn Makie.set_theme!(foresight(:dark, :transparent))
     @test_nowarn save("./demo_transparentdark.png", demofigure())
 
-    @test_nowarn Makie.set_theme!(foresight(; font=:serif))
+    @test_nowarn Makie.set_theme!(foresight(:serif))
     @test_nowarn save("./demo_serif.png", demofigure())
 end
