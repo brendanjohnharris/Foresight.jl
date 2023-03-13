@@ -25,6 +25,10 @@ jobs:
         arch:
           - x64
     steps:
+      - name: Install fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install fonts-cmu
       - uses: actions/checkout@v2
       - uses: julia-actions/setup-julia@v1
         with:
