@@ -14,7 +14,9 @@ function drawonto(canvas, ax::CairoMakie.Axis)
     CairoMakie.autolimits!(ax)
     drawonto(canvas, ax.scene)
 end
-
+import CairoMakie.autolimits!
+autolimits!(::Legend) = ()
+autolimits!(::Colorbar) = ()
 function drawonto(canvas, f::CairoMakie.Figure)
     autolimits!.(f.content)
     drawonto(canvas, f.scene)
