@@ -1,5 +1,5 @@
-using .CairoMakie
-using .Gtk
+using CairoMakie
+using Gtk
 
 function drawonto(canvas, scene::CairoMakie.Scene)
     @guarded draw(canvas) do _
