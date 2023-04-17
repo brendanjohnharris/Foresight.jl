@@ -1,5 +1,5 @@
 # Foresight.jl
-A Makie theme
+A Makie theme. And some cool utilities.
 # Usage
 ```Julia
 using CairMakie
@@ -31,3 +31,7 @@ foresight(:serif) |> Makie.set_theme!
 fig = Foresight.demofigure()
 ```
 ![demo](test/demo_serif.png)
+
+
+# Utilities
+
