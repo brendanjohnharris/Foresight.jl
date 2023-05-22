@@ -325,7 +325,7 @@ function Makie.initialize_block!(po::PolarAxis)
     # Whenever the limits change or the scene is resized,
     # update the camera.
     onany(po.limits, scene.px_area) do lims, px_area
-        adjustcam!(po, lims, (0.0, 2π))
+        adjustcam!(po, lims, (-1.0π, 1.0π))
     end
 
 
@@ -443,7 +443,7 @@ function draw_axis!(po::PolarAxis)
 
     spinepoints = Observable{Vector{Point2f}}()
 
-    θlims = (0.0, 2π)
+    θlims = (-1.0π, 1.0π)
 
     onany(po.rticks, po.θticks, po.rminorticks, po.θminorticks, po.rtickformat, po.θtickformat, po.rtickangle, po.limits, po.sample_density, po.scene.px_area, po.scene.transformation.transform_func, po.scene.camera_controls.area) do rticks, θticks, rminorticks, θminorticks, rtickformat, θtickformat, rtickangle, limits, sample_density, pixelarea, trans, area
 
@@ -669,7 +669,7 @@ end
 
 
 "Adjust the axis's scene's camera to conform to the given r-limits"
-function adjustcam!(po::PolarAxis, limits::NTuple{2, <: Real}, θlims::NTuple{2, <: Real} = (0.0, 2π))
+function adjustcam!(po::PolarAxis, limits::NTuple{2, <: Real}, θlims::NTuple{2, <: Real} = (-1.0π, 1.0π))
     @assert limits[1] ≤ limits[2]
     scene = po.scene
     # We transform our limits to transformed space, since we can
@@ -711,7 +711,7 @@ end
 
 function pick_polarhist_edges(vals, bins)
     if bins isa Int
-        return range(0, 2π, length = bins)
+        return range(-1.0π, 1.0π, length = bins)
     else
         if !issorted(bins)
             error("Histogram bins are not sorted: $bins")
@@ -722,7 +722,7 @@ end
 
 function Makie.plot!(plot::PolarHist)
 
-    values = plot.values
+    values = lift(x->mod.(x .+ π, 2*π) .- π, plot.values)
     edges = lift(pick_polarhist_edges, plot, values, plot.bins)
 
     points = lift(plot, edges, plot.normalization, plot.scale_to,
@@ -766,5 +766,95 @@ function Makie.plot!(plot::PolarHist)
     poly!(plot, pgons; plot.attributes..., color=color)
     plot
 end
+
+# ? ----------------------------- Polar density ---------------------------- ? #
+@recipe(PolarDensity) do scene
+    Theme(
+        color = theme(scene, :patchcolor),
+        colormap = theme(scene, :colormap),
+        colorrange = Makie.automatic,
+        strokecolor = theme(scene, :patchstrokecolor),
+        strokewidth = theme(scene, :patchstrokewidth),
+        linestyle = nothing,
+        strokearound = false,
+        npoints = 200,
+        offset = 0.0,
+        direction = :x,
+        boundary = (-1.0π, 1.0π),
+        bandwidth = automatic,
+        weights = automatic,
+        cycle = [:color => :patchcolor],
+        inspectable = theme(scene, :inspectable)
+    )
+end
+
+function plot!(plot::PolarDensity{<:Tuple{<:AbstractVector}})
+    θ = plot[1]
+
+    lowerupper = lift(plot, θ, plot.direction, plot.boundary, plot.offset,
+        plot.npoints, plot.bandwidth, plot.weights) do θ, dir, bound, offs, n, bw, weights
+
+        k = KernelDensity.kde(θ;
+            npoints = n,
+            (bound === automatic ? NamedTuple() : (boundary = bound,))...,
+            (bw === automatic ? NamedTuple() : (bandwidth = bw,))...,
+            (weights === automatic ? NamedTuple() : (weights = StatsBase.weights(weights),))...
+        )
+
+        if dir === :x
+            lowerv = Point2f.(k.x, offs)
+            upperv = Point2f.(k.x, offs .+ k.density)
+        elseif dir === :y
+            lowerv = Point2f.(offs, k.x)
+            upperv = Point2f.(offs .+ k.density, k.x)
+        else
+            error("Invalid direction $dir, only :x or :y allowed")
+        end
+        (lowerv, upperv)
+    end
+
+    linepoints = lift(plot, lowerupper, plot.strokearound) do lu, sa
+        if sa
+            ps = copy(lu[2])
+            push!(ps, lu[1][end])
+            push!(ps, lu[1][1])
+            push!(ps, lu[1][2])
+            ps
+        else
+            lu[2]
+        end
+    end
+
+    lower = Observable(Point2f[])
+    upper = Observable(Point2f[])
+
+    on(plot, lowerupper) do (l, u)
+        lower.val = l
+        upper[] = u
+    end
+    notify(lowerupper)
+
+    colorobs = Observable{RGBColors}()
+    map!(plot, colorobs, plot.color, lowerupper, plot.direction) do c, lu, dir
+        if (dir === :x && c === :x) || (dir === :y && c === :y)
+            dim = dir === :x ? 1 : 2
+            return Float32[l[dim] for l in lu[1]]
+        elseif (dir === :y && c === :x) || (dir === :x && c === :y)
+            o = Float32(plot.offset[])
+            dim = dir === :x ? 2 : 1
+            return vcat(Float32[l[dim] - o for l in lu[1]], Float32[l[dim] - o for l in lu[2]])::Vector{Float32}
+        else
+            return to_color(c)
+        end
+    end
+
+    band!(plot, lower, upper, color = colorobs, colormap = plot.colormap,
+        colorrange = plot.colorrange, inspectable = plot.inspectable)
+    l = lines!(plot, linepoints, color = plot.strokecolor,
+        linestyle = plot.linestyle, linewidth = plot.strokewidth,
+        inspectable = plot.inspectable)
+    plot
+end
+
 
 # end # module
