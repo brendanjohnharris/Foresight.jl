@@ -1,4 +1,4 @@
-module Polar
+# module Polar
 using Makie
 import Makie: @Block, inherit, Text, Observables, GeometryBasics, alpha, red, green, blue, GridLayoutBase, automatic, bar_label_formatter, _hist_center_weights, Polygon
 
@@ -767,4 +767,4 @@ function Makie.plot!(plot::PolarHist)
     plot
 end
 
-end # module
+# end # module
