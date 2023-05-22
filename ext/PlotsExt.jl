@@ -1,5 +1,6 @@
+module PlotsExt
 using Plots
-using Colors
+using .Colors
 import Plots.PlotThemes._themes
 const cornflowerblue = colorant"cornflowerblue"; export cornflowerblue
 const crimson = colorant"crimson"; export crimson
@@ -22,7 +23,7 @@ foresight_palette = torgba.([
 ], (0.7,))
 
 
-foresight = Plots.PlotThemes.PlotTheme(
+defaults = (;
     foreground_color_text = :black,
     fgguide = :black,
     fglegend = :black,
@@ -51,6 +52,8 @@ foresight = Plots.PlotThemes.PlotTheme(
     fontfamily = "Computer Modern",
     minorticks = 2,
 ); # Plots.showtheme(:foresight)
+defaults = Dict(pairs(defaults))
+foresight = Plots.PlotThemes.PlotTheme(defaults)
 Plots.PlotThemes._themes[:foresight] = foresight
 function foresight!()
     Plots.PlotThemes._themes[:foresight] = foresight
@@ -59,7 +62,7 @@ end
 export foresight!
 
 
-foresight_dark = NonstationaryProcesses.foresight.defaults |> deepcopy
+foresight_dark = defaults |> deepcopy
 foresight_dark[:foreground_color_text] = :white
 foresight_dark[:foreground_color_subplot] = darkbg
 foresight_dark[:fgguide] = :white
@@ -79,3 +82,4 @@ function foresight_dark!()
     theme(:foresight_dark)
 end
 export foresight_dark!
+end # module

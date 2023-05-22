@@ -1,5 +1,9 @@
+module CairoMakieExt
+import CairoMakie
 using CairoMakie
 using Gtk
+
+export drawonto, gtkshow
 
 function drawonto(canvas, scene::CairoMakie.Scene)
     @guarded draw(canvas) do _
@@ -39,3 +43,4 @@ Base.display(f::CairoMakie.Axis) = gtkshow(f)
 Base.display(f::CairoMakie.Figure) = gtkshow(f)
 Base.display(f::CairoMakie.Scene) = gtkshow(f)
 Base.display(f::CairoMakie.Makie.FigureAxisPlot) = gtkshow(f)
+end # module

@@ -6,8 +6,11 @@ using Random
 # using Images
 using ImageClipboard
 using FileIO
-using Requires
 using Preferences
+
+if !isdefined(Base, :get_extension)
+    using Requires
+end
 
 export foresight, importall, freeze!, clip, hidexaxis!, hideyaxis!
 
@@ -79,9 +82,12 @@ end
 
 function __init__()
     @eval Makie.set_theme!(default_theme())
-    @require Plots="91a5bcdd-55d7-5caf-9e0b-520d859cae80" @eval include("Plots.jl")
-    @require CairoMakie="13f3f980-e62b-5c42-98c6-ff1f3baf88f0" begin
-        @require Gtk="4c0ca9eb-093a-5379-98c5-f87ac0bbbf44" @eval include("CairoMakie.jl")
+
+    @static if !isdefined(Base, :get_extension)
+        @require Plots="91a5bcdd-55d7-5caf-9e0b-520d859cae80" include("../ext/PlotsExt.jl")
+        @require Gtk="4c0ca9eb-093a-5379-98c5-f87ac0bbbf44" begin
+            @require CairoMakie="13f3f980-e62b-5c42-98c6-ff1f3baf88f0" @eval include("../ext/CairoMakieExt.jl")
+        end
     end
 end
 
@@ -332,5 +338,8 @@ function _foresight!(thm::Attributes, ::Val{:dark})
     thm[:Axis3][:yticksvisible] = false
     thm[:Axis3][:zticksvisible] = false
 end
+
+
+include("Polar.jl")
 
 end
