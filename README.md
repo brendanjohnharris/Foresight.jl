@@ -8,7 +8,7 @@
 A Makie theme. And some cool utilities.
 # Usage
 ```Julia
-using CairMakie
+using CairoMakie
 using Foresight
 foresight() |> Makie.set_theme!
 fig = Foresight.demofigure()
