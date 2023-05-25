@@ -1,4 +1,4 @@
-module CairoMakieExt
+# module CairoMakieExt
 import CairoMakie
 using CairoMakie
 using Gtk
@@ -43,4 +43,4 @@ Base.display(f::CairoMakie.Axis) = gtkshow(f)
 Base.display(f::CairoMakie.Figure) = gtkshow(f)
 Base.display(f::CairoMakie.Scene) = gtkshow(f)
 Base.display(f::CairoMakie.Makie.FigureAxisPlot) = gtkshow(f)
-end # module
+# end # module

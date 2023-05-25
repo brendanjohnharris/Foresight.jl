@@ -1,4 +1,4 @@
-module PlotsExt
+# module PlotsExt
 using Plots
 using .Colors
 import Plots.PlotThemes._themes
@@ -82,4 +82,4 @@ function foresight_dark!()
     theme(:foresight_dark)
 end
 export foresight_dark!
-end # module
+# end # module

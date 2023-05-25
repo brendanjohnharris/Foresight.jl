@@ -767,94 +767,93 @@ function Makie.plot!(plot::PolarHist)
     plot
 end
 
-# ? ----------------------------- Polar density ---------------------------- ? #
-@recipe(PolarDensity) do scene
-    Theme(
-        color = theme(scene, :patchcolor),
-        colormap = theme(scene, :colormap),
-        colorrange = Makie.automatic,
-        strokecolor = theme(scene, :patchstrokecolor),
-        strokewidth = theme(scene, :patchstrokewidth),
-        linestyle = nothing,
-        strokearound = false,
-        npoints = 200,
-        offset = 0.0,
-        direction = :x,
-        boundary = (-1.0π, 1.0π),
-        bandwidth = automatic,
-        weights = automatic,
-        cycle = [:color => :patchcolor],
-        inspectable = theme(scene, :inspectable)
-    )
-end
+# # ? ----------------------------- Polar density ---------------------------- ? #
+# @recipe(PolarDensity) do scene
+#     Theme(
+#         color = theme(scene, :patchcolor),
+#         colormap = theme(scene, :colormap),
+#         colorrange = Makie.automatic,
+#         strokecolor = theme(scene, :patchstrokecolor),
+#         strokewidth = theme(scene, :patchstrokewidth),
+#         linestyle = nothing,
+#         strokearound = false,
+#         npoints = 200,
+#         offset = 0.0,
+#         direction = :x,
+#         boundary = (-1.0π, 1.0π),
+#         bandwidth = automatic,
+#         weights = automatic,
+#         cycle = [:color => :patchcolor],
+#         inspectable = theme(scene, :inspectable)
+#     )
+# end
 
-function plot!(plot::PolarDensity{<:Tuple{<:AbstractVector}})
-    θ = plot[1]
+# function plot!(plot::PolarDensity{<:Tuple{<:AbstractVector}})
+#     θ = plot[1]
 
-    lowerupper = lift(plot, θ, plot.direction, plot.boundary, plot.offset,
-        plot.npoints, plot.bandwidth, plot.weights) do θ, dir, bound, offs, n, bw, weights
+#     lowerupper = lift(plot, θ, plot.direction, plot.boundary, plot.offset,
+#         plot.npoints, plot.bandwidth, plot.weights) do θ, dir, bound, offs, n, bw, weights
 
-        k = KernelDensity.kde(θ;
-            npoints = n,
-            (bound === automatic ? NamedTuple() : (boundary = bound,))...,
-            (bw === automatic ? NamedTuple() : (bandwidth = bw,))...,
-            (weights === automatic ? NamedTuple() : (weights = StatsBase.weights(weights),))...
-        )
+#         k = KernelDensity.kde(θ;
+#             npoints = n,
+#             (bound === automatic ? NamedTuple() : (boundary = bound,))...,
+#             (bw === automatic ? NamedTuple() : (bandwidth = bw,))...,
+#             (weights === automatic ? NamedTuple() : (weights = StatsBase.weights(weights),))...
+#         )
 
-        if dir === :x
-            lowerv = Point2f.(k.x, offs)
-            upperv = Point2f.(k.x, offs .+ k.density)
-        elseif dir === :y
-            lowerv = Point2f.(offs, k.x)
-            upperv = Point2f.(offs .+ k.density, k.x)
-        else
-            error("Invalid direction $dir, only :x or :y allowed")
-        end
-        (lowerv, upperv)
-    end
+#         if dir === :x
+#             lowerv = Point2f.(k.x, offs)
+#             upperv = Point2f.(k.x, offs .+ k.density)
+#         elseif dir === :y
+#             lowerv = Point2f.(offs, k.x)
+#             upperv = Point2f.(offs .+ k.density, k.x)
+#         else
+#             error("Invalid direction $dir, only :x or :y allowed")
+#         end
+#         (lowerv, upperv)
+#     end
 
-    linepoints = lift(plot, lowerupper, plot.strokearound) do lu, sa
-        if sa
-            ps = copy(lu[2])
-            push!(ps, lu[1][end])
-            push!(ps, lu[1][1])
-            push!(ps, lu[1][2])
-            ps
-        else
-            lu[2]
-        end
-    end
+#     linepoints = lift(plot, lowerupper, plot.strokearound) do lu, sa
+#         if sa
+#             ps = copy(lu[2])
+#             push!(ps, lu[1][end])
+#             push!(ps, lu[1][1])
+#             push!(ps, lu[1][2])
+#             ps
+#         else
+#             lu[2]
+#         end
+#     end
 
-    lower = Observable(Point2f[])
-    upper = Observable(Point2f[])
+#     lower = Observable(Point2f[])
+#     upper = Observable(Point2f[])
 
-    on(plot, lowerupper) do (l, u)
-        lower.val = l
-        upper[] = u
-    end
-    notify(lowerupper)
+#     on(plot, lowerupper) do (l, u)
+#         lower.val = l
+#         upper[] = u
+#     end
+#     notify(lowerupper)
 
-    colorobs = Observable{RGBColors}()
-    map!(plot, colorobs, plot.color, lowerupper, plot.direction) do c, lu, dir
-        if (dir === :x && c === :x) || (dir === :y && c === :y)
-            dim = dir === :x ? 1 : 2
-            return Float32[l[dim] for l in lu[1]]
-        elseif (dir === :y && c === :x) || (dir === :x && c === :y)
-            o = Float32(plot.offset[])
-            dim = dir === :x ? 2 : 1
-            return vcat(Float32[l[dim] - o for l in lu[1]], Float32[l[dim] - o for l in lu[2]])::Vector{Float32}
-        else
-            return to_color(c)
-        end
-    end
+#     colorobs = Observable{RGBColors}()
+#     map!(plot, colorobs, plot.color, lowerupper, plot.direction) do c, lu, dir
+#         if (dir === :x && c === :x) || (dir === :y && c === :y)
+#             dim = dir === :x ? 1 : 2
+#             return Float32[l[dim] for l in lu[1]]
+#         elseif (dir === :y && c === :x) || (dir === :x && c === :y)
+#             o = Float32(plot.offset[])
+#             dim = dir === :x ? 2 : 1
+#             return vcat(Float32[l[dim] - o for l in lu[1]], Float32[l[dim] - o for l in lu[2]])::Vector{Float32}
+#         else
+#             return to_color(c)
+#         end
+#     end
 
-    band!(plot, lower, upper, color = colorobs, colormap = plot.colormap,
-        colorrange = plot.colorrange, inspectable = plot.inspectable)
-    l = lines!(plot, linepoints, color = plot.strokecolor,
-        linestyle = plot.linestyle, linewidth = plot.strokewidth,
-        inspectable = plot.inspectable)
-    plot
-end
-
+#     band!(plot, lower, upper, color = colorobs, colormap = plot.colormap,
+#         colorrange = plot.colorrange, inspectable = plot.inspectable)
+#     l = lines!(plot, linepoints, color = plot.strokecolor,
+#         linestyle = plot.linestyle, linewidth = plot.strokewidth,
+#         inspectable = plot.inspectable)
+#     plot
+# end
 
 # end # module
