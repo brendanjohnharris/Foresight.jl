@@ -1,7 +1,7 @@
 # module CairoMakieExt
-import CairoMakie
-using CairoMakie
-using Gtk
+import ..CairoMakie
+using ..CairoMakie
+using .Gtk
 
 export drawonto, gtkshow
 

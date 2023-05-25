@@ -53,10 +53,10 @@ defaults = (;
     minorticks = 2,
 ); # Plots.showtheme(:foresight)
 defaults = Dict(pairs(defaults))
-foresight = Plots.PlotThemes.PlotTheme(defaults)
-Plots.PlotThemes._themes[:foresight] = foresight
+foresight_plots = Plots.PlotThemes.PlotTheme(defaults)
+Plots.PlotThemes._themes[:foresight] = foresight_plots
 function foresight!()
-    Plots.PlotThemes._themes[:foresight] = foresight
+    Plots.PlotThemes._themes[:foresight] = foresight_plots
     theme(:foresight)
 end
 export foresight!
