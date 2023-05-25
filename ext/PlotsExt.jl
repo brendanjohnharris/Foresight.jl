@@ -1,7 +1,7 @@
 # module PlotsExt
 using .Plots
 using .Colors
-import Plots.PlotThemes._themes
+import .Plots.PlotThemes._themes
 const cornflowerblue = colorant"cornflowerblue"; export cornflowerblue
 const crimson = colorant"crimson"; export crimson
 const cucumber = colorant"#77ab58"; export cucumber
