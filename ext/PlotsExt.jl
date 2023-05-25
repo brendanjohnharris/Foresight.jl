@@ -1,5 +1,5 @@
 # module PlotsExt
-using Plots
+using .Plots
 using .Colors
 import Plots.PlotThemes._themes
 const cornflowerblue = colorant"cornflowerblue"; export cornflowerblue
