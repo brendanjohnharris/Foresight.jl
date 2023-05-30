@@ -4,10 +4,10 @@ import Makie: @Block, inherit, Text, Observables, GeometryBasics, alpha, red, gr
 
 # ! implementing https://github.com/MakieOrg/Makie.jl/pull/2014
 
-inherit(scene, attr::NTuple{1, <: Symbol}, default_value) = inherit(scene, attr[begin], default_value)
+inherit(scene, attr::NTuple{1,<:Symbol}, default_value) = inherit(scene, attr[begin], default_value)
 
 
-function inherit(scene, attr::NTuple{N, <: Symbol}, default_value) where N
+function inherit(scene, attr::NTuple{N,<:Symbol}, default_value) where {N}
     current_dict = scene.theme
     for i in 1:(N-1)
         if haskey(current_dict, attr[i])
@@ -24,7 +24,7 @@ function inherit(scene, attr::NTuple{N, <: Symbol}, default_value) where N
     end
 end
 
-function inherit(::Nothing, attr::NTuple{N, Symbol}, default_value::T) where {N, T}
+function inherit(::Nothing, attr::NTuple{N,Symbol}, default_value::T) where {N,T}
     default_value
 end
 
@@ -47,11 +47,11 @@ end
         "The alignment of the scene in its suggested bounding box."
         alignmode = Inside()
         "The numerical limits from center circle to outer radius"
-        limits::Tuple{Float32, Float32} = (0.0, 10.0)
+        limits::Tuple{Float32,Float32} = (0.0, 10.0)
         "The direction of rotation.  Can be -1 (clockwise) or 1 (counterclockwise)."
         direction = 1
         "The initial angle offset.  This essentially rotates the axis."
-        θ_0 = 0f0
+        θ_0 = 0.0f0
         "The width of the spine."
         spinewidth = 2
         "The color of the spine."
@@ -83,7 +83,7 @@ end
         "Controls if the `r` ticks are visible."
         rticklabelsvisible = inherit(scene, (:Axis, :yticklabelsvisible), true)
         "The angle in radians along which the `r` ticks are printed."
-        rtickangle = π/8
+        rtickangle = π / 8
         "The specifier for the angular (`θ`) ticks, similar to `yticks` for a normal Axis."
         θticks = MultiplesTicks(12, π, "π")
         "The specifier for the minor `θ` ticks."
@@ -166,19 +166,19 @@ end
 
 Base.broadcastable(x::PolarAxisTransformation) = (x,)
 
-function Makie.apply_transform(trans::PolarAxisTransformation, point::VecTypes{2, T}) where T <: Real
+function Makie.apply_transform(trans::PolarAxisTransformation, point::VecTypes{2,T}) where {T<:Real}
     y, x = point[1] .* sincos((point[2] + trans.θ_0) * trans.direction)
     return Point2f(x, y)
 end
 
-function Makie.apply_transform(f::PolarAxisTransformation, point::VecTypes{N2, T}) where {N2, T}
+function Makie.apply_transform(f::PolarAxisTransformation, point::VecTypes{N2,T}) where {N2,T}
     p_dim = to_ndim(Point2f, point, 0.0)
     p_trans = Makie.apply_transform(f, p_dim)
     if 2 < N2
-        p_large = ntuple(i-> i <= 2 ? p_trans[i] : point[i], N2)
-        return Point{N2, Float32}(p_large)
+        p_large = ntuple(i -> i <= 2 ? p_trans[i] : point[i], N2)
+        return Point{N2,Float32}(p_large)
     else
-        return to_ndim(Point{N2, Float32}, p_trans, 0.0)
+        return to_ndim(Point{N2,Float32}, p_trans, 0.0)
     end
 end
 
@@ -201,12 +201,12 @@ function Makie.apply_transform(f::PolarAxisTransformation, r::Rect2{T}) where {T
         # the diagonal of a square is sqrt(2) * side
         # the radius of a circle inscribed within that square is side/2
         mins = Point2f(-rmax) #Makie.apply_transform(f, Point2f(xmin, ymin))
-        maxs = Point2f(rmax*2) #Makie.apply_transform(f, Point2f(xmax - xmin, prevfloat(2f0π)))
+        maxs = Point2f(rmax * 2) #Makie.apply_transform(f, Point2f(xmax - xmin, prevfloat(2f0π)))
         # @show(mins, maxs)
-        return Rect2f(mins,maxs)
+        return Rect2f(mins, maxs)
     end
-    for x in range(xmin, xmax; length = N)
-        for y in range(ymin, ymax; length = N)
+    for x in range(xmin, xmax; length=N)
+        for y in range(ymin, ymax; length=N)
             u, v = Makie.apply_transform(f, Point(x, y))
             umin = min(umin, u)
             umax = max(umax, u)
@@ -215,20 +215,21 @@ function Makie.apply_transform(f::PolarAxisTransformation, r::Rect2{T}) where {T
         end
     end
 
-    return Rect(Vec2(umin, vmin), Vec2(umax-umin, vmax-vmin))
+    return Rect(Vec2(umin, vmin), Vec2(umax - umin, vmax - vmin))
 end
 
 
 # Define its inverse (for interactivity)
-Makie.inverse_transform(trans::PolarAxisTransformation) = Makie.PointTrans{2}() do point
-    Point2f(hypot(point[1], point[2]), -trans.direction * (atan(point[2], point[1]) - trans.θ_0))
-end
+Makie.inverse_transform(trans::PolarAxisTransformation) =
+    Makie.PointTrans{2}() do point
+        Point2f(hypot(point[1], point[2]), -trans.direction * (atan(point[2], point[1]) - trans.θ_0))
+    end
 
 # End transform code
 
 # Some useful code to transform from data (transformed) space to pixelspace
 
-function project_to_pixelspace(scene, point::VecTypes{N, T}) where {N, T}
+function project_to_pixelspace(scene, point::VecTypes{N,T}) where {N,T}
     @assert N ≤ 3
     return to_ndim(
         typeof(point),
@@ -247,7 +248,7 @@ function project_to_pixelspace(scene, point::VecTypes{N, T}) where {N, T}
     )
 end
 
-function project_to_pixelspace(scene, points::AbstractVector{Point{N, T}}) where {N, T}
+function project_to_pixelspace(scene, points::AbstractVector{Point{N,T}}) where {N,T}
     to_ndim.(
         (eltype(points),),
         Makie.project.(
@@ -267,12 +268,12 @@ end
 
 # A function which redoes text layouting, to provide a bbox for arbitrary text.
 
-function text_bbox(textstring::AbstractString, fontsize::Union{AbstractVector, Number}, font, align, rotation, justification, lineheight, word_wrap_width = -1)
+function text_bbox(textstring::AbstractString, fontsize::Union{AbstractVector,Number}, font, align, rotation, justification, lineheight, word_wrap_width=-1)
     glyph_collection = Makie.layout_text(
-            textstring, fontsize,
-            string(font), [], align, rotation, justification, lineheight,
-            RGBAf(0,0,0,0), RGBAf(0,0,0,0), 0f0, word_wrap_width
-        )
+        textstring, fontsize,
+        string(font), [], align, rotation, justification, lineheight,
+        RGBAf(0, 0, 0, 0), RGBAf(0, 0, 0, 0), 0.0f0, word_wrap_width
+    )
 
     return Rect2f(Makie.boundingbox(glyph_collection, Point3f(0), Makie.to_rotation(rotation)))
 end
@@ -286,7 +287,7 @@ function text_bbox(plot::Text)
         plot.rotation[],
         plot.justification[],
         plot.lineheight[],
-        RGBAf(0,0,0,0), RGBAf(0,0,0,0), 0f0,
+        RGBAf(0, 0, 0, 0), RGBAf(0, 0, 0, 0), 0.0f0,
         plot.word_wrap_width[]
     )
 end
@@ -307,10 +308,10 @@ function Makie.initialize_block!(po::PolarAxis)
         diff = new_ws - ws
         new_o = cb.origin - 0.5diff
         new_o =
-        Rect(round.(Int, new_o), round.(Int, new_ws))
+            Rect(round.(Int, new_o), round.(Int, new_ws))
     end
 
-    scene = Scene(po.blockscene, square, camera = cam2d!, backgroundcolor = :transparent)
+    scene = Scene(po.blockscene, square, camera=cam2d!, backgroundcolor=:transparent)
 
     translate!(scene, 0, 0, -100)
 
@@ -337,8 +338,8 @@ function Makie.initialize_block!(po::PolarAxis)
     # Handle protrusions
 
     θticklabelprotrusions = Observable(GridLayoutBase.RectSides(
-        0f0,0f0,0f0,0f0
-        )
+        0.0f0, 0.0f0, 0.0f0, 0.0f0
+    )
     )
 
     old_input = Ref(θticklabelplot[1][])
@@ -397,12 +398,12 @@ function Makie.initialize_block!(po::PolarAxis)
     titleplot = text!(
         po.blockscene,
         title_position;
-        text = po.title,
-        font = po.titlefont,
-        fontsize = po.titlesize,
-        color = po.titlecolor,
-        align = @lift(($(po.titlealign), :center)),
-        visible = po.titlevisible
+        text=po.title,
+        font=po.titlefont,
+        fontsize=po.titlesize,
+        color=po.titlecolor,
+        align=@lift(($(po.titlealign), :center)),
+        visible=po.titlevisible
     )
 
     # We only need to update the title protrusion calculation when some parameter
@@ -415,7 +416,7 @@ function Makie.initialize_block!(po::PolarAxis)
             θtlprot.left,
             θtlprot.right,
             θtlprot.bottom,
-            (title_position[][2] + boundingbox(titleplot).widths[2]/2 - top(pixelarea(scene)[])),
+            (title_position[][2] + boundingbox(titleplot).widths[2] / 2 - top(pixelarea(scene)[])),
         )
     end
 
@@ -432,8 +433,8 @@ end
 
 function draw_axis!(po::PolarAxis)
 
-    rtick_pos_lbl = Observable{Vector{<:Tuple{AbstractString, Point2f}}}()
-    θtick_pos_lbl = Observable{Vector{<:Tuple{AbstractString, Point2f}}}()
+    rtick_pos_lbl = Observable{Vector{<:Tuple{AbstractString,Point2f}}}()
+    θtick_pos_lbl = Observable{Vector{<:Tuple{AbstractString,Point2f}}}()
 
     rgridpoints = Observable{Vector{Makie.GeometryBasics.LineString}}()
     θgridpoints = Observable{Vector{Makie.GeometryBasics.LineString}}()
@@ -462,7 +463,7 @@ function draw_axis!(po::PolarAxis)
         end
 
         θtextbboxes = text_bbox.(
-            _θticklabels, (po.θticklabelsize[],), (po.θticklabelfont[],), ((:center, :center),), 0f0, 0f0, 0f0, -1
+            _θticklabels, (po.θticklabelsize[],), (po.θticklabelfont[],), ((:center, :center),), 0.0f0, 0.0f0, 0.0f0, -1
         )
 
         rtick_pos_lbl[] = tuple.(_rticklabels, project_to_pixelspace(po.scene, Point2f.(_rtickvalues, rtickangle)) .+ Ref(pixelarea.origin))
@@ -504,58 +505,58 @@ function draw_axis!(po::PolarAxis)
     # spine
     spineplot = lines!(
         po.blockscene, spinepoints;
-        color = po.spinecolor,
-        linestyle = po.spinestyle,
-        linewidth = po.spinewidth,
-        visible = po.spinevisible
+        color=po.spinecolor,
+        linestyle=po.spinestyle,
+        linewidth=po.spinewidth,
+        visible=po.spinevisible
     )
     # major grids
     rgridplot = lines!(
         po.blockscene, rgridpoints;
-        color = po.rgridcolor,
-        linestyle = po.rgridstyle,
-        linewidth = po.rgridwidth,
-        visible = po.rgridvisible
+        color=po.rgridcolor,
+        linestyle=po.rgridstyle,
+        linewidth=po.rgridwidth,
+        visible=po.rgridvisible
     )
 
     θgridplot = lines!(
         po.blockscene, θgridpoints;
-        color = po.θgridcolor,
-        linestyle = po.θgridstyle,
-        linewidth = po.θgridwidth,
-        visible = po.θgridvisible
+        color=po.θgridcolor,
+        linestyle=po.θgridstyle,
+        linewidth=po.θgridwidth,
+        visible=po.θgridvisible
     )
     # minor grids
     rminorgridplot = lines!(
         po.blockscene, rminorgridpoints;
-        color = po.rminorgridcolor,
-        linestyle = po.rminorgridstyle,
-        linewidth = po.rminorgridwidth,
-        visible = po.rminorgridvisible
+        color=po.rminorgridcolor,
+        linestyle=po.rminorgridstyle,
+        linewidth=po.rminorgridwidth,
+        visible=po.rminorgridvisible
     )
 
     θminorgridplot = lines!(
         po.blockscene, θminorgridpoints;
-        color = po.θminorgridcolor,
-        linestyle = po.θminorgridstyle,
-        linewidth = po.θminorgridwidth,
-        visible = po.θminorgridvisible
+        color=po.θminorgridcolor,
+        linestyle=po.θminorgridstyle,
+        linewidth=po.θminorgridwidth,
+        visible=po.θminorgridvisible
     )
     # tick labels
     rticklabelplot = text!(
         po.blockscene, rtick_pos_lbl;
-        fontsize = po.rticklabelsize,
-        font = po.rticklabelfont,
-        color = po.rticklabelcolor,
-        align = (:left, :bottom),
+        fontsize=po.rticklabelsize,
+        font=po.rticklabelfont,
+        color=po.rticklabelcolor,
+        align=(:left, :bottom)
     )
 
     θticklabelplot = text!(
         po.blockscene, θtick_pos_lbl;
-        fontsize = po.θticklabelsize,
-        font = po.θticklabelfont,
-        color = po.θticklabelcolor,
-        align = (:center, :center),
+        fontsize=po.θticklabelsize,
+        font=po.θticklabelfont,
+        color=po.θticklabelcolor,
+        align=(:center, :center)
     )
 
     clippoints = lift(spinepoints) do spinepoints
@@ -571,7 +572,7 @@ function draw_axis!(po::PolarAxis)
 
     clipcolor = lift(parent(po.blockscene).theme.backgroundcolor) do bgc
         bgc = to_color(bgc)
-        if alpha(bgc) == 0f0
+        if alpha(bgc) == 0.0f0
             return to_color(:white)
         else
             return RGBf(red(bgc), blue(bgc), green(bgc))
@@ -581,10 +582,10 @@ function draw_axis!(po::PolarAxis)
     clipplot = poly!(
         po.blockscene,
         clippoints,
-        color = clipcolor,
-        space = :pixel,
-        strokewidth = 0,
-        visible = po.clip,
+        color=clipcolor,
+        space=:pixel,
+        strokewidth=0,
+        visible=po.clip,
     )
 
     translate!.((spineplot, rgridplot, θgridplot, rminorgridplot, θminorgridplot, rticklabelplot, θticklabelplot), 0, 0, -100)
@@ -612,8 +613,8 @@ function calculate_polar_title_position(area, titlegap, align, θaxisprotrusion)
     #     0f0
     # end
 
-    yoffset::Float32 = top(area) + titlegap + θaxisprotrusion.top #=+
-        subtitlespace=#
+    yoffset::Float32 = top(area) + titlegap + θaxisprotrusion.top =+
+           subtitlespace=#
 
     return Point2f(x, yoffset)
 end
@@ -659,7 +660,7 @@ function Makie.autolimits!(po::PolarAxis)
     # notify(po.limits)
 end
 
-function rlims!(po::PolarAxis, rs::NTuple{2, <: Real})
+function rlims!(po::PolarAxis, rs::NTuple{2,<:Real})
     po.limits[] = rs
 end
 
@@ -669,7 +670,7 @@ end
 
 
 "Adjust the axis's scene's camera to conform to the given r-limits"
-function adjustcam!(po::PolarAxis, limits::NTuple{2, <: Real}, θlims::NTuple{2, <: Real} = (-1.0π, 1.0π))
+function adjustcam!(po::PolarAxis, limits::NTuple{2,<:Real}, θlims::NTuple{2,<:Real}=(-1.0π, 1.0π))
     @assert limits[1] ≤ limits[2]
     scene = po.scene
     # We transform our limits to transformed space, since we can
@@ -688,30 +689,30 @@ end
 # ? ---------------------------- Polar histogram --------------------------- ? #
 @recipe(PolarHist, values) do scene
     Attributes(
-        bins = 15, # Int or iterable of edges
-        normalization = :none,
-        weights = automatic,
-        cycle = [:color => :patchcolor],
-        color = theme(scene, :patchcolor),
-        offset = 0.0,
-        fillto = automatic,
-        scale_to = nothing,
-        strokewidth = 2,
-        bar_labels = nothing,
-        flip_labels_at = Inf,
-        label_color = theme(scene, :textcolor),
-        over_background_color = automatic,
-        over_bar_color = automatic,
-        label_offset = 5,
-        label_font = theme(scene, :font),
-        label_size = 20,
-        label_formatter = bar_label_formatter
+        bins=15, # Int or iterable of edges
+        normalization=:none,
+        weights=automatic,
+        cycle=[:color => :patchcolor],
+        color=theme(scene, :patchcolor),
+        offset=0.0,
+        fillto=automatic,
+        scale_to=nothing,
+        strokewidth=2,
+        bar_labels=nothing,
+        flip_labels_at=Inf,
+        label_color=theme(scene, :textcolor),
+        over_background_color=automatic,
+        over_bar_color=automatic,
+        label_offset=5,
+        label_font=theme(scene, :font),
+        label_size=20,
+        label_formatter=bar_label_formatter
     )
 end
 
 function pick_polarhist_edges(vals, bins)
     if bins isa Int
-        return range(-1.0π, 1.0π, length = bins)
+        return range(-1.0π, 1.0π, length=bins)
     else
         if !issorted(bins)
             error("Histogram bins are not sorted: $bins")
@@ -722,11 +723,11 @@ end
 
 function Makie.plot!(plot::PolarHist)
 
-    values = lift(x->mod.(x .+ π, 2*π) .- π, plot.values)
+    values = lift(x -> mod.(x .+ π, 2 * π) .- π, plot.values)
     edges = lift(pick_polarhist_edges, plot, values, plot.bins)
 
     points = lift(plot, edges, plot.normalization, plot.scale_to,
-                  plot.weights) do edges, normalization, scale_to, wgts
+        plot.weights) do edges, normalization, scale_to, wgts
         centers, weights = _hist_center_weights(values, edges, normalization, scale_to, wgts)
         return Point2f.(centers, weights)
     end
@@ -745,11 +746,11 @@ function Makie.plot!(plot::PolarHist)
     # plot as an oversampled line
     # ? For each interval, get a list of thetas and rs
     θs = lift(edges) do edges
-            [edges[i]:0.01:edges[i+1] for i in 1:length(edges)-1]
-        end
+        [edges[i]:0.01:edges[i+1] for i in 1:length(edges)-1]
+    end
     rs = lift(points, θs) do points, θs
-            [fill(last(points[i]), length(θ)) for (i, θ) in enumerate(θs)]
-        end
+        [fill(last(points[i]), length(θ)) for (i, θ) in enumerate(θs)]
+    end
 
     # ? Polygons
     pgons = lift(rs, θs) do rs, θs

@@ -8,7 +8,7 @@ export drawonto, gtkshow
 function drawonto(canvas, scene::CairoMakie.Scene)
     @guarded draw(canvas) do _
         resize!(scene, Gtk.width(canvas), Gtk.height(canvas))
-        config = CairoMakie.ScreenConfig(1.0,1.0,:good,true,true)
+        config = CairoMakie.ScreenConfig(1.0, 1.0, :good, true, true)
         screen = CairoMakie.Screen(scene, config, Gtk.cairo_surface(canvas))
         CairoMakie.cairo_draw(screen, scene)
     end
