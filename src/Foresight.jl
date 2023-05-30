@@ -12,7 +12,7 @@ using Preferences
     using Requires
 # end
 
-export foresight, importall, freeze!, clip, hidexaxis!, hideyaxis!
+export foresight, importall, freeze!, clip, hidexaxis!, hideyaxis!, axiscolorbar
 
 
 const cornflowerblue = colorant"#6495ED"; export cornflowerblue
@@ -340,6 +340,15 @@ function _foresight!(thm::Attributes, ::Val{:dark})
     thm[:Axis3][:yticksvisible] = false
     thm[:Axis3][:zticksvisible] = false
 end
+
+
+function axiscolorbar(ax, args...; position = :rt, kwargs...)
+    Colorbar(ax.parent, args...;
+        bbox = ax.scene.px_area,
+        Makie.legend_position_to_aligns(position)...,
+        kwargs...)
+end
+
 
 
 include("Polar.jl")
