@@ -613,7 +613,7 @@ function calculate_polar_title_position(area, titlegap, align, θaxisprotrusion)
     #     0f0
     # end
 
-    yoffset::Float32 = top(area) + titlegap + θaxisprotrusion.top =+
+    yoffset::Float32 = top(area) + titlegap + θaxisprotrusion.top #=+
            subtitlespace=#
 
     return Point2f(x, yoffset)
