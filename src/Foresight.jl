@@ -315,7 +315,11 @@ function setall!(thm::Attributes, attribute, value)
     thm[attribute] = value
     for a in keys(thm)
         if thm[a] isa Attributes
-            thm[a][attribute] = value
+            if value isa Attributes
+                thm[a] = value
+            else
+                thm[a][attribute] = value
+            end
         end
     end
 end
@@ -372,6 +376,7 @@ end
 
 
 
+include("RedBlue.jl")
 include("Polar.jl")
 
 end
