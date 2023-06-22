@@ -213,6 +213,9 @@ function _foresight(; globalfont=foresightfont(), globalfontsize=foresightfontsi
         palette,
         linewidth=5.0,
         fontsize=globalfontsize,
+        Figure=(;
+            resolution=(720, 480),
+        ),
         Axis=(;
             backgroundcolor=:white,
             xgridcolor=:gray88,

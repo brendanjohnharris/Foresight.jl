@@ -29,6 +29,13 @@ function _foresight!(thm::Attributes, ::Val{:grey})
     setall!(thm, :topspinevisible, false)
     setall!(thm, :rightspinevisible, false)
 
+    setall!(thm, :xminorticksvisible, true)
+    setall!(thm, :yminorticksvisible, true)
+    setall!(thm, :zminorticksvisible, true)
+    setall!(thm, :xticksvisible, true)
+    setall!(thm, :yticksvisible, true)
+    setall!(thm, :zticksvisible, true)
+
     setall!(thm, :xspinesvisible, true)
     setall!(thm, :yspinesvisible, true)
     setall!(thm, :zspinesvisible, true)
