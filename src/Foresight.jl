@@ -83,7 +83,12 @@ end
 export brighten, darken
 
 # * A good font
-foresightfont() = "TeX Gyre Heros"
+foresightfont() = "Arial"
+foresightfont(f::Symbol) = foresightfont(Val(f))
+foresightfont(::Val{:bold}) = foresightfont()*" Bold"
+foresightfont(::Val{:italic}) = foresightfont()*" Italic"
+foresightfont(s::String) = foresightfont()*" "
+
 foresightfontsize() = 16
 # foresightfont_bold() = "Helvetica Bold"
 
@@ -224,6 +229,7 @@ function _foresight(; globalfont=foresightfont(), globalfontsize=foresightfontsi
         strokecolor=:black,
         strokevisible=true,
         font=globalfont,
+        fonts=(; regular=globalfont, bold=foresightfont(:bold), italic=foresightfont(:italic)),
         palette,
         linewidth=5.0,
         fontsize=globalfontsize,

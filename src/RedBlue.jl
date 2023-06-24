@@ -49,3 +49,7 @@ function _foresight!(thm::Attributes, ::Val{:redblue})
     _foresight!(thm, Val(:grey))
     Makie._update_key!(thm, :palette, redblue_palette)
 end
+
+
+
+#!!!!!!!!!!!!CHANGE REDBLUE FONT TO SOMETHING MORE COMPATIBLE!!!!!!!!!!!!!
