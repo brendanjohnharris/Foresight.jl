@@ -68,6 +68,20 @@ function seethrough(C::Makie.PlotUtils.ContinuousColorGradient, start=0.5, stop=
 end
 export seethrough
 
+function brighten(c::T, β) where T
+    b = RGBA(c)
+    b = RGBA(1, 1, 1, b.alpha)
+    cb = cgrad([c, b])
+    return convert(T, cb[β])
+end
+function darken(c::T, β) where T
+    b = RGBA(c)
+    b = RGBA(0, 0, 0, b.alpha)
+    cb = cgrad([c, b])
+    return convert(T, cb[β])
+end
+export brighten, darken
+
 # * A good font
 foresightfont() = "TeX Gyre Heros"
 foresightfontsize() = 16
