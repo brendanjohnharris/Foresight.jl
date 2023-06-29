@@ -1,6 +1,7 @@
 module Foresight
 
 using Makie
+using Makie.Formatting
 using Colors
 using Random
 # using Images
@@ -12,7 +13,7 @@ using Preferences
 using Requires
 # end
 
-export foresight, importall, freeze!, clip, hidexaxis!, hideyaxis!, axiscolorbar
+export foresight, importall, freeze!, clip, hidexaxis!, hideyaxis!, axiscolorbar, scientific
 
 
 const cornflowerblue = colorant"#6495ED"
@@ -208,6 +209,27 @@ function hideyaxis!(ax::Axis)
     ax.ylabelvisible = false
 end
 
+function scientific(x::Real, sigdigits=2)
+    formatted = fmt(".$(sigdigits-1)e", x)
+    formatted = replace(formatted, "e+0" => "e+")
+    formatted = replace(formatted, "e-0" => "e-")
+    formatted = replace(formatted, "e+" => "e")
+    formatted = replace(formatted, "e" => " × 10^")
+
+    # To display unicode superscripts for exponent
+    exponent = split(formatted, "^")[2]
+    if exponent[1] == '-'
+        neg = "⁻"
+        exponent = exponent[2:end]
+    else
+        neg = ""
+    end
+
+    unicode_exponent = join(['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'][parse(Int, digit) + 1] for digit in exponent)
+
+    formatted = split(formatted, " ")[1] * " " * split(formatted, " ")[2] * " 10" * neg * unicode_exponent
+end
+
 
 
 colororder = [(cornflowerblue, 0.7),
@@ -316,7 +338,8 @@ function _foresight(; globalfont=foresightfont(), globalfontsize=foresightfontsi
         ),
         Scatter=(; palette),
         Lines=(; palette),
-        Hist=(; palette)
+        Hist=(; palette),
+        Label=(; valign=:top, halign=:left, font=:bold, fontsize=24)
     )
 end
 
