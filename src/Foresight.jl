@@ -8,12 +8,13 @@ using Random
 using ImageClipboard
 using FileIO
 using Preferences
+using Makie.LaTeXStrings
 
 # if !isdefined(Base, :get_extension)
 using Requires
 # end
 
-export foresight, importall, freeze!, clip, hidexaxis!, hideyaxis!, axiscolorbar, scientific
+export foresight, importall, freeze!, clip, hidexaxis!, hideyaxis!, axiscolorbar, scientific, lscientific
 
 
 const cornflowerblue = colorant"#6495ED"
@@ -228,6 +229,17 @@ function scientific(x::Real, sigdigits=2)
     unicode_exponent = join(['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'][parse(Int, digit) + 1] for digit in exponent)
 
     formatted = split(formatted, " ")[1] * " " * split(formatted, " ")[2] * " 10" * neg * unicode_exponent
+end
+
+function lscientific(x::Real, sigdigits=2)
+    formatted = fmt(".$(sigdigits-1)e", x)
+    formatted = replace(formatted, "e+0" => "e+")
+    formatted = replace(formatted, "e-0" => "e-")
+    formatted = replace(formatted, "e+" => "e")
+
+    s = replace(formatted, "e" => "\\times 10^{")
+
+    s = s*"}"
 end
 
 

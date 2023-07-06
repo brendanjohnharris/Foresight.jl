@@ -1,6 +1,7 @@
 const mediumcarmine = colorant"#ad4338ff"
 const steelblue = colorant"#3e86acff"
 const spanishgrey = colorant"#999999ff"
+spanishgray = spanishgrey
 const raisinblack = colorant"#252525ff"
 
 redblue_order = [mediumcarmine,
@@ -49,7 +50,3 @@ function _foresight!(thm::Attributes, ::Val{:redblue})
     _foresight!(thm, Val(:grey))
     Makie._update_key!(thm, :palette, redblue_palette)
 end
-
-
-
-#!!!!!!!!!!!!CHANGE REDBLUE FONT TO SOMETHING MORE COMPATIBLE!!!!!!!!!!!!!

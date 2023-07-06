@@ -83,7 +83,7 @@ end
         "Controls if the `r` ticks are visible."
         rticklabelsvisible = inherit(scene, (:Axis, :yticklabelsvisible), true)
         "The angle in radians along which the `r` ticks are printed."
-        rtickangle = π / 8
+        rtickangle = π / 2
         "The specifier for the angular (`θ`) ticks, similar to `yticks` for a normal Axis."
         θticks = MultiplesTicks(12, π, "π")
         "The specifier for the minor `θ` ticks."
@@ -548,7 +548,7 @@ function draw_axis!(po::PolarAxis)
         fontsize=po.rticklabelsize,
         font=po.rticklabelfont,
         color=po.rticklabelcolor,
-        align=(:left, :bottom)
+        align=(:center, :bottom)
     )
 
     θticklabelplot = text!(
