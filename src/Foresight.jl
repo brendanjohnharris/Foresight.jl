@@ -61,7 +61,15 @@ sunset = reverse(cgrad([crimson, juliapurple, cornflowerblue], [0, 0.6, 1]))
 export sunset
 
 """
+    seethrough(C::ContinuousColorGradient, start=0.5, stop=1.0)
+
 Convert a color gradient into a transparent version
+
+# Examples
+```julia
+C = sunrise;
+transparent_gradient = seethrough(C)
+```
 """
 function seethrough(C::Makie.PlotUtils.ContinuousColorGradient, start=0.5, stop=1.0)
     colors = C.colors
@@ -70,12 +78,33 @@ function seethrough(C::Makie.PlotUtils.ContinuousColorGradient, start=0.5, stop=
 end
 export seethrough
 
+"""
+    brighten(c::T, β)
+
+Brighten a color `c` by a factor of `β` by blending it with white. `β` should be between 0 and 1.
+
+# Example
+```julia
+brighten(cornflowerblue, 0.5)
+```
+"""
 function brighten(c::T, β) where T
     b = RGBA(c)
     b = RGBA(1, 1, 1, b.alpha)
     cb = cgrad([c, b])
     return convert(T, cb[β])
 end
+
+"""
+    darken(c::T, β)
+
+Darken a color `c` by a factor of `β` by blending it with black. `β` should be between 0 and 1.
+
+# Example
+```julia
+darken(cornflowerblue, 0.5)
+```
+"""
 function darken(c::T, β) where T
     b = RGBA(c)
     b = RGBA(0, 0, 0, b.alpha)
@@ -103,6 +132,16 @@ function widen(x, δ=0.05)
     return x .+ δ * Δ .* [-1, 1]
 end
 
+"""
+    default_theme!(thm)
+
+Set the default theme to `thm` and save it as a preference. The change will take effect after restarting Julia.
+
+# Example
+```julia
+default_theme!(foresight())
+```
+"""
 macro default_theme!(thm)
     try
         @set_preferences!("default_theme" => string(thm))
@@ -135,6 +174,11 @@ function __init__()
     # end
 end
 
+"""
+    demofigure()
+
+Produce a figure showcasing the current theme.
+"""
 function demofigure()
     Random.seed!(32)
     f = Figure()
@@ -167,6 +211,17 @@ end
 
 
 freeze!(anything) = ()
+"""
+    freeze!(ax::Union{Axis, Axis3, Figure}=current_figure())
+Freeze the limits of an Axis or Axis3 object at their current values.
+
+# Example
+```julia
+ax = Axis();
+plot!(ax, -5:0.01:5, x->sinc(x))
+freeze!(ax)
+```
+"""
 function freeze!(ax::Union{Axis,Axis3})
     limits = ax.finallimits.val
     limits = zip(limits.origin, limits.origin .+ limits.widths)
@@ -175,8 +230,17 @@ freeze!(f::Figure) = freeze!.(f.content)
 freeze!() = freeze!(current_figure())
 
 
+
 """
-Copy a Makie figure to the clipboard
+    tmpfile = clip(fig=Makie.current_figure(), fmt=:png; kwargs...)
+
+Save the current figure to a temporary file and copy it to the clipboard. `kwargs` are passed to `Makie.save`.
+
+# Example
+```julia
+f = plot(-5:0.01:5, x->sinc(x))
+clip(f)
+```
 """
 function clip(fig=Makie.current_figure(), fmt=:png; kwargs...)
     freeze!(fig)
@@ -187,9 +251,16 @@ function clip(fig=Makie.current_figure(), fmt=:png; kwargs...)
     return tmp
 end
 
+
 """
-Hacky way to import all symbols from a module into the current scope. Really only a half-good idea in the REPL, for debugging.
-Use this as `importall(module) .|> eval`
+    importall(module)
+
+Return an array of expressions that can be used to import all names from a module.
+
+# Example
+```julia
+importall(module) .|> eval
+```
 """
 function importall(mdl)
     mdl = eval(mdl)
@@ -210,6 +281,23 @@ function hideyaxis!(ax::Axis)
     ax.ylabelvisible = false
 end
 
+"""
+    scientific(x::Real, sigdigits=2)
+
+Return a string representation of a number in scientific notation with a specified number of significant digits.
+
+# Arguments
+- `x::Real`: The number to be formatted.
+- `sigdigits::Int=2`: The number of significant digits to display.
+
+# Returns
+A string representation of the number in scientific notation with the specified number of significant digits.
+
+# Example
+```julia
+scientific(1/123.456, 3) # "8.10 × 10⁻³"
+```
+"""
 function scientific(x::Real, sigdigits=2)
     formatted = fmt(".$(sigdigits-1)e", x)
     formatted = replace(formatted, "e+0" => "e+")
@@ -231,6 +319,16 @@ function scientific(x::Real, sigdigits=2)
     formatted = split(formatted, " ")[1] * " " * split(formatted, " ")[2] * " 10" * neg * unicode_exponent
 end
 
+"""
+    lscientific(x::Real, sigdigits=2)
+
+Return a string representation of a number in scientific notation with a specified number of significant digits. This is _not_ an L-string.
+
+# Example
+```julia
+lscientific(1/123.456, 3) # "8.10 \\times 10^{-3}"
+```
+"""
 function lscientific(x::Real, sigdigits=2)
     formatted = fmt(".$(sigdigits-1)e", x)
     formatted = replace(formatted, "e+0" => "e+")
@@ -355,6 +453,19 @@ function _foresight(; globalfont=foresightfont(), globalfontsize=foresightfontsi
     )
 end
 
+"""
+    foresight(options...; font=foresightfont())
+
+Return the default Foresight theme. The `options` argument can be used to modify the default values, by passing keyword arguments with the names of the attributes to be changed and their new values.
+
+Some vailable options are:
+- `:dark`: Use a dark background and light text.
+- `:transparent`: Make the background transparent.
+- `:minorgrid`: Show minor gridlines.
+- `:serif`: Use a serif font.
+- `:redblue`: Use a red-blue colormap.
+- `:gray`: Use a grayscale colormap.
+"""
 function foresight(options...; font=foresightfont())
     if :serif ∈ options
         thm = _foresight(; globalfont="CMU")
@@ -425,11 +536,28 @@ function _foresight!(thm::Attributes, ::Val{:dark})
 end
 
 
+"""
+    axiscolorbar(ax, args...; kwargs...)
+
+Create a colorbar for the given `ax` axis. The `args` argument is passed to the `Colorbar` constructor, and the `kwargs` argument is passed to the `Colorbar` constructor as keyword arguments. The `position` argument specifies the position of the colorbar relative to the axis, and can be one of `:rt` (right-top), `:rb` (right-bottom), `:lt` (left-top), `:lb` (left-bottom). The default value is `:rt`.
+
+# Example
+```julia
+f = Figure()
+ax = Axis(f[1, 1])
+x = -5:0.01:5
+plot!(ax, x, x->sinc(x), color=1:length(x), colormap=sunset)
+axiscolorbar(ax; label="Time (m)")
+```
+"""
 function axiscolorbar(ax, args...; position=:rt, kwargs...)
-    Colorbar(ax.parent, args...;
+    C = Colorbar(ax.parent, args...;
         bbox=ax.scene.px_area,
         Makie.legend_position_to_aligns(position)...,
         kwargs...)
+    if !isempty(C.label[])
+        ax.alignmode = Mixed(right=75);
+    end
 end
 
 

@@ -2,7 +2,7 @@ using CairoMakie
 using Foresight
 using Documenter
 
-DocMeta.setdocmeta!(Foresight, :DocTestSetup, :(using CairoMakie; using Foresight); recursive=true)
+# DocMeta.setdocmeta!(Foresight, :DocTestSetup, :(using CairoMakie; using Foresight); recursive=true)
 
 makedocs(;
     modules=[Foresight],

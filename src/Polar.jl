@@ -152,7 +152,7 @@ end
 
 This struct defines a general polar-to-cartesian transformation, i.e.,
 ```math
-(r, θ) -> (r \\cos(direction * (θ + θ_0)), r \\sin(direction * (θ + θ_0)))
+(r, θ) \\to (r \\cos(direction * (θ + θ_0)), r \\sin(direction * (θ + θ_0)))
 ```
 
 where θ is assumed to be in radians.

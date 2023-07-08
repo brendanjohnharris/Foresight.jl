@@ -1,6 +1,8 @@
 using Foresight
 using Test
 using CairoMakie
+using CairoMakie.Makie.PlotUtils.ContinuousColorGradient
+using Documenter
 
 @testset "Importall" begin
     @test all(isnothing.(eval.(importall(Foresight))))
@@ -19,4 +21,10 @@ end
 
     @test_nowarn Makie.set_theme!(foresight(:serif))
     @test_nowarn save("./demo_serif.png", demofigure(), px_per_unit = 5)
+end
+
+@testset "Seethrough" begin
+    C = sunrise;
+    transparent_gradient = seethrough(C)
+    @test C isa PlotUtils.ContinuousColorGradient
 end
