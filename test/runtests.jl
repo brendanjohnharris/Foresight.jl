@@ -1,7 +1,7 @@
 using Foresight
 using Test
 using CairoMakie
-using CairoMakie.Makie.PlotUtils.ContinuousColorGradient
+using CairoMakie.Makie.PlotUtils
 using Documenter
 
 @testset "Importall" begin
