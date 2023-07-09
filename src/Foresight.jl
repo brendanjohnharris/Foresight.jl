@@ -133,13 +133,13 @@ function widen(x, δ=0.05)
 end
 
 """
-    default_theme!(thm)
+    @default_theme!(thm)
 
 Set the default theme to `thm` and save it as a preference. The change will take effect after restarting Julia.
 
 # Example
 ```julia
-default_theme!(foresight())
+    @default_theme!(foresight())
 ```
 """
 macro default_theme!(thm)
@@ -546,8 +546,8 @@ Create a colorbar for the given `ax` axis. The `args` argument is passed to the 
 f = Figure()
 ax = Axis(f[1, 1])
 x = -5:0.01:5
-plot!(ax, x, x->sinc(x), color=1:length(x), colormap=sunset)
-axiscolorbar(ax; label="Time (m)")
+p = plot!(ax, x, x->sinc(x), color=1:length(x), colormap=sunset)
+axiscolorbar(ax, p; label="Time (m)")
 ```
 """
 function axiscolorbar(ax, args...; position=:rt, kwargs...)
