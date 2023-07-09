@@ -2,7 +2,6 @@ using Foresight
 using Test
 using CairoMakie
 using CairoMakie.Makie.PlotUtils
-using Documenter
 
 @testset "Importall" begin
     @test all(isnothing.(eval.(importall(Foresight))))
