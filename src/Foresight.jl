@@ -120,7 +120,7 @@ foresightfont(::Val{:bold}) = foresightfont()*" Bold"
 foresightfont(::Val{:italic}) = foresightfont()*" Italic"
 foresightfont(s::String) = foresightfont()*" "
 
-foresightfontsize() = 16
+foresightfontsize() = 18
 # foresightfont_bold() = "Helvetica Bold"
 
 """
