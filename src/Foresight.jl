@@ -14,51 +14,10 @@ using Makie.LaTeXStrings
 using Requires
 # end
 
-export foresight, importall, freeze!, clip, hidexaxis!, hideyaxis!, axiscolorbar, scientific, lscientific
+export foresight, importall, freeze!, clip, hidexaxis!, hideyaxis!, axiscolorbar,
+       scientific, lscientific
 
-
-const cornflowerblue = colorant"#6495ED"
-export cornflowerblue
-const _cornflowerblue = colorant"#3676E8"
-export _cornflowerblue
-const crimson = colorant"#DC143C"
-export crimson
-const _crimson = colorant"#ED365B"
-export _crimson
-const cucumber = colorant"#77ab58"
-export cucumber
-const _cucumber = colorant"#5F8A46"
-export _cucumber
-const california = colorant"#EF9901"
-export california
-const _california = colorant"#FEB025"
-export _california
-const copper = colorant"#c37940"
-export copper
-const _copper = colorant"#9E6132"
-export _copper
-const juliapurple = colorant"#9558b2"
-export juliapurple
-const _juliapurple = colorant"#7A4493"
-export _juliapurple
-const keppel = colorant"#46AF98"
-export keppel
-const _keppel = colorant"#66C2AE"
-export _keppel
-const darkbg = colorant"#282C34"
-export darkbg
-const _darkbg = colorant"#3E4451"
-export _darkbg
-const greyseas = colorant"#cccccc"
-export greyseas
-const _greyseas = colorant"#eeeeee"
-export _greyseas
-cyclical = cgrad([california, crimson, cornflowerblue, cucumber, california], [0, 0.2, 0.5, 0.8, 1])
-export cyclical
-sunrise = cgrad([crimson, california, cucumber, cornflowerblue], [0.2, 0.4, 0.6, 0.8])
-export sunrise
-sunset = reverse(cgrad([crimson, juliapurple, cornflowerblue], [0, 0.6, 1]))
-export sunset
+include("Colors.jl")
 
 """
     seethrough(C::ContinuousColorGradient, start=0.5, stop=1.0)
@@ -71,11 +30,13 @@ C = sunrise;
 transparent_gradient = seethrough(C)
 ```
 """
-function seethrough(C::Makie.PlotUtils.ContinuousColorGradient, start=0.5, stop=1.0)
+function seethrough(C::Makie.PlotUtils.ContinuousColorGradient, start = 0, stop = 1.0)
     colors = C.colors
     alphas = LinRange(start, stop, length(colors))
     return cgrad([RGBA(RGB(c), a) for (c, a) in zip(colors, alphas)], C.values)
 end
+seethrough(C, args...) = seethrough(cgrad(C), args...)
+seethrough(C::Makie.Color, args...) = seethrough(cgrad([C, C]), args...)
 export seethrough
 
 """
@@ -88,7 +49,7 @@ Brighten a color `c` by a factor of `β` by blending it with white. `β` should 
 brighten(cornflowerblue, 0.5)
 ```
 """
-function brighten(c::T, β) where T
+function brighten(c::T, β) where {T}
     b = RGBA(c)
     b = RGBA(1, 1, 1, b.alpha)
     cb = cgrad([c, b])
@@ -105,7 +66,7 @@ Darken a color `c` by a factor of `β` by blending it with black. `β` should be
 darken(cornflowerblue, 0.5)
 ```
 """
-function darken(c::T, β) where T
+function darken(c::T, β) where {T}
     b = RGBA(c)
     b = RGBA(0, 0, 0, b.alpha)
     cb = cgrad([c, b])
@@ -116,9 +77,9 @@ export brighten, darken
 # * A good font
 foresightfont() = "Arial"
 foresightfont(f::Symbol) = foresightfont(Val(f))
-foresightfont(::Val{:bold}) = foresightfont()*" Bold"
-foresightfont(::Val{:italic}) = foresightfont()*" Italic"
-foresightfont(s::String) = foresightfont()*" "
+foresightfont(::Val{:bold}) = foresightfont() * " Bold"
+foresightfont(::Val{:italic}) = foresightfont() * " Italic"
+foresightfont(s::String) = foresightfont() * " "
 
 foresightfontsize() = 18
 # foresightfont_bold() = "Helvetica Bold"
@@ -126,7 +87,7 @@ foresightfontsize() = 18
 """
 Slightly widen an interval by a fraction δ
 """
-function widen(x, δ=0.05)
+function widen(x, δ = 0.05)
     @assert length(x) == 2
     Δ = diff(x |> collect)[1]
     return x .+ δ * Δ .* [-1, 1]
@@ -144,14 +105,14 @@ Set the default theme to `thm` and save it as a preference. The change will take
 """
 macro default_theme!(thm)
     try
-        @set_preferences!("default_theme" => string(thm))
+        @set_preferences!("default_theme"=>string(thm))
         @info("Default theme set to $thm. Restart Julia for the change to take effect")
     catch e
         @error "Could not set theme. Reverting to Foresight.jl default"
     end
 end
 export @default_theme!
-_default_theme = @load_preference("default_theme", default = "foresight()")
+_default_theme = @load_preference("default_theme", default="foresight()")
 function default_theme()
     try
         eval(Meta.parse(_default_theme))
@@ -165,7 +126,7 @@ function __init__()
     @eval Makie.set_theme!(default_theme())
 
     # @static if !isdefined(Base, :get_extension)
-    @require Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80" begin
+    @require Plots="91a5bcdd-55d7-5caf-9e0b-520d859cae80" begin
         include("../ext/PlotsExt.jl")
     end
     # @require Gtk="4c0ca9eb-093a-5379-98c5-f87ac0bbbf44" begin
@@ -181,34 +142,48 @@ Produce a figure showcasing the current theme.
 """
 function demofigure()
     Random.seed!(32)
-    f = Figure()
-    ax = Axis(f[1, 1], title="measurements", xlabel="time (s)", ylabel="amplitude")
+    f = Figure(resolution = (720, 1080))
+    ax = Axis(f[1, 1], title = "measurements", xlabel = "time (s)", ylabel = "amplitude")
     labels = ["alpha", "beta", "gamma", "delta", "epsilon", "zeta"]
     for i in 1:6
         y = cumsum(randn(10)) .* (isodd(i) ? 1 : -1)
-        lines!(y, label=labels[i])
-        scatter!(y, label=labels[i])
+        lines!(y, label = labels[i])
+        scatter!(y, label = labels[i])
     end
-    Legend(f[1, 2], ax, "legend", merge=true)
-    Axis3(f[1, 3], viewmode=:stretch, zlabeloffset=40, title="Variable: σ⟿𝑡")
-    s = Makie.surface!(0:0.5:10, 0:0.5:10, (x, y) -> sqrt(x * y) + sin(1.5x))
-    Colorbar(f[1, 4], s, label="intensity")
-    ax = Axis(f[2, 1:2], title="different species", xlabel="height (m)", ylabel="density",)
+    Legend(f[1, 2], ax, "legend", merge = true)
+    Axis3(f[1, 3], viewmode = :stretch, zlabeloffset = 40, title = "Variable: σ⟿𝑡")
+    s = Makie.surface!(0:0.5:10, 0:0.5:10, (x, y) -> sqrt(x * y) + sin(1.5x),
+                       colormap = sunrise)
+    Colorbar(f[1, 4], s, label = "intensity")
+    ax = Axis(f[2, 1:2], title = "different species", xlabel = "height (m)",
+              ylabel = "density")
     for i in 1:6
         y = randn(200) .+ 2i
         Makie.density!(y)
     end
     tightlimits!(ax, Bottom())
     Makie.xlims!(ax, -1, 15)
-    Axis(f[2, 3:4], title="stock performance", xticks=(1:6, labels), xlabel="company", ylabel="gain (\$)", xticklabelrotation=pi / 6)
+    Axis(f[2, 3:4], title = "stock performance", xticks = (1:6, labels), xlabel = "company",
+         ylabel = "gain (\$)", xticklabelrotation = pi / 6)
     for i in 1:6
         data = randn(1)
         barplot!([i], data)
-        rangebars!([i], data .- 0.2, data .+ 0.2, color=:gray41)
+        rangebars!([i], data .- 0.2, data .+ 0.2, color = :gray41)
     end
+
+    # ax = Makie.Axis(f[3, 2:4])
+    # tightlimits!(ax)
+    # heatmap!(ax, sineramp()', colormap = sunrise)
+    # hidedecorations!(ax)
+    # ax.topspinevisible = ax.bottomspinevisible = ax.leftspinevisible = ax.rightspinevisible = true
+    # ax = Makie.PolarAxis(f[3, 1])
+    # ax.thetaticklabelsvisible = false
+    # ax.rticklabelsvisible = false
+    # tightlimits!(ax)
+    # heatmap!(ax, 0 .. 2pi, 0 .. 5000, sineramp()', colormap = cyclic)
+    # rowsize!(f.layout, 3, Relative(0.4))
     return f
 end
-
 
 freeze!(anything) = ()
 """
@@ -222,14 +197,12 @@ plot!(ax, -5:0.01:5, x->sinc(x))
 freeze!(ax)
 ```
 """
-function freeze!(ax::Union{Axis,Axis3})
+function freeze!(ax::Union{Axis, Axis3})
     limits = ax.finallimits.val
     limits = zip(limits.origin, limits.origin .+ limits.widths)
 end
 freeze!(f::Figure) = freeze!.(f.content)
 freeze!() = freeze!(current_figure())
-
-
 
 """
     tmpfile = clip(fig=Makie.current_figure(), fmt=:png; kwargs...)
@@ -242,7 +215,7 @@ f = plot(-5:0.01:5, x->sinc(x))
 clip(f)
 ```
 """
-function clip(fig=Makie.current_figure(), fmt=:png; kwargs...)
+function clip(fig = Makie.current_figure(), fmt = :png; kwargs...)
     freeze!(fig)
     tmp = tempname() * "." * string(fmt)
     Makie.save(tmp, fig; kwargs...)
@@ -250,7 +223,6 @@ function clip(fig=Makie.current_figure(), fmt=:png; kwargs...)
     clipboard_img(img)
     return tmp
 end
-
 
 """
     importall(module)
@@ -265,7 +237,7 @@ importall(module) .|> eval
 function importall(mdl)
     mdl = eval(mdl)
     fullname = Symbol(mdl)
-    exp = names(eval(mdl), all=true)
+    exp = names(eval(mdl), all = true)
     return [:(import $fullname.$e) for e in exp]
 end
 
@@ -298,7 +270,7 @@ A string representation of the number in scientific notation with the specified 
 scientific(1/123.456, 3) # "8.10 × 10⁻³"
 ```
 """
-function scientific(x::Real, sigdigits=2)
+function scientific(x::Real, sigdigits = 2)
     formatted = fmt(".$(sigdigits-1)e", x)
     formatted = replace(formatted, "e+0" => "e+")
     formatted = replace(formatted, "e-0" => "e-")
@@ -314,9 +286,11 @@ function scientific(x::Real, sigdigits=2)
         neg = ""
     end
 
-    unicode_exponent = join(['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'][parse(Int, digit) + 1] for digit in exponent)
+    unicode_exponent = join(['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'][parse(Int, digit) + 1]
+                            for digit in exponent)
 
-    formatted = split(formatted, " ")[1] * " " * split(formatted, " ")[2] * " 10" * neg * unicode_exponent
+    formatted = split(formatted, " ")[1] * " " * split(formatted, " ")[2] * " 10" * neg *
+                unicode_exponent
 end
 
 """
@@ -329,7 +303,7 @@ Return a string representation of a number in scientific notation with a specifi
 lscientific(1/123.456, 3) # "8.10 \\times 10^{-3}"
 ```
 """
-function lscientific(x::Real, sigdigits=2)
+function lscientific(x::Real, sigdigits = 2)
     formatted = fmt(".$(sigdigits-1)e", x)
     formatted = replace(formatted, "e+0" => "e+")
     formatted = replace(formatted, "e-0" => "e-")
@@ -337,120 +311,115 @@ function lscientific(x::Real, sigdigits=2)
 
     s = replace(formatted, "e" => "\\times 10^{")
 
-    s = s*"}"
+    s = s * "}"
 end
-
-
 
 colororder = [(cornflowerblue, 0.7),
     (crimson, 0.7),
     (cucumber, 0.7),
     (california, 0.7),
     (juliapurple, 0.7)]
-palette = (
-    patchcolor=colororder,
-    color=colororder,
-    strokecolor=colororder)
+palette = (patchcolor = colororder,
+           color = colororder,
+           strokecolor = colororder)
 
-
-
-function _foresight(; globalfont=foresightfont(), globalfontsize=foresightfontsize())
+function _foresight(; globalfont = foresightfont(), globalfontsize = foresightfontsize())
     Theme(;
-        colormap=sunrise,
-        strokewidth=10.0,
-        strokecolor=:black,
-        strokevisible=true,
-        font=globalfont,
-        fonts=(; regular=globalfont, bold=foresightfont(:bold), italic=foresightfont(:italic)),
-        palette,
-        linewidth=5.0,
-        fontsize=globalfontsize,
-        Figure=(;
-            resolution=(720, 480),
-        ),
-        Axis=(;
-            backgroundcolor=:white,
-            xgridcolor=:gray88,
-            ygridcolor=:gray88,
-            xminorgridcolor=:gray91,
-            # xminorgridvisible = true,
-            yminorgridcolor=:gray91,
-            # yminorgridvisible = true,
-            leftspinevisible=false,
-            rightspinevisible=false,
-            bottomspinevisible=false,
-            topspinevisible=false,
-            xminorticksvisible=false,
-            yminorticksvisible=false,
-            xticksvisible=false,
-            yticksvisible=false,
-            spinewidth=1,
-            xticklabelcolor=:black,
-            yticklabelcolor=:black,
-            titlecolor=:black,
-            xticksize=4,
-            yticksize=4,
-            xtickwidth=1.5,
-            ytickwidth=1.5,
-            xgridwidth=1.5,
-            ygridwidth=1.5,
-            xlabelpadding=3,
-            ylabelpadding=3,
-            palette,
-            titlefont=string(globalfont) * " bold", # "times serif bold",
-            xticklabelfont=globalfont,
-            yticklabelfont=globalfont,
-            xlabelfont=globalfont,
-            ylabelfont=globalfont,
-            titlesize=20
-        ),
-        Legend=(;
-            framevisible=false,
-            padding=(0, 0, 0, 0),
-            patchcolor=:transparent,
-            titlefont=string(globalfont) * " Bold",
-            labelfont=globalfont
-        ),
-        Axis3=(;
-            xgridcolor=:gray81,
-            ygridcolor=:gray81,
-            zgridcolor=:gray81,
-            xspinesvisible=false,
-            yspinesvisible=false,
-            zspinesvisible=false,
-            yzpanelcolor=:white,
-            xzpanelcolor=:white,
-            xypanelcolor=:white,
-            xticksvisible=false,
-            yticksvisible=false,
-            zticksvisible=false,
-            titlefont=string(globalfont) * " Bold",
-            xticklabelfont=globalfont,
-            yticklabelfont=globalfont,
-            zticklabelfont=globalfont,
-            xlabelfont=globalfont,
-            ylabelfont=globalfont,
-            zlabelfont=globalfont,
-            titlesize=20,
-            palette
-        ),
-        Colorbar=(;
-            tickcolor=:white,
-            tickalign=1,
-            ticklabelcolor=:black,
-            spinewidth=0,
-            ticklabelpad=5,
-            ticklabelfont=globalfont,
-            labelfont=globalfont
-        ),
-        Textbox=(;
-            font=globalfont
-        ),
-        Scatter=(; palette),
-        Lines=(; palette),
-        Hist=(; palette),
-        Label=(; valign=:top, halign=:left, font=:bold, fontsize=24)
-    )
+          colormap = sunrise,
+          strokewidth = 10.0,
+          strokecolor = :black,
+          strokevisible = true,
+          font = globalfont,
+          fonts = (; regular = globalfont, bold = foresightfont(:bold),
+                   italic = foresightfont(:italic)),
+          palette,
+          linewidth = 5.0,
+          fontsize = globalfontsize,
+          Figure = (;
+                    resolution = (720, 480)),
+          Axis = (;
+                  backgroundcolor = :white,
+                  topspinecolor = :gray88,
+                  leftspinecolor = :gray88,
+                  bottomspinecolor = :gray88,
+                  rightspinecolor = :gray88,
+                  xgridcolor = :gray88,
+                  ygridcolor = :gray88,
+                  xminorgridcolor = :gray91,
+                  # xminorgridvisible = true,
+                  yminorgridcolor = :gray91,
+                  # yminorgridvisible = true,
+                  leftspinevisible = false,
+                  rightspinevisible = false,
+                  bottomspinevisible = false,
+                  topspinevisible = false,
+                  xminorticksvisible = false,
+                  yminorticksvisible = false,
+                  xticksvisible = false,
+                  yticksvisible = false,
+                  spinewidth = 1,
+                  xticklabelcolor = :black,
+                  yticklabelcolor = :black,
+                  titlecolor = :black,
+                  xticksize = 4,
+                  yticksize = 4,
+                  xtickwidth = 1.5,
+                  ytickwidth = 1.5,
+                  xgridwidth = 1.5,
+                  ygridwidth = 1.5,
+                  xlabelpadding = 3,
+                  ylabelpadding = 3,
+                  palette,
+                  titlefont = string(globalfont) * " bold", # "times serif bold",
+                  xticklabelfont = globalfont,
+                  yticklabelfont = globalfont,
+                  xlabelfont = globalfont,
+                  ylabelfont = globalfont,
+                  titlesize = 20),
+          Legend = (;
+                    framevisible = false,
+                    padding = (0, 0, 0, 0),
+                    patchcolor = :transparent,
+                    titlefont = string(globalfont) * " Bold",
+                    labelfont = globalfont),
+          Axis3 = (;
+                   spinecolor = :gray81,
+                   xgridcolor = :gray81,
+                   ygridcolor = :gray81,
+                   zgridcolor = :gray81,
+                   xspinesvisible = false,
+                   yspinesvisible = false,
+                   zspinesvisible = false,
+                   yzpanelcolor = :white,
+                   xzpanelcolor = :white,
+                   xypanelcolor = :white,
+                   xticksvisible = false,
+                   yticksvisible = false,
+                   zticksvisible = false,
+                   titlefont = string(globalfont) * " Bold",
+                   xticklabelfont = globalfont,
+                   yticklabelfont = globalfont,
+                   zticklabelfont = globalfont,
+                   xlabelfont = globalfont,
+                   ylabelfont = globalfont,
+                   zlabelfont = globalfont,
+                   titlesize = 20,
+                   palette),
+          Colorbar = (;
+                      spinecolor = :gray88,
+                      tickcolor = :white,
+                      tickalign = 1,
+                      ticklabelcolor = :black,
+                      spinewidth = 0,
+                      ticklabelpad = 5,
+                      ticklabelfont = globalfont,
+                      labelfont = globalfont),
+          Textbox = (;
+                     font = globalfont),
+          Scatter = (; palette),
+          Lines = (; palette),
+          Hist = (; palette),
+          Label = (; valign = :top, halign = :left, font = :bold, fontsize = 24))
 end
 
 """
@@ -466,14 +435,14 @@ Some vailable options are:
 - `:redblue`: Use a red-blue colormap.
 - `:gray`: Use a grayscale colormap.
 """
-function foresight(options...; font=foresightfont())
+function foresight(options...; font = foresightfont())
     if :serif ∈ options
-        thm = _foresight(; globalfont="CMU")
+        thm = _foresight(; globalfont = "CMU")
     else
-        thm = _foresight(; globalfont=font)
+        thm = _foresight(; globalfont = font)
     end
     options = collect(options)
-    options = options[options.!=:serif]
+    options = options[options .!= :serif]
     _foresight!.((thm,), Val.(options))
     return thm
 end
@@ -515,6 +484,9 @@ function _foresight!(thm::Attributes, ::Val{:dark})
     setall!(thm, :xgridcolor, gridcolor)
     setall!(thm, :ygridcolor, gridcolor)
     setall!(thm, :zgridcolor, gridcolor)
+    setall!(thm, :xtickcolor, gridcolor)
+    setall!(thm, :ytickcolor, gridcolor)
+    setall!(thm, :ztickcolor, gridcolor)
     setall!(thm, :xminorgridcolor, minorgridcolor)
     setall!(thm, :yminorgridcolor, minorgridcolor)
     setall!(thm, :zminorgridcolor, minorgridcolor)
@@ -527,6 +499,12 @@ function _foresight!(thm::Attributes, ::Val{:dark})
     setall!(thm, :xypanelcolor, darkbg)
     setall!(thm, :tickcolor, textcolor)
     setall!(thm, :ticklabelcolor, textcolor)
+    setall!(thm, :spinecolor, gridcolor)
+    thm[:Axis][:topspinecolor] = gridcolor
+    thm[:Axis][:leftspinecolor] = gridcolor
+    thm[:Axis][:bottomspinecolor] = gridcolor
+    thm[:Axis][:rightspinecolor] = gridcolor
+    thm[:Colorbar][:spinecolor] = gridcolor
     thm[:Axis3][:xspinesvisible] = false
     thm[:Axis3][:yspinesvisible] = false
     thm[:Axis3][:zspinesvisible] = false
@@ -534,7 +512,25 @@ function _foresight!(thm::Attributes, ::Val{:dark})
     thm[:Axis3][:yticksvisible] = false
     thm[:Axis3][:zticksvisible] = false
 end
+function _foresight!(thm::Attributes, ::Val{:physics})
+    setall!(thm, :topspinevisible, true)
+    setall!(thm, :rightspinevisible, true)
+    setall!(thm, :bottomspinevisible, true)
+    setall!(thm, :leftspinevisible, true)
+    setall!(thm, :xticksvisible, true)
+    setall!(thm, :yticksvisible, true)
+    setall!(thm, :zticksvisible, true)
+    setall!(thm, :xtickalign, true)
+    setall!(thm, :ytickalign, true)
+    setall!(thm, :ztickalign, true)
 
+    setall!(thm, :xgridvisible, false)
+    setall!(thm, :ygridvisible, false)
+    setall!(thm, :zgridvisible, false)
+    thm[:Axis3][:xgridvisible] = true
+    thm[:Axis3][:ygridvisible] = true
+    thm[:Axis3][:zgridvisible] = true
+end
 
 """
     axiscolorbar(ax, args...; kwargs...)
@@ -550,19 +546,19 @@ p = plot!(ax, x, x->sinc(x), color=1:length(x), colormap=sunset)
 axiscolorbar(ax, p; label="Time (m)")
 ```
 """
-function axiscolorbar(ax, args...; position=:rt, kwargs...)
+function axiscolorbar(ax, args...; position = :rt, kwargs...)
     C = Colorbar(ax.parent, args...;
-        bbox=ax.scene.px_area,
-        Makie.legend_position_to_aligns(position)...,
-        kwargs...)
+                 bbox = ax.scene.px_area,
+                 Makie.legend_position_to_aligns(position)...,
+                 kwargs...)
     if !isempty(C.label[])
-        ax.alignmode = Mixed(right=75);
+        ax.alignmode = Mixed(right = 75)
     end
 end
 
-
-
 include("RedBlue.jl")
 include("Polar.jl")
+include("Prism.jl")
+include("CovEllipse.jl")
 
 end

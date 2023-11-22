@@ -2,6 +2,8 @@ using Foresight
 using Test
 using CairoMakie
 using CairoMakie.Makie.PlotUtils
+using Statistics
+using LinearAlgebra
 
 @testset "Importall" begin
     @test all(isnothing.(eval.(importall(Foresight))))
@@ -23,7 +25,31 @@ end
 end
 
 @testset "Seethrough" begin
-    C = sunrise;
+    C = sunrise
     transparent_gradient = seethrough(C)
     @test C isa PlotUtils.ContinuousColorGradient
 end
+
+# @testset "Prism plots" begin
+# begin
+#     using Test
+#     using LinearAlgebra
+#     using Statistics
+#     using CairoMakie
+#     using Foresight
+
+#     f = 1:100
+#     x = randn(1000, 4)
+#     y = x * [1.0; 0.5; 0.01; 1.5] .+ randn(1000, 4) * [1.0 0.04 0.09 0.4; 0.04 1.0 0.01 0.1; 0.09 0.01 1.0 0.2; 0.4 0.1 0.2 1.0]
+#     z = [x y]
+#     Σ² = cov(z; dims=1)
+#     # heatmap(Σ²; colormap=:binary)
+
+#     H = prism(Σ²)
+#     prismplot(H)
+
+#     # i, _ = Foresight.cluster(eachindex(f), Σ²)
+#     # p = heatmap(◬[i, i])
+#     # Colorbar(p.figure[1, 1], p.plot)
+
+# end
