@@ -142,7 +142,7 @@ Produce a figure showcasing the current theme.
 """
 function demofigure()
     Random.seed!(32)
-    f = Figure(resolution = (720, 1080))
+    f = Figure(resolution = (1080, 720))
     ax = Axis(f[1, 1], title = "measurements", xlabel = "time (s)", ylabel = "amplitude")
     labels = ["alpha", "beta", "gamma", "delta", "epsilon", "zeta"]
     for i in 1:6

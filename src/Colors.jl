@@ -62,7 +62,8 @@ const sunset = reverse(cgrad([crimson, juliapurple, cornflowerblue], [0, 0.65, 1
 # const sunset = cgrad([RGB(c...) for c in eachrow(C)])
 export sunset
 
-const sunrise = cgrad([crimson, california, cucumber, cornflowerblue], [0.2, 0.4, 0.6, 0.8])
+const sunrise = cgrad([crimson, california, cucumber, cornflowerblue],
+                      [0.25, 0.4, 0.6, 0.75])
 # C = EqualizeColorMap("RGB", C[0:0.001:1], "CIEDE2000", [1, 1, 1], 6)
 # const sunrise = cgrad([RGB(c...) for c in eachrow(C)])
 export sunrise
