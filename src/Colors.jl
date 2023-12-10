@@ -38,7 +38,7 @@ export _greyseas
 C = reverse(cgrad([crimson, juliapurple, cornflowerblue], [0, 0.65, 1]))
 export sunset
 
-C = cgrad([crimson, california, cucumber, cornflowerblue], [0.2, 0.4, 0.6, 0.8])
+C = cgrad([crimson, california, cucumber, cornflowerblue], [0.2, 0.4, 0.6, 0.8]) |> reverse
 export sunrise
 
 C = cgrad([california, crimson, cornflowerblue, cucumber, california],

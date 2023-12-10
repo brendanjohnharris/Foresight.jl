@@ -20,7 +20,7 @@ export foresight, importall, freeze!, clip, hidexaxis!, hideyaxis!, axiscolorbar
 include("Colors.jl")
 
 """
-    seethrough(C::ContinuousColorGradient, start=0.5, stop=1.0)
+    seethrough(C::ContinuousColorGradient, start=0.0, stop=1.0)
 
 Convert a color gradient into a transparent version
 
@@ -437,7 +437,7 @@ Some vailable options are:
 """
 function foresight(options...; font = foresightfont())
     if :serif ∈ options
-        thm = _foresight(; globalfont = "CMU")
+        thm = _foresight(; globalfont = "Times")
     else
         thm = _foresight(; globalfont = font)
     end
