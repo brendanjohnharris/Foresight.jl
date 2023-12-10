@@ -5,7 +5,7 @@ Makie.@recipe(CovEllipse, μ, Σ²) do scene
 end
 
 function Makie.plot!(p::CovEllipse)
-    μ, Σ² = p.input_args
+    μ, Σ² = p.μ, p.Σ²
     if length(μ[]) != size(Σ²[], 1)
         error("Dimension mismatch between mean and covariance")
     end
