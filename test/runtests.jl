@@ -20,7 +20,7 @@ end
     @test_nowarn Makie.set_theme!(foresight(:dark, :transparent))
     @test_nowarn save("./demo_transparentdark.png", demofigure(), px_per_unit = 5)
 
-    @test_nowarn Makie.set_theme!(foresight(:serif))
+    Makie.set_theme!(foresight(:serif))
     @test_nowarn save("./demo_serif.png", demofigure(), px_per_unit = 5)
 end
 
