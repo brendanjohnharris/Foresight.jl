@@ -2,7 +2,7 @@ using Makie
 using LinearAlgebra
 using Clustering
 
-export prism, prismplot!, prismplot
+export prism, prismplot!
 
 function _cluster(Σ²)
     issymmetric(Σ²) || (Σ² = cov(Σ²'))

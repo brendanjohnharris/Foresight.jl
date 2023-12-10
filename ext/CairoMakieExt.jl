@@ -26,9 +26,9 @@ function drawonto(canvas, f::CairoMakie.Figure)
     drawonto(canvas, f.scene)
 end
 
-function gtkshow(scene; name="CairoMakie", resolution=(720, 480), kwargs...)
+function gtkshow(scene; name = "CairoMakie", size = (720, 480), kwargs...)
     canvas = @GtkCanvas()
-    window = GtkWindow(canvas, name, resolution...; kwargs...)
+    window = GtkWindow(canvas, name, size...; kwargs...)
     drawonto(canvas, scene)
     show(canvas)
 end

@@ -142,7 +142,7 @@ Produce a figure showcasing the current theme.
 """
 function demofigure()
     Random.seed!(32)
-    f = Figure(resolution = (1080, 720))
+    f = Figure(size = (1080, 720))
     ax = Axis(f[1, 1], title = "measurements", xlabel = "time (s)", ylabel = "amplitude")
     labels = ["alpha", "beta", "gamma", "delta", "epsilon", "zeta"]
     for i in 1:6
@@ -336,7 +336,7 @@ function _foresight(; globalfont = foresightfont(), globalfontsize = foresightfo
           linewidth = 5.0,
           fontsize = globalfontsize,
           Figure = (;
-                    resolution = (720, 480)),
+                    size = (720, 480)),
           Axis = (;
                   backgroundcolor = :white,
                   topspinecolor = :gray88,
