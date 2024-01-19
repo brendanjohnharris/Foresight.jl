@@ -5,7 +5,7 @@ using Clustering
 export prism, prismplot!
 
 function _cluster(Σ²)
-    issymmetric(Σ²) || (Σ² = cov(Σ²'))
+    issymmetric(Σ²) || error("Input covariance matrix is not symmetric")
     Dr = 1.0 .- abs.(Σ²)
     if !issymmetric(Dr)
         @warn "Correlation distance matrix is not symmetric, so not clustering"

@@ -123,8 +123,7 @@ function default_theme()
 end
 
 function __init__()
-    @eval Makie.set_theme!(default_theme())
-
+    # @eval Makie.set_theme!(default_theme())
     # @static if !isdefined(Base, :get_extension)
     @require Plots="91a5bcdd-55d7-5caf-9e0b-520d859cae80" begin
         include("../ext/PlotsExt.jl")
@@ -222,6 +221,15 @@ function clip(fig = Makie.current_figure(), fmt = :png; kwargs...)
     img = load(tmp)
     clipboard_img(img)
     return tmp
+end
+
+function beep()
+    try
+        sound(f) = [`play -q -n synth 0.1 sin $f`]
+        @async [run.(sound(f)) for f in [500, 250, 450, 250, 425, 250, 500]]
+        ()
+    catch
+    end
 end
 
 """
@@ -523,6 +531,9 @@ function _foresight!(thm::Attributes, ::Val{:physics})
     setall!(thm, :xtickalign, true)
     setall!(thm, :ytickalign, true)
     setall!(thm, :ztickalign, true)
+    setall!(thm, :xminortickalign, true)
+    setall!(thm, :yminortickalign, true)
+    setall!(thm, :zminortickalign, true)
 
     setall!(thm, :xgridvisible, false)
     setall!(thm, :ygridvisible, false)

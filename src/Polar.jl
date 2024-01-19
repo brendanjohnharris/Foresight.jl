@@ -1,6 +1,8 @@
 # module Polar
 using Makie
-# import Makie: @Block, inherit, Text, Observables, GeometryBasics, alpha, red, green, blue, GridLayoutBase, automatic, bar_label_formatter, _hist_center_weights, Polygon
+# import Makie.automatic
+import Makie: @Block, inherit, Text, Observables, GeometryBasics, alpha, red, green, blue,
+              GridLayoutBase, automatic, bar_label_formatter, _hist_center_weights, Polygon
 
 # ! implementing https://github.com/MakieOrg/Makie.jl/pull/2014
 
@@ -705,7 +707,7 @@ function pick_polarhist_edges(vals, bins)
     end
 end
 
-function Makie.plot!(plot::PolarHist)
+function Makie.plot!(plot::PolarHist) # Set PolarAxis(; theta_as_x=false)
     values = lift(x -> mod.(x .+ π, 2 * π) .- π, plot.values)
     edges = lift(pick_polarhist_edges, plot, values, plot.bins)
 
