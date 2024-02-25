@@ -51,13 +51,17 @@ const cyclic = cgrad([darkbg, crimson, greyseas, cornflowerblue, darkbg],
 # const cyclic = cgrad([RGB(c...) for c in eachrow(C)])
 export cyclic
 
-const lightsunset = reverse(cgrad([crimson, greyseas, cornflowerblue], [0, 0.5, 1]))
+const lightsunset = cgrad([crimson, greyseas, cornflowerblue], [0, 0.5, 1])
 export lightsunset
 
-const darksunset = reverse(cgrad([crimson, darkbg, cornflowerblue], [0, 0.5, 1]))
+const darksunset = cgrad([crimson, darkbg, cornflowerblue], [0, 0.5, 1])
 export darksunset
 
-const sunset = reverse(cgrad([crimson, juliapurple, cornflowerblue], [0, 0.65, 1]))
+const binarysunset = cgrad([darkbg, crimson, cornflowerblue, greyseas],
+                           [0, 0.25, 0.5, 0.7, 1])
+export binarysunset
+
+const sunset = cgrad([crimson, juliapurple, cornflowerblue], [0, 0.65, 1])
 # C = EqualizeColorMap("RGB", C[0:0.001:1], "CIEDE2000", [1, 1, 1], 6)
 # const sunset = cgrad([RGB(c...) for c in eachrow(C)])
 export sunset

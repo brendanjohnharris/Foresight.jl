@@ -1,9 +1,29 @@
-using Foresight
 using Test
 using CairoMakie
 using CairoMakie.Makie.PlotUtils
 using Statistics
 using LinearAlgebra
+using Foresight
+using CairoMakie.Makie.Distributions
+
+@testset "Polar histogram" begin
+    x = [rand(Distributions.VonMises(-3, 10), 100); rand(VonMises(0, 10), 100)]
+
+    f = Figure()
+    ax = PolarAxis(f[1, 1])
+    polarhist!(ax, x; bins = 100)
+    display(f)
+
+    f = Figure()
+    ax = PolarAxis(f[1, 1])
+    polardensity!(ax, x; strokewidth = 5, strokecolor = :crimson)
+    display(f)
+
+    f = Figure()
+    ax = PolarAxis(f[1, 1])
+    polardensity!(ax, x; bins = 100, strokewidth = 5, strokecolor = :angle)
+    display(f)
+end
 
 @testset "Importall" begin
     @test all(isnothing.(eval.(importall(Foresight))))

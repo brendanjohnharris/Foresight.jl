@@ -1,7 +1,7 @@
 module Foresight
 
 using Makie
-using Makie.Formatting
+using Format
 using Colors
 using Random
 # using Images
@@ -199,6 +199,9 @@ freeze!(ax)
 function freeze!(ax::Union{Axis, Axis3})
     limits = ax.finallimits.val
     limits = zip(limits.origin, limits.origin .+ limits.widths)
+    limits = (first(limits)..., last(limits)...)
+    ax.limits = limits
+    limits
 end
 freeze!(f::Figure) = freeze!.(f.content)
 freeze!() = freeze!(current_figure())
@@ -219,7 +222,11 @@ function clip(fig = Makie.current_figure(), fmt = :png; kwargs...)
     tmp = tempname() * "." * string(fmt)
     Makie.save(tmp, fig; kwargs...)
     img = load(tmp)
-    clipboard_img(img)
+    try
+        clipboard_img(img)
+    catch e
+        @warn "Could not copy to clipboard"
+    end
     return tmp
 end
 
@@ -323,10 +330,10 @@ function lscientific(x::Real, sigdigits = 2)
 end
 
 colororder = [(cornflowerblue, 0.7),
-    (crimson, 0.7),
-    (cucumber, 0.7),
-    (california, 0.7),
-    (juliapurple, 0.7)]
+              (crimson, 0.7),
+              (cucumber, 0.7),
+              (california, 0.7),
+              (juliapurple, 0.7)]
 palette = (patchcolor = colororder,
            color = colororder,
            strokecolor = colororder)
@@ -335,7 +342,7 @@ function _foresight(; globalfont = foresightfont(), globalfontsize = foresightfo
     Theme(;
           colormap = sunrise,
           strokewidth = 10.0,
-          strokecolor = :black,
+          strokecolor = :cornflowerblue,
           strokevisible = true,
           font = globalfont,
           fonts = (; regular = globalfont, bold = foresightfont(:bold),
@@ -485,7 +492,8 @@ end
 function _foresight!(thm::Attributes, ::Val{:dark})
     gridcolor = :gray38
     minorgridcolor = :gray51
-    strokecolor = textcolor = :white
+    strokecolor = cornflowerblue
+    textcolor = :white
     setall!(thm, :strokecolor, strokecolor)
     setall!(thm, :backgroundcolor, darkbg)
     setall!(thm, :textcolor, textcolor)
@@ -538,6 +546,14 @@ function _foresight!(thm::Attributes, ::Val{:physics})
     setall!(thm, :xgridvisible, false)
     setall!(thm, :ygridvisible, false)
     setall!(thm, :zgridvisible, false)
+    setall!(thm, :xminorgridvisible, false)
+    setall!(thm, :yminorgridvisible, false)
+    setall!(thm, :zminorgridvisible, false)
+
+    setall!(thm, :xminorgridstyle, :dash)
+    setall!(thm, :yminorgridstyle, :dash)
+    setall!(thm, :zminorgridstyle, :dash)
+
     thm[:Axis3][:xgridvisible] = true
     thm[:Axis3][:ygridvisible] = true
     thm[:Axis3][:zgridvisible] = true
