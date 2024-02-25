@@ -1,5 +1,5 @@
 using Makie
-using MakieCore
+import Makie.MakieCore
 
 MakieCore.@recipe(CovEllipse, μ, Σ²) do scene
     Makie.Theme(;)
