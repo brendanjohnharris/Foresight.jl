@@ -829,6 +829,10 @@ function Makie.plot!(plot::PolarDensity) # Set PolarAxis(; theta_as_x=false)
             return C[nm(ps)]
         elseif color isa Vector
             return C[nm(color)]
+        elseif color isa Tuple && isnothing(first(color))
+            return :transparent
+        elseif isnothing(color)
+            return :transparent
         else
             return color
         end
