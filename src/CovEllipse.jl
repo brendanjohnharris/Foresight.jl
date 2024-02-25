@@ -1,6 +1,7 @@
 using Makie
+using MakieCore
 
-Makie.@recipe(CovEllipse, μ, Σ²) do scene
+MakieCore.@recipe(CovEllipse, μ, Σ²) do scene
     Makie.Theme(;)
 end
 
