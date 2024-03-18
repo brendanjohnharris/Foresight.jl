@@ -330,10 +330,10 @@ function lscientific(x::Real, sigdigits = 2)
 end
 
 colororder = [(cornflowerblue, 0.7),
-              (crimson, 0.7),
-              (cucumber, 0.7),
-              (california, 0.7),
-              (juliapurple, 0.7)]
+    (crimson, 0.7),
+    (cucumber, 0.7),
+    (california, 0.7),
+    (juliapurple, 0.7)]
 palette = (patchcolor = colororder,
            color = colororder,
            strokecolor = colororder)
@@ -542,6 +542,11 @@ function _foresight!(thm::Attributes, ::Val{:physics})
     setall!(thm, :xminortickalign, true)
     setall!(thm, :yminortickalign, true)
     setall!(thm, :zminortickalign, true)
+
+    setall!(thm, :topspinecolor, :black)
+    setall!(thm, :rightspinecolor, :black)
+    setall!(thm, :bottomspinecolor, :black)
+    setall!(thm, :leftspinecolor, :black)
 
     setall!(thm, :xgridvisible, false)
     setall!(thm, :ygridvisible, false)
