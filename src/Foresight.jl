@@ -56,6 +56,11 @@ function brighten(c::T, β) where {T}
     return convert(T, cb[β])
 end
 
+function lighten(c, a)
+    c = parse(RGB, c)
+    return RGB((1 - a) + a * c.r), RGB((1 - a) + a * c.g), RGB((1 - a) + a * c.b)
+end
+
 """
     darken(c::T, β)
 
@@ -449,6 +454,7 @@ Some vailable options are:
 - `:serif`: Use a serif font.
 - `:redblue`: Use a red-blue colormap.
 - `:gray`: Use a grayscale colormap.
+- `:physics`: Set a theme that resembles typical plots in physics journals.
 """
 function foresight(options...; font = foresightfont())
     if :serif ∈ options
@@ -543,6 +549,13 @@ function _foresight!(thm::Attributes, ::Val{:physics})
     setall!(thm, :yminortickalign, true)
     setall!(thm, :zminortickalign, true)
 
+    setall!(thm, :xminorticksvisible, true)
+    setall!(thm, :yminorticksvisible, true)
+    setall!(thm, :zminorticksvisible, true)
+    setall!(thm, :xminorticks, IntervalsBetween(5))
+    setall!(thm, :yminorticks, IntervalsBetween(5))
+    setall!(thm, :zminorticks, IntervalsBetween(5))
+
     setall!(thm, :topspinecolor, :black)
     setall!(thm, :rightspinecolor, :black)
     setall!(thm, :bottomspinecolor, :black)
@@ -592,5 +605,6 @@ include("RedBlue.jl")
 include("Polar.jl")
 include("Prism.jl")
 include("CovEllipse.jl")
+include("Layouts.jl")
 
 end
