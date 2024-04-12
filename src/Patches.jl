@@ -1,5 +1,6 @@
 module Patches
 # * Patch draworder of bars in violin and boxplots
+__precompile__(false)
 using Makie
 import Makie: plot!, compute_x_and_width, StructArray, StructArrays, automatic,
               KernelDensity, getuniquevalue, median, extrema_nan, RGBA, Polygon,
