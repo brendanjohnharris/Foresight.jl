@@ -138,7 +138,7 @@ function __init__()
     # end
     # end
     if haskey(ENV, "FORESIGHT_PATCHES")
-        include("Patches.jl")
+        include("./Patches.jl")
     end
 end
 
