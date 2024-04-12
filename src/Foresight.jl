@@ -137,9 +137,6 @@ function __init__()
     #     @require CairoMakie="13f3f980-e62b-5c42-98c6-ff1f3baf88f0" @eval include("../ext/CairoMakieExt.jl")
     # end
     # end
-    if haskey(ENV, "FORESIGHT_PATCHES")
-        include(joinpath(@__DIR__, "Patches.jl"))
-    end
 end
 
 """
@@ -609,5 +606,9 @@ include("Polar.jl")
 include("Prism.jl")
 include("CovEllipse.jl")
 include("Layouts.jl")
+
+if haskey(ENV, "FORESIGHT_PATCHES")
+    include(joinpath(@__DIR__, "Patches.jl"))
+end
 
 end
