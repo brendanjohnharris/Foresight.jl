@@ -1,4 +1,6 @@
+module Patches
 # * Patch draworder of bars in violin and boxplots
+using Makie
 import Makie: plot!, compute_x_and_width, StructArray, StructArrays, automatic,
               KernelDensity, getuniquevalue, median, extrema_nan, RGBA, Polygon,
               PolyElements, poly_convert, to_lines, flip_xy, Mesh, Vec3f0, Point2f,
@@ -158,4 +160,5 @@ function plot!(plot::Violin)
            linewidth = plot.strokewidth, space = plot.space,
            overdraw = plot.overdraw, transparency = plot.transparency,
            inspectable = plot.inspectable, depth_shift = -1.0f-5)
+end
 end
