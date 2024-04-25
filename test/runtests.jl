@@ -42,6 +42,9 @@ end
 
     Makie.set_theme!(foresight(:serif))
     save("./demo_serif.png", demofigure(), px_per_unit = 5)
+
+    Makie.set_theme!(foresight(:physics))
+    save("./demo_physics.png", demofigure(), px_per_unit = 5)
 end
 
 @testset "Seethrough" begin

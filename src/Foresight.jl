@@ -18,6 +18,7 @@ export foresight, importall, freeze!, clip, hidexaxis!, hideyaxis!, axiscolorbar
        scientific, lscientific
 
 include("Colors.jl")
+include("Recipes.jl")
 
 """
     seethrough(C::ContinuousColorGradient, start=0.0, stop=1.0)
@@ -146,47 +147,58 @@ Produce a figure showcasing the current theme.
 """
 function demofigure()
     Random.seed!(32)
-    f = Figure(size = (1080, 720))
-    ax = Axis(f[1, 1], title = "measurements", xlabel = "time (s)", ylabel = "amplitude")
-    labels = ["alpha", "beta", "gamma", "delta", "epsilon", "zeta"]
+    f = Figure(size = (1080, 640))
+    ax = Axis(f[1, 1], title = "Measurements", xlabel = "Time (s)", ylabel = "Amplitude")
+    labels = [L"\alpha", L"\beta", L"\gamma", L"\delta", L"\epsilon", L"\zeta"]
     for i in 1:6
         y = cumsum(randn(10)) .* (isodd(i) ? 1 : -1)
         lines!(y, label = labels[i])
         scatter!(y, label = labels[i])
     end
-    Legend(f[1, 2], ax, "legend", merge = true)
-    Axis3(f[1, 3], viewmode = :stretch, zlabeloffset = 40, title = "Variable: σ⟿𝑡")
+    Legend(f[1, 2], ax, "Legend", merge = true, nbanks = 2)
+    Axis3(f[1, 3], viewmode = :stretch, zlabeloffset = 40, title = "Variable: σ ⤆ τ")
     s = Makie.surface!(0:0.5:10, 0:0.5:10, (x, y) -> sqrt(x * y) + sin(1.5x),
                        colormap = sunrise)
-    Colorbar(f[1, 4], s, label = "intensity")
-    ax = Axis(f[2, 1:2], title = "different species", xlabel = "height (m)",
-              ylabel = "density")
+    Colorbar(f[1, 4], s, label = "Intensity")
+    ax = Axis(f[2, 1:2], title = "Different species", xlabel = "Height (m)",
+              ylabel = "Density")
     for i in 1:6
         y = randn(200) .+ 2i
-        Makie.density!(y)
+        hill!(y)
     end
     tightlimits!(ax, Bottom())
     Makie.xlims!(ax, -1, 15)
-    Axis(f[2, 3:4], title = "stock performance", xticks = (1:6, labels), xlabel = "company",
-         ylabel = "gain (\$)", xticklabelrotation = pi / 6)
+    Axis(f[2, 3:4], title = "Stock performance", xticks = (1:6, labels), xlabel = "Company",
+         ylabel = "Gain (\$)")
     for i in 1:6
         data = randn(1)
         barplot!([i], data)
         rangebars!([i], data .- 0.2, data .+ 0.2, color = :gray41)
     end
 
-    # ax = Makie.Axis(f[3, 2:4])
-    # tightlimits!(ax)
-    # heatmap!(ax, sineramp()', colormap = sunrise)
-    # hidedecorations!(ax)
-    # ax.topspinevisible = ax.bottomspinevisible = ax.leftspinevisible = ax.rightspinevisible = true
-    # ax = Makie.PolarAxis(f[3, 1])
-    # ax.thetaticklabelsvisible = false
-    # ax.rticklabelsvisible = false
-    # tightlimits!(ax)
-    # heatmap!(ax, 0 .. 2pi, 0 .. 5000, sineramp()', colormap = cyclic)
-    # rowsize!(f.layout, 3, Relative(0.4))
-    return f
+    ax = Makie.Axis(f[1, 5], title = "Dogs vs. cats")
+    tightlimits!(ax)
+    for i in 1:3
+        y = randn(200) .+ 2i
+        staircase!(y)
+    end
+
+    ax = Makie.Axis(f[2, 5], title = "Strange attractor") # From the Makie docs for datashader
+    function trajectory(fn, x0, y0, kargs...; n = 1000) #  kargs = a, b, c, d
+        xy = zeros(Point2f, n + 1)
+        xy[1] = Point2f(x0, y0)
+        @inbounds for i in 1:n
+            xy[i + 1] = fn(xy[i], kargs...)
+        end
+        return xy
+    end
+    Clifford((x, y), a, b, c, d) = Point2f(sin(a * y) + c * cos(a * x),
+                                           sin(b * x) + d * cos(b * y))
+    arg = [0, 0, -1.7, 1.5, -0.5, 0.7]
+    points = trajectory(Clifford, arg...; n = Int(5e6))
+    datashader!(ax, points, async = false,
+                colormap = cgrad([:transparent, cornflowerblue, darkbg], [0, 0.4, 1]))
+    f
 end
 
 freeze!(anything) = ()
@@ -354,6 +366,8 @@ function _foresight(; globalfont = foresightfont(), globalfontsize = foresightfo
                    italic = foresightfont(:italic)),
           palette,
           linewidth = 5.0,
+          patchstrokewidth = 0.0,
+          markersize = 15,
           fontsize = globalfontsize,
           Figure = (;
                     size = (720, 480)),
@@ -439,6 +453,8 @@ function _foresight(; globalfont = foresightfont(), globalfontsize = foresightfo
           Scatter = (; palette),
           Lines = (; palette),
           Hist = (; palette),
+          Density = (; palette, strokewidth = 5,
+                     cycle = Cycle([:color, :strokecolor], covary = true)),
           Label = (; valign = :top, halign = :left, font = :bold, fontsize = 24))
 end
 
