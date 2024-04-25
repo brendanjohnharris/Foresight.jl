@@ -34,11 +34,11 @@ end
 @testset "Demo figure" begin
     @test_nowarn save("./demo.png", demofigure(), px_per_unit = 5)
 
-    @test_nowarn Makie.set_theme!(foresight(:dark, :transparent))
+    @test_nowarn Makie.set_theme!(foresight(:dark))
     @test_nowarn save("./demo_dark.png", demofigure(), px_per_unit = 5)
 
-    @test_nowarn Makie.set_theme!(foresight(:physics, :transparent))
-    @test_nowarn save("./demo_transparentphysics.png", demofigure(), px_per_unit = 5)
+    @test_nowarn Makie.set_theme!(foresight(:dark, :transparent))
+    @test_nowarn save("./demo_transparent.png", demofigure(), px_per_unit = 5)
 
     Makie.set_theme!(foresight(:serif))
     save("./demo_serif.png", demofigure(), px_per_unit = 5)

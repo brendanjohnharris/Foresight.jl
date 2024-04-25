@@ -45,13 +45,6 @@ fig = Foresight.demofigure()
 ```
 ![demo](test/demo_physics.png)
 
-### Transparent
-```Julia
-foresight(:physics, :transparent) |> Makie.set_theme!
-fig = Foresight.demofigure()
-```
-![demo](test/demo_transparentphysics.png)
-
 # Utilities
 
 ### seethrough
