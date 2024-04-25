@@ -19,7 +19,7 @@ fig = Foresight.demofigure()
 Any combination of the keywords below can be used to customise the theme.
 ### Dark
 ```Julia
-foresight(:dark) |> Makie.set_theme!
+foresight(:dark, :transparent) |> Makie.set_theme!
 fig = Foresight.demofigure()
 ```
 ![demo](test/demo_dark.png)
@@ -45,6 +45,12 @@ fig = Foresight.demofigure()
 ```
 ![demo](test/demo_physics.png)
 
+### Transparent
+```Julia
+foresight(:physics, :transparent) |> Makie.set_theme!
+fig = Foresight.demofigure()
+```
+![demo](test/demo_transparentphysics.png)
 
 # Utilities
 
