@@ -1,5 +1,5 @@
 
-@recipe(Staircase, values) do scene
+@recipe(Ziggurat, values) do scene
     Attributes(bins = 15, # Int or iterable of edges
                normalization = :none,
                weights = automatic,
@@ -23,7 +23,7 @@
                fillalpha = 0.2)
 end
 
-function Makie.plot!(plot::Staircase)
+function Makie.plot!(plot::Ziggurat)
     fillcolor = lift(plot.attributes[:fillcolor], plot.attributes[:color],
                      plot.attributes[:fillalpha]) do x, y, a
         x = x == automatic ? y : x

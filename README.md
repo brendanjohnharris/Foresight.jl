@@ -38,6 +38,13 @@ fig = Foresight.demofigure()
 ```
 ![demo](test/demo_serif.png)
 
+### Physics
+```Julia
+foresight(:physics) |> Makie.set_theme!
+fig = Foresight.demofigure()
+```
+![demo](test/demo_physics.png)
+
 
 # Utilities
 

@@ -180,7 +180,7 @@ function demofigure()
     tightlimits!(ax)
     for i in 1:3
         y = randn(200) .+ 2i
-        staircase!(y)
+        ziggurat!(y)
     end
 
     ax = Makie.Axis(f[2, 5], title = "Strange attractor") # From the Makie docs for datashader
