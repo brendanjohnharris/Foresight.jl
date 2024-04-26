@@ -20,7 +20,8 @@
                label_size = 20,
                label_formatter = bar_label_formatter,
                linestyle = :solid,
-               fillalpha = 0.2)
+               fillalpha = 0.2,
+               filternan = true)
 end
 
 function Makie.plot!(plot::Ziggurat)
@@ -29,9 +30,12 @@ function Makie.plot!(plot::Ziggurat)
         x = x == automatic ? y : x
         isnothing(a) ? x : (x, a)
     end
-    hist!(plot, plot.values; plot.attributes..., color = fillcolor,
+    values = lift(plot.attributes[:filternan], plot.values) do filternan, v
+        filternan ? filter(!isnan, v) : v
+    end
+    hist!(plot, values; plot.attributes..., color = fillcolor,
           strokewidth = plot.attributes[:fillstrokewidth])
-    stephist!(plot, plot.values; plot.attributes...)
+    stephist!(plot, values; plot.attributes...)
     plot
 end
 
@@ -52,7 +56,8 @@ end
                weights = automatic,
                cycle = [:color => :patchcolor],
                inspectable = theme(scene, :inspectable),
-               fillalpha = 0.2)
+               fillalpha = 0.2,
+               filternan = true)
 end
 
 function Makie.plot!(plot::Hill)
@@ -63,7 +68,10 @@ function Makie.plot!(plot::Hill)
                      plot.attributes[:fillalpha]) do x, a
         isnothing(a) ? x : (x, a)
     end
-    density!(plot, plot.values; plot.attributes..., color = fillcolor,
+    values = lift(plot.attributes[:filternan], plot.values) do filternan, v
+        filternan ? filter(!isnan, v) : v
+    end
+    density!(plot, values; plot.attributes..., color = fillcolor,
              strokecolor)
     plot
 end
