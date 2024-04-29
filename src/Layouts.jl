@@ -1,4 +1,5 @@
 export addlabels!, OnePanel, TwoPanel, FourPanel, SixPanel, subdivide
+import Makie.GridLayoutBase.GridContent
 
 # * A set of consistent figure layouts
 
@@ -30,7 +31,7 @@ end
 
 function addlabels!(f, text = nothing; kwargs...)
     content = f.layout.content
-    allowedblocks = [Axis, Axis3, PolarAxis, LScene]
+    allowedblocks = [Axis, Axis3, PolarAxis, LScene, GridPosition, GridContent, GridLayout]
     content = filter(x -> any(isa.([x.content], allowedblocks)), content)
     n = prod(length(content))
     spans = [[c.rows, c.cols] for c in getfield.(content, :span)]

@@ -50,7 +50,7 @@ Brighten a color `c` by a factor of `β` by blending it with white. `β` should 
 brighten(cornflowerblue, 0.5)
 ```
 """
-function brighten(c::T, β) where {T}
+function brighten(c::T, β::Float) where {T}
     b = RGBA(c)
     b = RGBA(1, 1, 1, b.alpha)
     cb = cgrad([c, b])
@@ -72,7 +72,7 @@ Darken a color `c` by a factor of `β` by blending it with black. `β` should be
 darken(cornflowerblue, 0.5)
 ```
 """
-function darken(c::T, β) where {T}
+function darken(c::T, β::Float) where {T}
     b = RGBA(c)
     b = RGBA(0, 0, 0, b.alpha)
     cb = cgrad([c, b])
@@ -274,13 +274,15 @@ function importall(mdl)
 end
 
 function hidexaxis!(ax::Axis)
-    # ax.xticksvisible = false
+    ax.xticksvisible = false
+    ax.xminorticksvisible = false
     ax.xticklabelsvisible = false
     ax.xlabelvisible = false
 end
 
 function hideyaxis!(ax::Axis)
-    # ax.yticksvisible = false
+    ax.yticksvisible = false
+    ax.yminorticksvisible = false
     ax.yticklabelsvisible = false
     ax.ylabelvisible = false
 end
