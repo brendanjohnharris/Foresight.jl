@@ -1,4 +1,4 @@
-export addlabels!, OnePanel, TwoPanel, FourPanel, SixPanel
+export addlabels!, OnePanel, TwoPanel, FourPanel, SixPanel, subdivide
 
 # * A set of consistent figure layouts
 
@@ -17,6 +17,11 @@ end
 function SixPanel(args...; kwargs...)
     f = Figure(args...; size = (720, 960))
     return f
+end
+
+function subdivide(f, nrows, ncols)
+    grid = [f[i, j] for i in 1:nrows, j in 1:ncols]
+    return permutedims(grid, (2, 1))
 end
 
 function addlabels!(f, text = nothing; kwargs...)
