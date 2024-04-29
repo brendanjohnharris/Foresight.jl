@@ -17,9 +17,6 @@ using Requires
 export foresight, importall, freeze!, clip, hidexaxis!, hideyaxis!, axiscolorbar,
        scientific, lscientific
 
-include("Colors.jl")
-include("Recipes.jl")
-
 """
     seethrough(C::ContinuousColorGradient, start=0.0, stop=1.0)
 
@@ -79,6 +76,9 @@ function darken(c::T, β::AbstractFloat) where {T}
     return convert(T, cb[β])
 end
 export brighten, darken
+
+include("Colors.jl")
+include("Recipes.jl")
 
 # * A good font
 foresightfont() = "Arial"

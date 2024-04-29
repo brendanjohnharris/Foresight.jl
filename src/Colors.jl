@@ -34,18 +34,20 @@ const greyseas = colorant"#cccccc"
 export greyseas
 const _greyseas = colorant"#eeeeee"
 export _greyseas
-
-C = reverse(cgrad([crimson, juliapurple, cornflowerblue], [0, 0.65, 1]))
+__crimson = brighten(crimson, 0.1)
+__california = darken(california, 0.1)
+C = reverse(cgrad([__crimson, juliapurple, cornflowerblue], [0, 0.65, 1]))
 export sunset
 
-C = cgrad([crimson, california, cucumber, cornflowerblue], [0.25, 0.5, 0.7, 0.9]) |> reverse
+C = cgrad([__crimson, __california, cucumber, cornflowerblue],
+          [0.25, 0.4, 0.6, 0.8]) |> reverse
 export sunrise
 
-C = cgrad([california, crimson, cornflowerblue, cucumber, california],
+C = cgrad([california, __crimson, cornflowerblue, cucumber, __california],
           [0, 0.2, 0.5, 0.8, 1])
 export cyclicsunrise
 
-const cyclic = cgrad([darkbg, crimson, greyseas, cornflowerblue, darkbg],
+const cyclic = cgrad([darkbg, __crimson, greyseas, cornflowerblue, darkbg],
                      [0, 0.25, 0.5, 0.7, 1])
 # C = EqualizeColorMap("RGB", C[0:0.001:1], "CIEDE2000", [1, 1, 1], 6, true)
 # const cyclic = cgrad([RGB(c...) for c in eachrow(C)])
@@ -54,25 +56,31 @@ export cyclic
 const lightsunset = cgrad([crimson, greyseas, cornflowerblue], [0, 0.5, 1])
 export lightsunset
 
-const darksunset = cgrad([crimson, darkbg, cornflowerblue], [0, 0.5, 1])
+const darksunset = cgrad([__crimson, darkbg, cornflowerblue], [0, 0.5, 1])
 export darksunset
 
-const binarysunset = cgrad([darkbg, crimson, cornflowerblue, greyseas],
+const binarysunset = cgrad([darkbg, __crimson, cornflowerblue, greyseas],
                            [0, 0.25, 0.5, 0.7, 1])
 export binarysunset
 
-const sunset = cgrad([crimson, juliapurple, cornflowerblue], [0, 0.65, 1])
+const sunset = cgrad([__crimson, juliapurple, cornflowerblue], [0, 0.65, 1])
 # C = EqualizeColorMap("RGB", C[0:0.001:1], "CIEDE2000", [1, 1, 1], 6)
 # const sunset = cgrad([RGB(c...) for c in eachrow(C)])
 export sunset
 
-const sunrise = cgrad([crimson, california, cucumber, cornflowerblue],
+const sunrise = cgrad([__crimson, __california, cucumber, cornflowerblue],
                       [0.25, 0.4, 0.6, 0.75])
 # C = EqualizeColorMap("RGB", C[0:0.001:1], "CIEDE2000", [1, 1, 1], 6)
 # const sunrise = cgrad([RGB(c...) for c in eachrow(C)])
 export sunrise
 
-const cyclicsunrise = cgrad([california, crimson, cornflowerblue, cucumber, california],
+const cyclicsunrise = cgrad([
+                                __california,
+                                __crimson,
+                                cornflowerblue,
+                                cucumber,
+                                __california
+                            ],
                             [0, 0.2, 0.5, 0.8, 1])
 # C = EqualizeColorMap("RGB", C[0:0.001:1], "CIEDE2000", [1, 1, 1], 6, true)
 # const cyclicsunrise = cgrad([RGB(c...) for c in eachrow(C)])
