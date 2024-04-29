@@ -19,9 +19,13 @@ function SixPanel(args...; kwargs...)
     return f
 end
 
-function subdivide(f, nrows, ncols)
+function subdivide(f, nrows::Int, ncols::Int)
     grid = [f[i, j] for i in 1:nrows, j in 1:ncols]
     return permutedims(grid, (2, 1))
+end
+function subdivide(f, sz::Tuple{Int, Int})
+    nrows, ncols = sz
+    subdivide(f, nrows, ncols)
 end
 
 function addlabels!(f, text = nothing; kwargs...)
