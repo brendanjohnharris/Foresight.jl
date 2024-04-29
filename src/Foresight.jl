@@ -15,6 +15,7 @@ using Requires
 # end
 
 export foresight, importall, freeze!, clip, hidexaxis!, hideyaxis!, axiscolorbar,
+       reverselegend!,
        scientific, lscientific
 
 """
@@ -254,6 +255,12 @@ function beep()
         ()
     catch
     end
+end
+
+function reverselegend!(l::Legend)
+    entrygroups = l.entrygroups[]
+    entrygroups[1][2] .= entrygroups[1][2] |> reverse
+    l.entrygroups[] = entrygroups
 end
 
 """

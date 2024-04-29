@@ -4,19 +4,19 @@ import Makie.GridLayoutBase.GridContent
 # * A set of consistent figure layouts
 
 function OnePanel(args...; kwargs...)
-    f = Figure(args...; size = (360, 360))
+    f = Figure(args...; size = (360, 300))
     return f
 end
 function TwoPanel(args...; kwargs...)
-    f = Figure(args...; size = (720, 320))
+    f = Figure(args...; size = (720, 300))
     return f
 end
 function FourPanel(args...; kwargs...)
-    f = Figure(args...; size = (720, 640))
+    f = Figure(args...; size = (720, 600))
     return f
 end
 function SixPanel(args...; kwargs...)
-    f = Figure(args...; size = (720, 960))
+    f = Figure(args...; size = (720, 900))
     return f
 end
 
