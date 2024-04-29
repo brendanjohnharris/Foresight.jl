@@ -7,15 +7,15 @@ function OnePanel(args...; kwargs...)
     return f
 end
 function TwoPanel(args...; kwargs...)
-    f = Figure(args...; size = (720, 360))
+    f = Figure(args...; size = (720, 320))
     return f
 end
 function FourPanel(args...; kwargs...)
-    f = Figure(args...; size = (720, 720))
+    f = Figure(args...; size = (720, 640))
     return f
 end
 function SixPanel(args...; kwargs...)
-    f = Figure(args...; size = (720, 1080))
+    f = Figure(args...; size = (720, 960))
     return f
 end
 

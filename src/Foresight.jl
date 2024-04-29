@@ -274,13 +274,13 @@ function importall(mdl)
 end
 
 function hidexaxis!(ax::Axis)
-    ax.xticksvisible = false
+    # ax.xticksvisible = false
     ax.xticklabelsvisible = false
     ax.xlabelvisible = false
 end
 
 function hideyaxis!(ax::Axis)
-    ax.yticksvisible = false
+    # ax.yticksvisible = false
     ax.yticklabelsvisible = false
     ax.ylabelvisible = false
 end
