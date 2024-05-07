@@ -75,3 +75,80 @@ function Makie.plot!(plot::Hill)
              strokecolor)
     plot
 end
+
+@recipe(Kinetic, x, y) do scene
+    Attributes(color = theme(scene, :color),
+               colormap = theme(scene, :colormap),
+               colorscale = identity,
+               colorrange = Makie.automatic,
+               linestyle = nothing,
+               cycle = [:color],
+               inspectable = theme(scene, :inspectable),
+               linewidth = :curv,
+               linewidthscale = 1)
+end
+
+function Makie.plot!(p::Kinetic)
+    x = p.x
+    y = p.y
+    function interleave(x)
+        x = [collect(x[i:(i + 1)]) for i in eachindex(x)[1:(end - 1)]]
+        # append!.(x, NaN)
+        vcat(x...)
+    end
+    function minter(x)
+        l = map(eachindex(x)) do i
+            if i == 1
+                x[1]
+            else
+                mean(x[(i - 1):i])
+            end
+        end
+        l = l .- minimum(l)
+        l = l ./ maximum(l)
+        l .*= 10
+        l .+= 1
+        return l[2:end]
+    end
+
+    function difter(x)
+        l = map(eachindex(x)) do i
+            if i < 2
+                x[3] - 2 * x[2] + x[1]
+            elseif i > length(x) - 1
+                x[end - 2] - 2 * x[end - 1] + x[end]
+            else
+                x[i + 1] - 2 * x[i] + x[i - 1]
+            end
+        end
+        l = exp.(-abs.(l) .^ 2)
+        l = l .- minimum(l)
+        l = l ./ maximum(l)
+        l .*= 10
+        l .+= 1
+        return l[2:end]
+    end
+
+    linewidth = lift(p.attributes[:linewidth], x, y) do l, x, y
+        if l isa Number
+            l = fill(l, length(x))
+        elseif l === :x
+            l = minter(x)
+        elseif l === :y
+            l = minter(y)
+        elseif l === :curv
+            l = difter(y)
+        else
+            l
+        end
+    end
+    x = lift(interleave, x)
+    y = lift(interleave, y)
+    linewidth = lift(linewidth) do linewidth
+        linewidth = [[l, l] for l in linewidth]
+        linewidth = vcat(linewidth...)
+    end
+    linewidth = lift((x, y) -> x .* y, linewidth, p.attributes[:linewidthscale])
+    linesegments!(p, x, y; p.attributes, linewidth)
+    # scatter!(p, x, y; p.attributes, markersize =linewidth)
+end

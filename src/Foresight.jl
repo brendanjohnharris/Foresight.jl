@@ -421,7 +421,7 @@ function _foresight(; globalfont = foresightfont(), globalfontsize = foresightfo
                   titlesize = 20),
           Legend = (;
                     framevisible = false,
-                    padding = (0, 0, 0, 0),
+                    padding = (1, 1, 1, 1),
                     patchcolor = :transparent,
                     titlefont = string(globalfont) * " Bold",
                     labelfont = globalfont),

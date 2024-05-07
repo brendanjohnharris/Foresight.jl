@@ -6,6 +6,15 @@ using LinearAlgebra
 using Foresight
 using CairoMakie.Makie.Distributions
 
+@testset "Kinetic plot" begin
+    x = range(-4π, 4π, length = 10000)
+    y = sinc.(x)
+    f = Figure()
+    ax = Axis(f[1, 1])
+    kinetic!(ax, x, y; linewidthscale = 0.5, linewidth = :curv)
+    display(f)
+end
+
 @testset "Polar histogram" begin
     x = [rand(Distributions.VonMises(-3, 10), 100); rand(VonMises(0, 10), 100)]
 
