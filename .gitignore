@@ -38,3 +38,4 @@ data/**
 *.code-workspace
 
 LocalPreferences.toml
+lcov.info

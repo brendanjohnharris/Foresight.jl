@@ -378,6 +378,8 @@ function _foresight(; globalfont = foresightfont(), globalfontsize = foresightfo
           patchstrokewidth = 0.0,
           markersize = 15,
           fontsize = globalfontsize,
+         linecap = :round,
+         joinstyle = :round,
           Figure = (;
                     size = (720, 480)),
           Axis = (;

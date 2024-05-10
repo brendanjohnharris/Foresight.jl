@@ -6,6 +6,15 @@ using LinearAlgebra
 using Foresight
 using CairoMakie.Makie.Distributions
 
+@testset "Bandwidth plot" begin
+    x = range(-4π, 4π, length = 10000)
+    y = sinc.(x)
+    f = Figure()
+    ax = Axis(f[1, 1])
+    bandwidth!(ax, x, y; linewidth = range(0.001, 0.05, length = length(x)))
+    display(f)
+end
+
 @testset "Kinetic plot" begin
     x = range(-4π, 4π, length = 10000)
     y = sinc.(x)
@@ -59,7 +68,9 @@ end
 @testset "Seethrough" begin
     C = sunrise
     transparent_gradient = seethrough(C)
-    @test C isa PlotUtils.ContinuousColorGradient
+    @test transparent_gradient isa PlotUtils.ContinuousColorGradient
+    transparent_gradient = @test_nowarn seethrough(C, 0.5, 1.0)
+    @test transparent_gradient isa PlotUtils.ContinuousColorGradient
 end
 
 @testset "Prism plots" begin

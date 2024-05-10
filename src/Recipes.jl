@@ -85,7 +85,8 @@ end
                cycle = [:color],
                inspectable = theme(scene, :inspectable),
                linewidth = :curv,
-               linewidthscale = 1)
+               linewidthscale = 1,
+               spacing = 1)
 end
 
 function Makie.plot!(p::Kinetic)
@@ -131,7 +132,7 @@ function Makie.plot!(p::Kinetic)
 
     linewidth = lift(p.attributes[:linewidth], x, y) do l, x, y
         if l isa Number
-            l = fill(l, length(x))
+            l = fill(l, length(x) - 1)
         elseif l === :x
             l = minter(x)
         elseif l === :y
@@ -151,4 +152,29 @@ function Makie.plot!(p::Kinetic)
     linewidth = lift((x, y) -> x .* y, linewidth, p.attributes[:linewidthscale])
     linesegments!(p, x, y; p.attributes, linewidth)
     # scatter!(p, x, y; p.attributes, markersize =linewidth)
+end
+
+@recipe(Bandwidth, x, y) do scene
+    Attributes(color = theme(scene, :color),
+               colormap = theme(scene, :colormap),
+               colorscale = identity,
+               colorrange = Makie.automatic,
+               cycle = [:color],
+               inspectable = theme(scene, :inspectable),
+               linewidth = 1, # * In data space
+               kernelwidth = 1)
+end
+
+function Makie.plot!(p::Bandwidth)
+    x = p.x
+    _y = p.y
+    linewidth = p.attributes[:linewidth]
+    yu = lift(_y, linewidth) do _y, l
+        _y .+ l
+    end
+    yl = lift(_y, linewidth) do _y, l
+        _y .- l
+    end
+
+    band!(p, x, yl, yu; p.attributes...)
 end
