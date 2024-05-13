@@ -32,13 +32,39 @@ function subdivide(f, sz::Tuple{Int, Int})
     subdivide(f, nrows, ncols)
 end
 
-function addlabels!(f, text = nothing; kwargs...)
-    content = f.layout.content
-    allowedblocks = [Axis, Axis3, PolarAxis, LScene, GridPosition, GridContent, GridLayout]
-    content = filter(x -> any(isa.([x.content], allowedblocks)), content)
+function addlabels!(f, text = nothing;
+                    allowedblocks = [Axis, Axis3, PolarAxis],
+                    recurse = [GridContent, GridLayout], kwargs...)
+    content = [Vector{Any}(f.layout.content)]
+    function isinrecurse(x)
+        types = typeof.(x)
+        checks = t -> any([t <: r for r in recurse])
+        checks.(types)
+    end
+    while any(isinrecurse(only(content)))
+        contents = only(content)
+        map(enumerate(contents)) do (i, c)
+            if any(isa.([c], recurse))
+                contents[i] = c.content
+            end
+        end
+        content[1] = vcat(contents...) |> Vector{Any}
+    end
+    content = only(content)
+    content = filter(content) do x
+        any(isa.([x], allowedblocks))
+    end
+    content = map(content) do x
+        x.layoutobservables.gridcontent[].parent
+    end
+    content = unique(content)
+
+    function getposition(g)
+        [1, -1] .* Makie.GridLayoutBase.tight_bbox(g).origin |> reverse
+    end
+    content = sort(content, by = getposition)
+
     n = prod(length(content))
-    spans = [[c.rows, c.cols] for c in getfield.(content, :span)]
-    idxs = sortperm(spans)
 
     if isnothing(text)
         text = Char.(1:n) .+ 96
@@ -48,9 +74,8 @@ function addlabels!(f, text = nothing; kwargs...)
         error("Number of labels does not match the number of valid blocks ($allowedblocks)")
     end
 
-    for (i, l) in enumerate(content[idxs])
-        span = l.span
-        Label(f[span.rows, span.cols, TopLeft()], halign = :left, valign = :bottom,
+    for (i, l) in enumerate(content)
+        Label(l[1, 1, TopLeft()], halign = :left, valign = :bottom,
               text = text[i],
               fontsize = 22, padding = (-5, 0, 5, 0), kwargs...)
     end
