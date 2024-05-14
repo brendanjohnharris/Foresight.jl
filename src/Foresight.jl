@@ -154,7 +154,7 @@ function demofigure()
     for i in 1:6
         y = cumsum(randn(10)) .* (isodd(i) ? 1 : -1)
         lines!(y, label = labels[i])
-        scatter!(y, label = labels[i])
+        # scatter!(y, label = labels[i])
     end
     Legend(f[1, 2], ax, "Legend", merge = true, nbanks = 2)
     Axis3(f[1, 3], viewmode = :stretch, zlabeloffset = 40, title = "Variable: σ ⤆ τ")
@@ -378,8 +378,8 @@ function _foresight(; globalfont = foresightfont(), globalfontsize = foresightfo
           patchstrokewidth = 0.0,
           markersize = 15,
           fontsize = globalfontsize,
-         linecap = :round,
-         joinstyle = :round,
+          linecap = :round,
+          joinstyle = :round,
           Figure = (;
                     size = (720, 480)),
           Axis = (;
@@ -462,7 +462,8 @@ function _foresight(; globalfont = foresightfont(), globalfontsize = foresightfo
           Textbox = (;
                      font = globalfont),
           Scatter = (; palette),
-          Lines = (; palette),
+          Lines = (; palette, linecap = :round,
+                   joinstyle = :round),
           Hist = (; palette),
           Density = (; palette, strokewidth = 5,
                      cycle = Cycle([:color, :strokecolor], covary = true)),
