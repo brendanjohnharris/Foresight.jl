@@ -1,7 +1,7 @@
 name = "Foresight"
 uuid = "c6e1034d-1844-4b96-abf2-c5824a5aa8c3"
 authors = ["brendanjohnharris <brendanjohnharris@gmail.com>"]
-version = "0.2.2"
+version = "0.2.3"
 
 [deps]
 Clustering = "aaaa29a8-35af-508c-8bc3-b662a17a0fe5"
@@ -29,7 +29,7 @@ FileIO = "1"
 Gtk = "1"
 ImageClipboard = "0.1"
 Images = "0.25, 0.26"
-Makie = "0.19, 0.20"
+Makie = "0.19, 0.20, 0.21"
 Plots = "1.20"
 Preferences = "1"
 Requires = "1"
