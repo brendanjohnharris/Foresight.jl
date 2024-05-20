@@ -33,9 +33,9 @@ function Makie.plot!(plot::Ziggurat)
     values = lift(plot.attributes[:filternan], plot.values) do filternan, v
         filternan ? filter(!isnan, v) : v
     end
-    hist!(plot, values; plot.attributes..., color = fillcolor,
+    hist!(plot, values; color = fillcolor,
           strokewidth = plot.attributes[:fillstrokewidth])
-    stephist!(plot, values; plot.attributes...)
+    stephist!(plot, values)
     plot
 end
 
@@ -71,7 +71,7 @@ function Makie.plot!(plot::Hill)
     values = lift(plot.attributes[:filternan], plot.values) do filternan, v
         filternan ? filter(!isnan, v) : v
     end
-    density!(plot, values; plot.attributes..., color = fillcolor,
+    density!(plot, values; color = fillcolor,
              strokecolor)
     plot
 end
@@ -150,7 +150,7 @@ function Makie.plot!(p::Kinetic)
         linewidth = vcat(linewidth...)
     end
     linewidth = lift((x, y) -> x .* y, linewidth, p.attributes[:linewidthscale])
-    linesegments!(p, x, y; p.attributes, linewidth)
+    linesegments!(p, x, y; linewidth)
     # scatter!(p, x, y; p.attributes, markersize =linewidth)
 end
 
@@ -176,5 +176,5 @@ function Makie.plot!(p::Bandwidth)
         _y .- l
     end
 
-    band!(p, x, yl, yu; p.attributes...)
+    band!(p, x, yl, yu)
 end
