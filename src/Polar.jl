@@ -750,7 +750,9 @@ function Makie.plot!(plot::PolarHist) # Set PolarAxis(; theta_as_x=false)
     # push!(rs[], rs[][1])
 
     # lp = lines!(plot, rs[], intervals[]; plot.attributes..., color=color)
-    poly!(plot, pgons; plot.attributes..., color = color)
+    polyattrs = [:cycle,
+        :strokewidth]
+    poly!(plot, pgons; color, [a => plot.attributes[a] for a in polyattrs]...)
     plot
 end
 
@@ -840,10 +842,8 @@ function Makie.plot!(plot::PolarDensity) # Set PolarAxis(; theta_as_x=false)
     strokecolor = lift(_color, plot.strokecolormap, plot.strokecolor, xs, ps)
     color = lift(_color, plot.colormap, plot.color, xs, ps)
 
-    band!(plot, xs, zs, ps; plot.attributes..., color,
-          strokecolor = :transparent,
-          strokewidth = 0)
-    lines!(plot, points; plot.attributes..., color = strokecolor,
+    band!(plot, xs, zs, ps; color)
+    lines!(plot, points, color = strokecolor,
            colormap = plot.attributes[:strokecolormap], linewidth = plot.strokewidth)
     plot
 end

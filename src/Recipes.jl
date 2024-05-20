@@ -1,27 +1,23 @@
 
 @recipe(Ziggurat, values) do scene
-    Attributes(bins = 15, # Int or iterable of edges
-               normalization = :none,
+    Attributes(bins = 15, # Common attributes
+               filternan = true,
                weights = automatic,
                cycle = [:color => :patchcolor],
-               color = theme(scene, :patchcolor),
-               fillcolor = automatic,
-               fillstrokewidth = 0.0,
-               offset = 0.0,
-               fillto = automatic,
                scale_to = nothing,
-               bar_labels = nothing,
-               flip_labels_at = Inf,
+               normalization = :none,
+               fillcolor = automatic, # Hist attributes
+               strokewidth = 0.0,
+               strokecolor = theme(scene, :patchstrokecolor),
                label_color = theme(scene, :textcolor),
-               over_background_color = automatic,
-               over_bar_color = automatic,
                label_offset = 5,
                label_font = theme(scene, :font),
                label_size = 20,
                label_formatter = bar_label_formatter,
-               linestyle = :solid,
-               fillalpha = 0.2,
-               filternan = true)
+               linestyle = :solid, # Stephist attributes
+               color = theme(scene, :patchcolor),
+               linewidth = theme(scene, :linewidth),
+               fillalpha = 0.2)
 end
 
 function Makie.plot!(plot::Ziggurat)
@@ -33,11 +29,33 @@ function Makie.plot!(plot::Ziggurat)
     values = lift(plot.attributes[:filternan], plot.values) do filternan, v
         filternan ? filter(!isnan, v) : v
     end
-    with_theme(; plot.attributes...) do
-        hist!(plot, values; color = fillcolor,
-              strokewidth = plot.attributes[:fillstrokewidth])
-        stephist!(plot, values)
-    end
+    histattr = [
+        :bins,
+        :weights,
+        :cycle,
+        :scale_to,
+        :normalization,
+        :strokewidth,
+        :strokecolor,
+        :label_color,
+        :label_offset,
+        :label_font,
+        :label_size,
+        :label_formatter,
+        :scale_to
+    ]
+    stepattr = [
+        :bins,
+        :weights,
+        :cycle,
+        :scale_to,
+        :normalization,
+        :linestyle,
+        :color,
+        :linewidth
+    ]
+    hist!(plot, values; color = fillcolor, [h => plot.attributes[h] for h in histattr]...)
+    stephist!(plot, values; [h => plot.attributes[h] for h in stepattr]...)
     plot
 end
 
@@ -46,7 +64,7 @@ end
                colormap = theme(scene, :colormap),
                colorscale = identity,
                colorrange = Makie.automatic,
-               strokecolor = automatic,
+               strokecolor = Makie.automatic,
                strokewidth = theme(scene, :linewidth),
                linestyle = nothing,
                strokearound = false,
@@ -73,9 +91,14 @@ function Makie.plot!(plot::Hill)
     values = lift(plot.attributes[:filternan], plot.values) do filternan, v
         filternan ? filter(!isnan, v) : v
     end
-    with_theme(; plot.attributes...) do
-        density!(plot, values; color = fillcolor, strokecolor)
+    colorrange = lift(plot.attributes[:colorrange], values) do c, x
+        c == Makie.automatic ? extrema(x) : c
     end
+    densatts = [:colorscale, :colormap,
+        :strokewidth, :linestyle, :strokearound, :npoints, :offset, :direction, :boundary,
+        :bandwidth, :weights, :cycle, :inspectable]
+    density!(plot, values; color = fillcolor, strokecolor, colorrange,
+             [h => plot.attributes[h] for h in densatts]...)
     plot
 end
 
@@ -153,9 +176,17 @@ function Makie.plot!(p::Kinetic)
         linewidth = vcat(linewidth...)
     end
     linewidth = lift((x, y) -> x .* y, linewidth, p.attributes[:linewidthscale])
-    with_theme(; plot.attributes...) do
-        linesegments!(p, x, y; linewidth)
-    end
+
+    lineatts = [
+        :color,
+        :colormap,
+        :colorscale,
+        :colorrange,
+        :linestyle,
+        :cycle,
+        :inspectable
+    ]
+    linesegments!(p, x, y; linewidth, [h => p.attributes[h] for h in lineatts]...)
     # scatter!(p, x, y; p.attributes, markersize =linewidth)
 end
 
@@ -180,7 +211,13 @@ function Makie.plot!(p::Bandwidth)
     yl = lift(_y, linewidth) do _y, l
         _y .- l
     end
-    with_theme(; plot.attributes...) do
-        band!(p, x, yl, yu)
-    end
+    bandatts = [
+        :color,
+        :colormap,
+        :colorscale,
+        :colorrange,
+        :cycle,
+        :inspectable
+    ]
+    band!(p, x, yl, yu; [h => p.attributes[h] for h in bandatts]...)
 end

@@ -159,7 +159,7 @@ function demofigure()
     Legend(f[1, 2], ax, "Legend", merge = true, nbanks = 2)
     Axis3(f[1, 3], viewmode = :stretch, zlabeloffset = 40, title = "Variable: σ ⤆ τ")
     s = Makie.surface!(0:0.5:10, 0:0.5:10, (x, y) -> sqrt(x * y) + sin(1.5x),
-                       colormap = sunrise)
+                       colormap = seethrough(sunrise, 0.9, 0.1))
     Colorbar(f[1, 4], s, label = "Intensity")
     ax = Axis(f[2, 1:2], title = "Different species", xlabel = "Height (m)",
               ylabel = "Density")
@@ -461,11 +461,11 @@ function _foresight(; globalfont = foresightfont(), globalfontsize = foresightfo
                       labelfont = globalfont),
           Textbox = (;
                      font = globalfont),
-          Scatter = (; palette),
-          Lines = (; palette, linecap = :round,
+          Scatter = (;),
+          Lines = (; linecap = :round,
                    joinstyle = :round),
-          Hist = (; palette),
-          Density = (; palette, strokewidth = 5,
+          Hist = (;),
+          Density = (; strokewidth = 5,
                      cycle = Cycle([:color, :strokecolor], covary = true)),
           Label = (; valign = :top, halign = :left, font = :bold, fontsize = 24))
 end
@@ -505,7 +505,9 @@ function setall!(thm::Attributes, attribute, value)
             if value isa Attributes
                 thm[a] = value
             else
-                thm[a][attribute] = value
+                if haskey(thm[a], attribute)
+                    thm[a][attribute] = value
+                end
             end
         end
     end
