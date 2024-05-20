@@ -6,6 +6,16 @@ using LinearAlgebra
 using Foresight
 using CairoMakie.Makie.Distributions
 
+@testset "Ziggurat plot" begin
+    x = randn(1000)
+    y = randn(1000) .+ 2
+    f = Figure()
+    ax = Axis(f[1, 1])
+    ziggurat!(ax, x; color = :red)
+    ziggurat!(ax, y; color = :green)
+    display(f)
+end
+
 @testset "Bandwidth plot" begin
     x = range(-4π, 4π, length = 10000)
     y = sinc.(x)
