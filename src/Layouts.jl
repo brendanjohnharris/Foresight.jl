@@ -2,7 +2,7 @@ export addlabels!, OnePanel, TwoPanel, FourPanel, SixPanel, subdivide
 import Makie.GridLayoutBase.GridContent
 
 # * A set of consistent figure layouts
-function _panels(args...; size = (720, 300), scale = 1, kwargs...)
+function _panels(args...; size = (720, 300), scale = 1.25, kwargs...)
     f = Figure(args...; size = size .* scale, kwargs...)
     return f
 end
