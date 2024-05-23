@@ -76,20 +76,29 @@ function darken(c::T, β::AbstractFloat) where {T}
     cb = cgrad([c, b])
     return convert(T, cb[β])
 end
+function brighten(c::Symbol, β::AbstractFloat)::RGBA
+    c = Makie.to_color(c)
+    return brighten(c, β)
+end
+function darken(c::Symbol, β::AbstractFloat)::RGBA
+    c = Makie.to_color(c)
+    return darken(c, β)
+end
 export brighten, darken
 
 include("Colors.jl")
 include("Recipes.jl")
 
 # * A good font
-foresightfont() = "Arial"
-foresightfont(f::Symbol) = foresightfont(Val(f))
-foresightfont(::Val{:bold}) = foresightfont() * " Bold"
-foresightfont(::Val{:italic}) = foresightfont() * " Italic"
-foresightfont(s::String) = foresightfont() * " "
+const foresightfont = "Arial"
+function foresightfonts(font = foresightfont)
+    Attributes(:regular => font,
+               :bold => font * " Bold",
+               :italic => font * " Italic",
+               :bold_italic => font * " Bold Italic")
+end
 
 foresightfontsize() = 18
-# foresightfont_bold() = "Helvetica Bold"
 
 """
 Slightly widen an interval by a fraction δ
@@ -161,7 +170,7 @@ function demofigure()
     s = Makie.surface!(0:0.5:10, 0:0.5:10, (x, y) -> sqrt(x * y) + sin(1.5x),
                        colormap = seethrough(sunrise, 0.9, 0.1))
     Colorbar(f[1, 4], s, label = "Intensity")
-    ax = Axis(f[2, 1:2], title = "Different species", xlabel = "Height (m)",
+    ax = Axis(f[2, 1:2], title = "Hill plots", xlabel = "Height (m)",
               ylabel = "Density")
     for i in 1:6
         y = randn(200) .+ 2i
@@ -177,7 +186,7 @@ function demofigure()
         rangebars!([i], data .- 0.2, data .+ 0.2, color = :gray41)
     end
 
-    ax = Makie.Axis(f[1, 5], title = "Dogs vs. cats")
+    ax = Makie.Axis(f[1, 5], title = "Ziggurat plots")
     tightlimits!(ax)
     for i in 1:3
         y = randn(200) .+ 2i
@@ -297,14 +306,11 @@ end
 """
     scientific(x::Real, sigdigits=2)
 
-Return a string representation of a number in scientific notation with a specified number of significant digits.
+Generate string representation of a number in scientific notation with a specified number of significant digits.
 
 # Arguments
 - `x::Real`: The number to be formatted.
 - `sigdigits::Int=2`: The number of significant digits to display.
-
-# Returns
-A string representation of the number in scientific notation with the specified number of significant digits.
 
 # Example
 ```julia
@@ -364,15 +370,14 @@ palette = (patchcolor = colororder,
            color = colororder,
            strokecolor = colororder)
 
-function _foresight(; globalfont = foresightfont(), globalfontsize = foresightfontsize())
+function _foresight(; globalfonts = foresightfonts(), globalfontsize = foresightfontsize())
     Theme(;
           colormap = sunrise,
           strokewidth = 10.0,
           strokecolor = :cornflowerblue,
           strokevisible = true,
-          font = globalfont,
-          fonts = (; regular = globalfont, bold = foresightfont(:bold),
-                   italic = foresightfont(:italic)),
+          font = :regular,
+          fonts = globalfonts,
           palette,
           linewidth = 5.0,
           patchstrokewidth = 0.0,
@@ -415,18 +420,13 @@ function _foresight(; globalfont = foresightfont(), globalfontsize = foresightfo
                   xlabelpadding = 3,
                   ylabelpadding = 3,
                   palette,
-                  titlefont = string(globalfont) * " bold", # "times serif bold",
-                  xticklabelfont = globalfont,
-                  yticklabelfont = globalfont,
-                  xlabelfont = globalfont,
-                  ylabelfont = globalfont,
-                  titlesize = 20),
+                  titlefont = :bold, # "times serif bold",
+                  titlesize = globalfontsize * 10 / 9),
           Legend = (;
                     framevisible = false,
                     padding = (1, 1, 1, 1),
                     patchcolor = :transparent,
-                    titlefont = string(globalfont) * " Bold",
-                    labelfont = globalfont),
+                    titlefont = :bold),
           Axis3 = (;
                    spinecolor = :gray81,
                    xgridcolor = :gray81,
@@ -441,14 +441,8 @@ function _foresight(; globalfont = foresightfont(), globalfontsize = foresightfo
                    xticksvisible = false,
                    yticksvisible = false,
                    zticksvisible = false,
-                   titlefont = string(globalfont) * " Bold",
-                   xticklabelfont = globalfont,
-                   yticklabelfont = globalfont,
-                   zticklabelfont = globalfont,
-                   xlabelfont = globalfont,
-                   ylabelfont = globalfont,
-                   zlabelfont = globalfont,
-                   titlesize = 20,
+                   titlefont = :bold,
+                   titlesize = globalfontsize * 10 / 9,
                    palette),
           Colorbar = (;
                       spinecolor = :gray88,
@@ -456,22 +450,20 @@ function _foresight(; globalfont = foresightfont(), globalfontsize = foresightfo
                       tickalign = 1,
                       ticklabelcolor = :black,
                       spinewidth = 0,
-                      ticklabelpad = 5,
-                      ticklabelfont = globalfont,
-                      labelfont = globalfont),
-          Textbox = (;
-                     font = globalfont),
+                      ticklabelpad = 5),
+          Textbox = (;),
           Scatter = (;),
           Lines = (; linecap = :round,
                    joinstyle = :round),
           Hist = (;),
           Density = (; strokewidth = 5,
                      cycle = Cycle([:color, :strokecolor], covary = true)),
-          Label = (; valign = :top, halign = :left, font = :bold, fontsize = 24))
+          Label = (; valign = :top, halign = :left, font = :bold,
+                   fontsize = globalfontsize * 4 / 3))
 end
 
 """
-    foresight(options...; font=foresightfont())
+    foresight(options...; fonts=foresightfonts())
 
 Return the default Foresight theme. The `options` argument can be used to modify the default values, by passing keyword arguments with the names of the attributes to be changed and their new values.
 
@@ -484,11 +476,14 @@ Some vailable options are:
 - `:gray`: Use a grayscale colormap.
 - `:physics`: Set a theme that resembles typical plots in physics journals.
 """
-function foresight(options...; font = foresightfont())
+function foresight(options...; fonts = foresightfonts())
+    if fonts isa String || fonts isa Symbol
+        foresightfonts(fonts)
+    end
     if :serif ∈ options
-        thm = _foresight(; globalfont = "Times")
+        thm = _foresight(; globalfonts = foresightfonts("Times"))
     else
-        thm = _foresight(; globalfont = font)
+        thm = _foresight(; globalfonts = fonts)
     end
     options = collect(options)
     options = options[options .!= :serif]

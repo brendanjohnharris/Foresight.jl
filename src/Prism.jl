@@ -97,16 +97,16 @@ function prismplot!(ax::Axis, f, H; kwargs...)
 end
 function prismplot!(f::Makie.GridPosition, args...;
                     colormap = seethrough(cgrad([:cornflowerblue, :cornflowerblue])),
-                    limits, axis = (), title = nothing, kwargs...)
+                    limits, axis = (), title = nothing, colorbarlabel = nothing, kwargs...)
     i = !isnothing(title)
     ax = Axis(f[i + 1, 1]; axis...)
     p = prismplot!(ax, args...; kwargs...)
     p.tellheight = true
-    C = Colorbar(f[i + 1, 2]; limits, colormap = colormap)
+    C = Colorbar(f[i + 1, 2]; limits, colormap = colormap, label = colorbarlabel)
     i && Label(f[1, :], title; halign = :center)
     # colsize!(f.layout, 1, Relative(0.8))
     # rowsize!(f.layout, 1, Aspect(2, 1))
-    return f
+    return f, ax
 end
 
 function prismplot!(f::Makie.GridPosition, g, X::AbstractMatrix{<:Number}; kwargs...)

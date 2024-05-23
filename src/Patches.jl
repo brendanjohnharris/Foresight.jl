@@ -4,7 +4,7 @@ __precompile__(false)
 using Makie
 import Makie: plot!, compute_x_and_width, StructArray, StructArrays, automatic,
               KernelDensity, getuniquevalue, median, extrema_nan, RGBA, Polygon,
-              PolyElements, poly_convert, to_lines, flip_xy, Mesh, Vec3f0, Point2f,
+              PolyElements, poly_convert, to_lines, flip_xy, Mesh, Vec3f, Point2f,
               linesegments!, poly!, to_color, lift, searchsortedfirst, searchsortedlast,
               findfirst, map, isnan, lines!, translate!, Violin
 

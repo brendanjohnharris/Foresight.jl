@@ -85,3 +85,11 @@ const cyclicsunrise = cgrad([
 # C = EqualizeColorMap("RGB", C[0:0.001:1], "CIEDE2000", [1, 1, 1], 6, true)
 # const cyclicsunrise = cgrad([RGB(c...) for c in eachrow(C)])
 export cyclicsunrise
+
+const foresight_colormaps = Dict(:sunset => sunset,
+                                 :sunrise => sunrise,
+                                 :cyclicsunrise => cyclicsunrise,
+                                 :cyclic => cyclic,
+                                 :lightsunset => lightsunset,
+                                 :darksunset => darksunset,
+                                 :binarysunset => binarysunset)

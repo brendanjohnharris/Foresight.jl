@@ -13,7 +13,7 @@ using Foresight
 foresight() |> Makie.set_theme!
 fig = Foresight.demofigure()
 ```
-![demo](test/demo.png)
+![demo](test/demos/demo.png)
 
 ## Theme options
 Any combination of the keywords below can be used to customise the theme.
@@ -22,30 +22,84 @@ Any combination of the keywords below can be used to customise the theme.
 foresight(:dark, :transparent) |> Makie.set_theme!
 fig = Foresight.demofigure()
 ```
-![demo](test/demo_dark.png)
+![demo](test/demos/dark.png)
 
 ### Transparent
 ```Julia
 foresight(:dark, :transparent) |> Makie.set_theme!
 fig = Foresight.demofigure()
 ```
-![demo](test/demo_transparentdark.png)
+![demo](test/demos/transparent.png)
 
 ### Serif
 ```Julia
 foresight(:serif) |> Makie.set_theme!
 fig = Foresight.demofigure()
 ```
-![demo](test/demo_serif.png)
+![demo](test/demos/serif.png)
 
 ### Physics
 ```Julia
 foresight(:physics) |> Makie.set_theme!
 fig = Foresight.demofigure()
 ```
-![demo](test/demo_physics.png)
+![demo](test/demos/physics.png)
+
+# Colors
+The theme is based on the colors `[cornflowerblue, crimson, cucumber, california, juliapurple]`:
+
+![palette](test/palette.svg)
+
+It also provides the following colormaps:
+#### sunrise
+![sunrise](test/colormaps/sunrise.svg)
+#### cyclicsunrise
+![cyclicsunrise](test/colormaps/cyclicsunrise.svg)
+#### sunset
+![sunset](test/colormaps/sunset.svg)
+#### darksunset
+![darksunset](test/colormaps/darksunset.svg)
+#### lightsunset
+![lightsunset](test/colormaps/lightsunset.svg)
+#### binarysunset
+![binarysunset](test/colormaps/binarysunset.svg)
+#### cyclic
+![cyclic](test/colormaps/cyclic.svg)
+
+# Recipes
+The following recipes are exported:
+
+### ziggurat
+
+A transparent stepped histogram, shown in the demo figure above.
+
+### hill
+
+A transparent kernel density plot, shown in the demo figure above.
+
+### prism
+
+Colors a positive definite matrix according to its eigendecomposition.
+![prism](./recipes/prism_light.svg#gh-light-mode-only)
+![prism](./recipes/prism_dark.svg#gh-dark-mode-only)
+
+### covellipse
+
+Plot an ellipse representing a given covariance matrix.
+![prism](./recipes/prism_light.svg#gh-light-mode-only)
+![prism](./recipes/prism_dark.svg#gh-dark-mode-only)
 
 # Utilities
+
+### addlabels!
+
+Add labels to a provided grid layout, automatically searching for blocks to label.
+
+```julia
+f = Foresight.demofigure()
+addlabels!(f)
+display(f)
+```
 
 ### seethrough
 
@@ -54,6 +108,32 @@ Converts a color gradient into a transparent version.
 ```julia
 C = cgrad(:viridis)
 transparent_gradient = seethrough(C)
+```
+
+### scientific
+
+Generate string representation of a number in scientific notation with a specified number of significant digits.
+
+```julia
+scientific(1/123.456, 3) # "8.10 × 10⁻³"
+```
+
+There is also an `lscientific` method, which returns a LaTeX string:
+```julia
+lscientific(1/123.456, 3) # "8.10 \\times 10^{-3}"
+```
+
+### brighten and darken
+
+Brighten a color by a given factor by blending it with white:
+
+```julia
+brighten(:cornflowerblue, 0.2) # Brightens the color by 20%
+```
+
+Or, darken a color by blending it with black:
+```julia
+darken(:cornflowerblue, 0.2) # Darkens the color by 20%
 ```
 
 ### widen
