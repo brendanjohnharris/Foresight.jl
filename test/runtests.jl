@@ -148,7 +148,7 @@ end
                ["PC 1", "PC 2"], position = :lt)
     ax.xlabel = ax.ylabel = "Variable"
     f
-    save("./recipes/prism_light.svg", f)
+    save("./recipes/prism_light.png", f; px_per_unit = 5)
 
     Makie.set_theme!(foresight(:transparent, :dark))
     f = OnePanel()
@@ -162,7 +162,7 @@ end
                ["PC 1", "PC 2"], position = :lt)
     ax.xlabel = ax.ylabel = "Variable"
     f
-    save("./recipes/prism_dark.svg", f)
+    save("./recipes/prism_dark.png", f; px_per_unit = 5)
 end
 
 @testset "covellipse" begin
@@ -179,7 +179,7 @@ end
                              strokecolor = cornflowerblue,
                              strokewidth = 5, scale = 2)
     scatter!(ax, x, y; markersize = 2, color = (cornflowerblue, 0.42))
-    save("./recipes/covellipse_light.svg", f)
+    save("./recipes/covellipse_light.png", f; px_per_unit = 5)
 
     Makie.set_theme!(foresight(:transparent, :dark))
     f = Figure()
@@ -188,7 +188,7 @@ end
                              strokecolor = cornflowerblue,
                              strokewidth = 5, scale = 2)
     scatter!(ax, x, y; markersize = 2, color = (cornflowerblue, 0.42))
-    save("./recipes/covellipse_dark.svg", f)
+    save("./recipes/covellipse_dark.png", f; px_per_unit = 5)
 end
 
 @testset "Importall" begin # Keep this at the end
