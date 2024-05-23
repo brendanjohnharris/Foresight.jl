@@ -185,6 +185,6 @@ Colors a positive definite matrix according to its eigendecomposition.
 ### covellipse
 
 Plot an ellipse representing a given covariance matrix.
-![prism](test/recipes/prism_light.png#gh-light-mode-only)
-![prism](test/recipes/prism_dark.png#gh-dark-mode-only)
+![prism](test/recipes/covellipse_light.png#gh-light-mode-only)
+![prism](test/recipes/covellipse_dark.png#gh-dark-mode-only)
 

@@ -150,7 +150,7 @@ end
     f
     save("./recipes/prism_light.png", f; px_per_unit = 5)
 
-    Makie.set_theme!(foresight(:transparent, :dark))
+    Makie.set_theme!(foresight(:dark, :transparent))
     f = OnePanel()
     limits = (0, maximum(abs.(Σ²)))
     g, ax = prismplot!(f[1, 1], H; limits, colorbarlabel = "Covariance magnitude")
@@ -181,7 +181,7 @@ end
     scatter!(ax, x, y; markersize = 2, color = (cornflowerblue, 0.42))
     save("./recipes/covellipse_light.png", f; px_per_unit = 5)
 
-    Makie.set_theme!(foresight(:transparent, :dark))
+    Makie.set_theme!(foresight(:dark, :transparent))
     f = Figure()
     ax = Axis(f[1, 1]; xlabel = "x", ylabel = "y")
     @test_nowarn covellipse!(ax, μ, Σ², color = (cornflowerblue, 0.1),
