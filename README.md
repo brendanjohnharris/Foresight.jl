@@ -80,14 +80,14 @@ A transparent kernel density plot, shown in the demo figure above.
 ### prism
 
 Colors a positive definite matrix according to its eigendecomposition.
-![prism](./recipes/prism_light.svg#gh-light-mode-only)
-![prism](./recipes/prism_dark.svg#gh-dark-mode-only)
+![prism](test/recipes/prism_light.svg#gh-light-mode-only)
+![prism](test/recipes/prism_dark.svg#gh-dark-mode-only)
 
 ### covellipse
 
 Plot an ellipse representing a given covariance matrix.
-![prism](./recipes/prism_light.svg#gh-light-mode-only)
-![prism](./recipes/prism_dark.svg#gh-dark-mode-only)
+![prism](test/recipes/prism_light.svg#gh-light-mode-only)
+![prism](test/recipes/prism_dark.svg#gh-dark-mode-only)
 
 # Utilities
 
