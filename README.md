@@ -45,50 +45,6 @@ fig = Foresight.demofigure()
 ```
 ![demo](test/demos/physics.png)
 
-# Colors
-The theme is based on the colors `[cornflowerblue, crimson, cucumber, california, juliapurple]`:
-
-![palette](test/palette.svg)
-
-It also provides the following colormaps:
-#### sunrise
-![sunrise](test/colormaps/sunrise.svg)
-#### cyclicsunrise
-![cyclicsunrise](test/colormaps/cyclicsunrise.svg)
-#### sunset
-![sunset](test/colormaps/sunset.svg)
-#### darksunset
-![darksunset](test/colormaps/darksunset.svg)
-#### lightsunset
-![lightsunset](test/colormaps/lightsunset.svg)
-#### binarysunset
-![binarysunset](test/colormaps/binarysunset.svg)
-#### cyclic
-![cyclic](test/colormaps/cyclic.svg)
-
-# Recipes
-The following recipes are exported:
-
-### ziggurat
-
-A transparent stepped histogram, shown in the demo figure above.
-
-### hill
-
-A transparent kernel density plot, shown in the demo figure above.
-
-### prism
-
-Colors a positive definite matrix according to its eigendecomposition.
-![prism](test/recipes/prism_light.svg#gh-light-mode-only)
-![prism](test/recipes/prism_dark.svg#gh-dark-mode-only)
-
-### covellipse
-
-Plot an ellipse representing a given covariance matrix.
-![prism](test/recipes/prism_light.svg#gh-light-mode-only)
-![prism](test/recipes/prism_dark.svg#gh-dark-mode-only)
-
 # Utilities
 
 ### addlabels!
@@ -187,4 +143,48 @@ using Foresight
 scene = CairoMakie.Scene()
 gtkshow(scene)
 ```
+
+# Colors
+The theme is based on the colors `[cornflowerblue, crimson, cucumber, california, juliapurple]`:
+
+![palette](test/palette.svg)
+
+It also provides the following colormaps:
+#### sunrise
+![sunrise](test/colormaps/sunrise.svg)
+#### cyclicsunrise
+![cyclicsunrise](test/colormaps/cyclicsunrise.svg)
+#### sunset
+![sunset](test/colormaps/sunset.svg)
+#### darksunset
+![darksunset](test/colormaps/darksunset.svg)
+#### lightsunset
+![lightsunset](test/colormaps/lightsunset.svg)
+#### binarysunset
+![binarysunset](test/colormaps/binarysunset.svg)
+#### cyclic
+![cyclic](test/colormaps/cyclic.svg)
+
+# Recipes
+The following recipes are exported:
+
+### ziggurat
+
+A transparent stepped histogram, shown in the demo figure above.
+
+### hill
+
+A transparent kernel density plot, shown in the demo figure above.
+
+### prism
+
+Colors a positive definite matrix according to its eigendecomposition.
+![prism](test/recipes/prism_light.svg#gh-light-mode-only)
+![prism](test/recipes/prism_dark.svg#gh-dark-mode-only)
+
+### covellipse
+
+Plot an ellipse representing a given covariance matrix.
+![prism](test/recipes/prism_light.svg#gh-light-mode-only)
+![prism](test/recipes/prism_dark.svg#gh-dark-mode-only)
 
