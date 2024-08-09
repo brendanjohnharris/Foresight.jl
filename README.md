@@ -164,6 +164,8 @@ It also provides the following colormaps:
 ![binarysunset](test/colormaps/binarysunset.svg)
 #### cyclic
 ![cyclic](test/colormaps/cyclic.svg)
+#### pelagic
+![pelagic](test/colormaps/pelagic.svg)
 
 # Recipes
 The following recipes are exported:

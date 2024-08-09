@@ -221,3 +221,5 @@ function Makie.plot!(p::Bandwidth)
     ]
     band!(p, x, yl, yu; [h => p.attributes[h] for h in bandatts]...)
 end
+
+

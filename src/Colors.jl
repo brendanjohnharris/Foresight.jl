@@ -36,6 +36,52 @@ const _greyseas = colorant"#eeeeee"
 export _greyseas
 __crimson = brighten(crimson, 0.1)
 __california = darken(california, 0.1)
+
+const epipelagic = colorant"#FA9F42"
+export epipelagic
+const mesopelagic = colorant"#007878"
+export mesopelagic
+const bathypelagic = colorant"#023653"
+export bathypelagic
+const pelagicopelagic = colorant"#280137"
+export pelagicopelagic
+
+function perceived_lightness(c::AbstractRGB)
+    # ? https://stackoverflow.com/questions/596216/formula-to-determine-perceived-brightness-of-rgb-color
+    r, g, b = c.r, c.g, c.b
+    lin(c) = c ≤ 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055)^2.4
+    Y = 0.2126lin(r) + 0.7152lin(g) + 0.0722lin(b)
+    return Y ≤ (216 / 24389) ? Y * (24389 / 27) : 116 * Y^(1 / 3) - 16
+end
+export perceived_lightness
+
+function make_lightness_linear(cs; flat = false, tol = 0.001)
+    ls = perceived_lightness.(RGB.(cs))
+    if flat
+        mb = [mean(ls), 0] # Constant brightness
+    else
+        mb = [ones(length(ls)) (1:length(ls))] \ ls
+    end
+    L = mb[1] .+ mb[2] * (1:length(ls)) |> collect
+    map(enumerate(cs)) do (i, c)
+        l = L[i]
+        while abs(l - perceived_lightness(c)) > tol &&
+            perceived_lightness(c) ∈ 0.1 .. 99.9
+            if perceived_lightness(c) > l
+                c = darken(c, tol)
+            else
+                c = brighten(c, tol)
+            end
+        end
+        return c
+    end
+end
+export make_lightness_linear
+
+pelagic = cgrad([epipelagic, mesopelagic, bathypelagic, pelagicopelagic],
+                [0, 0.3, 0.6, 0.8, 1]) #.|> RGB #|> make_lightness_linear |> cgrad
+export pelagic
+
 C = reverse(cgrad([__crimson, juliapurple, cornflowerblue], [0, 0.65, 1]))
 export sunset
 
@@ -92,4 +138,5 @@ const foresight_colormaps = Dict(:sunset => sunset,
                                  :cyclic => cyclic,
                                  :lightsunset => lightsunset,
                                  :darksunset => darksunset,
-                                 :binarysunset => binarysunset)
+                                 :binarysunset => binarysunset,
+                                 :pelagic => pelagic)
