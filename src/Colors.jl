@@ -43,8 +43,8 @@ const mesopelagic = colorant"#007878"
 export mesopelagic
 const bathypelagic = colorant"#023653"
 export bathypelagic
-const pelagicopelagic = colorant"#280137"
-export pelagicopelagic
+const abyssopelagic = colorant"#280137"
+export abyssopelagic
 
 function perceived_lightness(c::AbstractRGB)
     # ? https://stackoverflow.com/questions/596216/formula-to-determine-perceived-brightness-of-rgb-color
@@ -78,8 +78,8 @@ function make_lightness_linear(cs; flat = false, tol = 0.001)
 end
 export make_lightness_linear
 
-pelagic = cgrad([epipelagic, mesopelagic, bathypelagic, pelagicopelagic],
-                [0, 0.3, 0.6, 0.8, 1]) #.|> RGB #|> make_lightness_linear |> cgrad
+pelagic = cgrad([epipelagic, mesopelagic, bathypelagic, abyssopelagic],
+                [0, 0.35, 0.6, 0.78, 1]) #.|> RGB #|> make_lightness_linear |> cgrad
 export pelagic
 
 C = reverse(cgrad([__crimson, juliapurple, cornflowerblue], [0, 0.65, 1]))
