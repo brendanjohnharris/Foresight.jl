@@ -23,6 +23,20 @@ function SixPanel(args...; kwargs...)
     return f
 end
 
+"""
+    subdivide(f, nrows::Int, ncols::Int)::Matrix{GridPosition}
+
+Subdivides a figure `f` into a grid with specified number of rows and columns.
+Returns the corresponding grid positions
+
+# Example
+```julia
+f = Figure()
+gs = subdivide(f, 2, 2)
+axs = Axis.(gs)
+display(f)
+```
+"""
 function subdivide(f, nrows::Int, ncols::Int)
     grid = [f[i, j] for i in 1:nrows, j in 1:ncols]
     return permutedims(grid, (2, 1))
@@ -49,8 +63,8 @@ grid positions.
 ## Examples
 ```julia
 f = Figure()
-gps = subdivide(f, 2, 2)
-addlabels!(gps)
+gs = subdivide(f, 2, 2)
+addlabels!(gs)
 display(f)
 ```
 """
