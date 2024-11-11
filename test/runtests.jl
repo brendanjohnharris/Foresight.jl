@@ -5,6 +5,32 @@ using Statistics
 using LinearAlgebra
 using Foresight
 using CairoMakie.Makie.Distributions
+using LaTeXStrings
+
+@testset "Scientific formatting" begin
+    x = scientific(1e-3, 1)
+    @test x == "1.0 × 10⁻³"
+    x = scientific(1e-3, 0)
+    @test x == "1 × 10⁻³"
+    x = scientific(π, 5)
+    @test x == "3.14159"
+    x = scientific(-π * 10^-6, 3)
+    @test x == "-3.142 × 10⁻⁶"
+
+    x = lscientific(1e-3, 1)
+    @test x == "1.0\\times 10^{-3}"
+    x = lscientific(1e-3, 0)
+    @test x == "1\\times 10^{-3}"
+    x = lscientific(π, 5)
+    @test x == "3.14159"
+    x = lscientific(-π * 10^-6, 3)
+    @test x == "-3.142\\times 10^{-6}"
+
+    x = (rand(1000) .- 0.5) .* 10 .|> exp10
+    @test_nowarn scientific.(x)
+    @test_nowarn lscientific.(x)
+    @test_nowarn Lscientific.(x)
+end
 
 @testset "Ziggurat plot" begin
     x = randn(1000)

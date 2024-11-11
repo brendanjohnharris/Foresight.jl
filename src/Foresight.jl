@@ -15,8 +15,8 @@ using Requires
 # end
 
 export foresight, importall, freeze!, clip, hidexaxis!, hideyaxis!, axiscolorbar,
-       reverselegend!,
-       scientific, lscientific
+    reverselegend!,
+    scientific, lscientific, Lscientific
 
 """
     seethrough(C::ContinuousColorGradient, start=0.0, stop=1.0)
@@ -29,7 +29,7 @@ C = sunrise;
 transparent_gradient = seethrough(C)
 ```
 """
-function seethrough(C::Makie.PlotUtils.ContinuousColorGradient, start = 0, stop = 1.0)
+function seethrough(C::Makie.PlotUtils.ContinuousColorGradient, start=0, stop=1.0)
     colors = C.colors
     alphas = LinRange(start, stop, length(colors))
     return cgrad([RGBA(RGB(c), a) for (c, a) in zip(colors, alphas)], C.values)
@@ -91,11 +91,11 @@ include("Recipes.jl")
 
 # * A good font
 const foresightfont = "Arial"
-function foresightfonts(font = foresightfont)
+function foresightfonts(font=foresightfont)
     Attributes(:regular => font,
-               :bold => font * " Bold",
-               :italic => font * " Italic",
-               :bold_italic => font * " Bold Italic")
+        :bold => font * " Bold",
+        :italic => font * " Italic",
+        :bold_italic => font * " Bold Italic")
 end
 
 foresightfontsize() = 18
@@ -103,7 +103,7 @@ foresightfontsize() = 18
 """
 Slightly widen an interval by a fraction δ
 """
-function widen(x, δ = 0.05)
+function widen(x, δ=0.05)
     @assert length(x) == 2
     Δ = diff(x |> collect)[1]
     return x .+ δ * Δ .* [-1, 1]
@@ -121,14 +121,14 @@ Set the default theme to `thm` and save it as a preference. The change will take
 """
 macro default_theme!(thm)
     try
-        @set_preferences!("default_theme"=>string(thm))
+        @set_preferences!("default_theme" => string(thm))
         @info("Default theme set to $thm. Restart Julia for the change to take effect")
     catch e
         @error "Could not set theme. Reverting to Foresight.jl default"
     end
 end
 export @default_theme!
-_default_theme = @load_preference("default_theme", default="foresight()")
+_default_theme = @load_preference("default_theme", default = "foresight()")
 function default_theme()
     try
         eval(Meta.parse(_default_theme))
@@ -141,7 +141,7 @@ end
 function __init__()
     # @eval Makie.set_theme!(default_theme())
     # @static if !isdefined(Base, :get_extension)
-    @require Plots="91a5bcdd-55d7-5caf-9e0b-520d859cae80" begin
+    @require Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80" begin
         include("../ext/PlotsExt.jl")
     end
     # @require Gtk="4c0ca9eb-093a-5379-98c5-f87ac0bbbf44" begin
@@ -157,57 +157,57 @@ Produce a figure showcasing the current theme.
 """
 function demofigure()
     Random.seed!(32)
-    f = Figure(size = (1080, 640))
-    ax = Axis(f[1, 1], title = "Measurements", xlabel = "Time (s)", ylabel = "Amplitude")
+    f = Figure(size=(1080, 640))
+    ax = Axis(f[1, 1], title="Measurements", xlabel="Time (s)", ylabel="Amplitude")
     labels = [L"\alpha", L"\beta", L"\gamma", L"\delta", L"\epsilon", L"\zeta"]
     for i in 1:6
         y = cumsum(randn(10)) .* (isodd(i) ? 1 : -1)
-        lines!(y, label = labels[i])
+        lines!(y, label=labels[i])
         # scatter!(y, label = labels[i])
     end
-    Legend(f[1, 2], ax, "Legend", merge = true, nbanks = 2)
-    Axis3(f[1, 3], viewmode = :stretch, zlabeloffset = 40, title = "Variable: σ ⤆ τ")
+    Legend(f[1, 2], ax, "Legend", merge=true, nbanks=2)
+    Axis3(f[1, 3], viewmode=:stretch, zlabeloffset=40, title="Variable: σ ⤆ τ")
     s = Makie.surface!(0:0.5:10, 0:0.5:10, (x, y) -> sqrt(x * y) + sin(1.5x),
-                       colormap = seethrough(sunrise, 0.9, 0.1))
-    Colorbar(f[1, 4], s, label = "Intensity")
-    ax = Axis(f[2, 1:2], title = "Hill plots", xlabel = "Height (m)",
-              ylabel = "Density")
+        colormap=seethrough(sunrise, 0.9, 0.1))
+    Colorbar(f[1, 4], s, label="Intensity")
+    ax = Axis(f[2, 1:2], title="Hill plots", xlabel="Height (m)",
+        ylabel="Density")
     for i in 1:6
         y = randn(200) .+ 2i
         hill!(y)
     end
     tightlimits!(ax, Bottom())
     Makie.xlims!(ax, -1, 15)
-    Axis(f[2, 3:4], title = "Stock performance", xticks = (1:6, labels), xlabel = "Company",
-         ylabel = "Gain (\$)")
+    Axis(f[2, 3:4], title="Stock performance", xticks=(1:6, labels), xlabel="Company",
+        ylabel="Gain (\$)")
     for i in 1:6
         data = randn(1)
         barplot!([i], data)
-        rangebars!([i], data .- 0.2, data .+ 0.2, color = :gray41)
+        rangebars!([i], data .- 0.2, data .+ 0.2, color=:gray41)
     end
 
-    ax = Makie.Axis(f[1, 5], title = "Ziggurat plots")
+    ax = Makie.Axis(f[1, 5], title="Ziggurat plots")
     tightlimits!(ax)
     for i in 1:3
         y = randn(200) .+ 2i
         ziggurat!(y)
     end
 
-    ax = Makie.Axis(f[2, 5], title = "Strange attractor") # From the Makie docs for datashader
-    function trajectory(fn, x0, y0, kargs...; n = 1000) #  kargs = a, b, c, d
+    ax = Makie.Axis(f[2, 5], title="Strange attractor") # From the Makie docs for datashader
+    function trajectory(fn, x0, y0, kargs...; n=1000) #  kargs = a, b, c, d
         xy = zeros(Point2f, n + 1)
         xy[1] = Point2f(x0, y0)
         @inbounds for i in 1:n
-            xy[i + 1] = fn(xy[i], kargs...)
+            xy[i+1] = fn(xy[i], kargs...)
         end
         return xy
     end
     Clifford((x, y), a, b, c, d) = Point2f(sin(a * y) + c * cos(a * x),
-                                           sin(b * x) + d * cos(b * y))
+        sin(b * x) + d * cos(b * y))
     arg = [0, 0, -1.7, 1.5, -0.5, 0.7]
-    points = trajectory(Clifford, arg...; n = Int(5e6))
-    datashader!(ax, points, async = false,
-                colormap = cgrad([:transparent, cornflowerblue, darkbg], [0, 0.4, 1]))
+    points = trajectory(Clifford, arg...; n=Int(5e6))
+    datashader!(ax, points, async=false,
+        colormap=cgrad([:transparent, cornflowerblue, darkbg], [0, 0.4, 1]))
     f
 end
 
@@ -223,7 +223,7 @@ plot!(ax, -5:0.01:5, x->sinc(x))
 freeze!(ax)
 ```
 """
-function freeze!(ax::Union{Axis, Axis3})
+function freeze!(ax::Union{Axis,Axis3})
     limits = ax.finallimits.val
     limits = zip(limits.origin, limits.origin .+ limits.widths)
     limits = (first(limits)..., last(limits)...)
@@ -244,7 +244,7 @@ f = plot(-5:0.01:5, x->sinc(x))
 clip(f)
 ```
 """
-function clip(fig = Makie.current_figure(), fmt = :png; kwargs...)
+function clip(fig=Makie.current_figure(), fmt=:png; kwargs...)
     freeze!(fig)
     tmp = tempname() * "." * string(fmt)
     Makie.save(tmp, fig; kwargs...)
@@ -285,7 +285,7 @@ importall(module) .|> eval
 function importall(mdl)
     mdl = eval(mdl)
     fullname = Symbol(mdl)
-    exp = names(eval(mdl), all = true)
+    exp = names(eval(mdl), all=true)
     return [:(import $fullname.$e) for e in exp]
 end
 
@@ -314,11 +314,11 @@ Generate string representation of a number in scientific notation with a specifi
 
 # Example
 ```julia
-scientific(1/123.456, 3) # "8.10 × 10⁻³"
+scientific(1/123.456, 2) # "8.10 × 10⁻³"
 ```
 """
-function scientific(x::Real, sigdigits = 2)
-    formatted = fmt(".$(sigdigits-1)e", x)
+function scientific(x::Real, sigdigits=2)
+    formatted = pyfmt(".$(sigdigits)e", x)
     formatted = replace(formatted, "e+0" => "e+")
     formatted = replace(formatted, "e-0" => "e-")
     formatted = replace(formatted, "e+" => "e")
@@ -333,133 +333,140 @@ function scientific(x::Real, sigdigits = 2)
         neg = ""
     end
 
-    unicode_exponent = join(['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'][parse(Int, digit) + 1]
+    unicode_exponent = join(['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'][parse(Int, digit)+1]
                             for digit in exponent)
 
     formatted = split(formatted, " ")[1] * " " * split(formatted, " ")[2] * " 10" * neg *
                 unicode_exponent
+
+    s = replace(formatted, " × 10⁰" => "")
 end
 
 """
     lscientific(x::Real, sigdigits=2)
 
-Return a string representation of a number in scientific notation with a specified number of significant digits. This is _not_ an L-string.
+Return a string representation of a number in scientific notation with a specified number of
+significant digits. This is _not_ an L-string.
+See [`Lscientific`](@ref)
 
 # Example
 ```julia
-lscientific(1/123.456, 3) # "8.10 \\times 10^{-3}"
+x = lscientific(1/123.456, 2) # "8.10 \\times 10^{-3}"
+l = LaTeXString(x)
 ```
 """
-function lscientific(x::Real, sigdigits = 2)
-    formatted = fmt(".$(sigdigits-1)e", x)
+function lscientific(x::Real, sigdigits=2)
+    formatted = pyfmt(".$(sigdigits)e", x)
     formatted = replace(formatted, "e+0" => "e+")
     formatted = replace(formatted, "e-0" => "e-")
     formatted = replace(formatted, "e+" => "e")
 
     s = replace(formatted, "e" => "\\times 10^{")
-
     s = s * "}"
+    s = replace(s, "\\times 10^{0}" => "")
 end
+
+Lscientific(args...) = LaTeXString(lscientific(args...))
 
 colororder = [(cornflowerblue, 0.7),
     (crimson, 0.7),
     (cucumber, 0.7),
     (california, 0.7),
     (juliapurple, 0.7)]
-palette = (patchcolor = colororder,
-           color = colororder,
-           strokecolor = colororder)
+palette = (patchcolor=colororder,
+    color=colororder,
+    strokecolor=colororder)
 
-function _foresight(; globalfonts = foresightfonts(), globalfontsize = foresightfontsize())
+function _foresight(; globalfonts=foresightfonts(), globalfontsize=foresightfontsize())
     Theme(;
-          colormap = sunrise,
-          strokewidth = 10.0,
-          strokecolor = :cornflowerblue,
-          strokevisible = true,
-          font = :regular,
-          fonts = globalfonts,
-          palette,
-          linewidth = 5.0,
-          patchstrokewidth = 0.0,
-          markersize = 15,
-          fontsize = globalfontsize,
-          linecap = :round,
-          joinstyle = :round,
-          Figure = (;
-                    size = (720, 480)),
-          Axis = (;
-                  backgroundcolor = :white,
-                  topspinecolor = :gray88,
-                  leftspinecolor = :gray88,
-                  bottomspinecolor = :gray88,
-                  rightspinecolor = :gray88,
-                  xgridcolor = :gray88,
-                  ygridcolor = :gray88,
-                  xminorgridcolor = :gray91,
-                  # xminorgridvisible = true,
-                  yminorgridcolor = :gray91,
-                  # yminorgridvisible = true,
-                  leftspinevisible = false,
-                  rightspinevisible = false,
-                  bottomspinevisible = false,
-                  topspinevisible = false,
-                  xminorticksvisible = false,
-                  yminorticksvisible = false,
-                  xticksvisible = false,
-                  yticksvisible = false,
-                  spinewidth = 1,
-                  xticklabelcolor = :black,
-                  yticklabelcolor = :black,
-                  titlecolor = :black,
-                  xticksize = 4,
-                  yticksize = 4,
-                  xtickwidth = 1.5,
-                  ytickwidth = 1.5,
-                  xgridwidth = 1.5,
-                  ygridwidth = 1.5,
-                  xlabelpadding = 3,
-                  ylabelpadding = 3,
-                  palette,
-                  titlefont = :bold, # "times serif bold",
-                  titlesize = globalfontsize * 10 / 9),
-          Legend = (;
-                    framevisible = false,
-                    padding = (1, 1, 1, 1),
-                    patchcolor = :transparent,
-                    titlefont = :bold),
-          Axis3 = (;
-                   spinecolor = :gray81,
-                   xgridcolor = :gray81,
-                   ygridcolor = :gray81,
-                   zgridcolor = :gray81,
-                   xspinesvisible = false,
-                   yspinesvisible = false,
-                   zspinesvisible = false,
-                   yzpanelcolor = :white,
-                   xzpanelcolor = :white,
-                   xypanelcolor = :white,
-                   xticksvisible = false,
-                   yticksvisible = false,
-                   zticksvisible = false,
-                   titlefont = :bold,
-                   titlesize = globalfontsize * 10 / 9,
-                   palette),
-          Colorbar = (;
-                      spinecolor = :gray88,
-                      tickcolor = :white,
-                      tickalign = 1,
-                      ticklabelcolor = :black,
-                      spinewidth = 0,
-                      ticklabelpad = 5),
-          Textbox = (;),
-          Scatter = (;),
-          Lines = (; linecap = :round,
-                   joinstyle = :round),
-          Hist = (;),
-          Density = (; strokewidth = 5,
-                     cycle = Cycle([:color, :strokecolor], covary = true)),
-          Label = (; valign = :top, halign = :left, font = :bold,
-                   fontsize = globalfontsize * 4 / 3))
+        colormap=sunrise,
+        strokewidth=10.0,
+        strokecolor=:cornflowerblue,
+        strokevisible=true,
+        font=:regular,
+        fonts=globalfonts,
+        palette,
+        linewidth=5.0,
+        patchstrokewidth=0.0,
+        markersize=15,
+        fontsize=globalfontsize,
+        linecap=:round,
+        joinstyle=:round,
+        Figure=(;
+            size=(720, 480)),
+        Axis=(;
+            backgroundcolor=:white,
+            topspinecolor=:gray88,
+            leftspinecolor=:gray88,
+            bottomspinecolor=:gray88,
+            rightspinecolor=:gray88,
+            xgridcolor=:gray88,
+            ygridcolor=:gray88,
+            xminorgridcolor=:gray91,
+            # xminorgridvisible = true,
+            yminorgridcolor=:gray91,
+            # yminorgridvisible = true,
+            leftspinevisible=false,
+            rightspinevisible=false,
+            bottomspinevisible=false,
+            topspinevisible=false,
+            xminorticksvisible=false,
+            yminorticksvisible=false,
+            xticksvisible=false,
+            yticksvisible=false,
+            spinewidth=1,
+            xticklabelcolor=:black,
+            yticklabelcolor=:black,
+            titlecolor=:black,
+            xticksize=4,
+            yticksize=4,
+            xtickwidth=1.5,
+            ytickwidth=1.5,
+            xgridwidth=1.5,
+            ygridwidth=1.5,
+            xlabelpadding=3,
+            ylabelpadding=3,
+            palette,
+            titlefont=:bold, # "times serif bold",
+            titlesize=globalfontsize * 10 / 9),
+        Legend=(;
+            framevisible=false,
+            padding=(1, 1, 1, 1),
+            patchcolor=:transparent,
+            titlefont=:bold),
+        Axis3=(;
+            spinecolor=:gray81,
+            xgridcolor=:gray81,
+            ygridcolor=:gray81,
+            zgridcolor=:gray81,
+            xspinesvisible=false,
+            yspinesvisible=false,
+            zspinesvisible=false,
+            yzpanelcolor=:white,
+            xzpanelcolor=:white,
+            xypanelcolor=:white,
+            xticksvisible=false,
+            yticksvisible=false,
+            zticksvisible=false,
+            titlefont=:bold,
+            titlesize=globalfontsize * 10 / 9,
+            palette),
+        Colorbar=(;
+            spinecolor=:gray88,
+            tickcolor=:white,
+            tickalign=1,
+            ticklabelcolor=:black,
+            spinewidth=0,
+            ticklabelpad=5),
+        Textbox=(;),
+        Scatter=(;),
+        Lines=(; linecap=:round,
+            joinstyle=:round),
+        Hist=(;),
+        Density=(; strokewidth=5,
+            cycle=Cycle([:color, :strokecolor], covary=true)),
+        Label=(; valign=:top, halign=:left, font=:bold,
+            fontsize=globalfontsize * 4 / 3))
 end
 
 """
@@ -476,17 +483,17 @@ Some vailable options are:
 - `:gray`: Use a grayscale colormap.
 - `:physics`: Set a theme that resembles typical plots in physics journals.
 """
-function foresight(options...; fonts = foresightfonts())
+function foresight(options...; fonts=foresightfonts())
     if fonts isa String || fonts isa Symbol
         foresightfonts(fonts)
     end
     if :serif ∈ options
-        thm = _foresight(; globalfonts = foresightfonts("Times"))
+        thm = _foresight(; globalfonts=foresightfonts("Times"))
     else
-        thm = _foresight(; globalfonts = fonts)
+        thm = _foresight(; globalfonts=fonts)
     end
     options = collect(options)
-    options = options[options .!= :serif]
+    options = options[options.!=:serif]
     _foresight!.((thm,), Val.(options))
     return thm
 end
@@ -616,13 +623,13 @@ p = plot!(ax, x, x->sinc(x), color=1:length(x), colormap=sunset)
 axiscolorbar(ax, p; label="Time (m)")
 ```
 """
-function axiscolorbar(ax, args...; position = :rt, kwargs...)
+function axiscolorbar(ax, args...; position=:rt, kwargs...)
     C = Colorbar(ax.parent, args...;
-                 bbox = ax.scene.px_area,
-                 Makie.legend_position_to_aligns(position)...,
-                 kwargs...)
+        bbox=ax.scene.px_area,
+        Makie.legend_position_to_aligns(position)...,
+        kwargs...)
     if !isempty(C.label[])
-        ax.alignmode = Mixed(right = 75)
+        ax.alignmode = Mixed(right=75)
     end
 end
 

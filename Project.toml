@@ -1,7 +1,7 @@
 name = "Foresight"
 uuid = "c6e1034d-1844-4b96-abf2-c5824a5aa8c3"
 authors = ["brendanjohnharris <brendanjohnharris@gmail.com>"]
-version = "0.2.2"
+version = "0.2.3"
 
 [deps]
 Clustering = "aaaa29a8-35af-508c-8bc3-b662a17a0fe5"
