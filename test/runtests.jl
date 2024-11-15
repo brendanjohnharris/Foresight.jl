@@ -40,6 +40,7 @@ end
     ziggurat!(ax, x; color = :red)
     ziggurat!(ax, y; color = :green)
     display(f)
+    @test_nowarn clip(f)
 end
 
 @testset "Bandwidth plot" begin
@@ -49,6 +50,7 @@ end
     ax = Axis(f[1, 1])
     bandwidth!(ax, x, y; linewidth = range(0.001, 0.05, length = length(x)))
     display(f)
+    @test_nowarn clip(f)
 end
 
 @testset "Kinetic plot" begin
@@ -58,6 +60,7 @@ end
     ax = Axis(f[1, 1])
     kinetic!(ax, x, y; linewidthscale = 0.5, linewidth = :curv)
     display(f)
+    @test_nowarn clip(f)
 end
 
 @testset "Polar histogram" begin
@@ -77,6 +80,7 @@ end
     ax = PolarAxis(f[1, 1])
     polardensity!(ax, x; bins = 100, strokewidth = 5, strokecolor = :angle)
     display(f)
+    @test_nowarn clip(f)
 end
 
 @testset "addlabels!" begin
@@ -133,6 +137,8 @@ end
     for (name, c) in Foresight.foresight_colormaps
         save("./colormaps/$name.svg", c)
     end
+    @test_nowarn freeze!(f)
+    @test_nowarn clip(f)
 end
 
 @testset "Seethrough" begin
