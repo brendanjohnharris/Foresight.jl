@@ -4,7 +4,6 @@ using Makie
 using Format
 using Colors
 using Random
-# using Images
 using ImageClipboard
 using FileIO
 using Preferences
