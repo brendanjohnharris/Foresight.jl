@@ -251,7 +251,7 @@ function clip(fig=Makie.current_figure(), fmt=:png; kwargs...)
     try
         clipboard_img(img)
     catch e
-        @warn "Could not copy to clipboard"
+        @warn e
     end
     return tmp
 end
