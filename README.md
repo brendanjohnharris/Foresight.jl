@@ -4,6 +4,7 @@
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://brendanjohnharris.github.io/Foresight.jl/dev/)
 [![Build Status](https://github.com/brendanjohnharris/Foresight.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/brendanjohnharris/Foresight.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![Coverage](https://codecov.io/gh/brendanjohnharris/Foresight.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/brendanjohnharris/Foresight.jl)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14511387.svg)](https://doi.org/10.5281/zenodo.14511387)
 
 A Makie theme. And some cool utilities.
 # Usage
@@ -132,16 +133,6 @@ Hides the x-axis or y-axis, respectively, of a given axis object.
 fig, ax, plt = scatter(rand(10), rand(10))
 hidexaxis!(ax)
 hideyaxis!(ax)
-```
-
-### gtkshow
-
-Displays a CairoMakie scene, axis, figure, or FigureAxisPlot in a new GTK window. If Gtk is loaded, this is the default display method for CairoMakie figures. Useful for X-forwarding CairoMakie outputs from e.g. a remote cluster.
-```julia
-using CairoMakie, Gtk
-using Foresight
-scene = CairoMakie.Scene()
-gtkshow(scene)
 ```
 
 # Colors
