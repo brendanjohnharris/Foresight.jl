@@ -39,3 +39,5 @@ data/**
 
 LocalPreferences.toml
 lcov.info
+
+**/index.html
