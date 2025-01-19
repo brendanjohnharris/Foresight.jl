@@ -37,45 +37,45 @@ end
     y = randn(1000) .+ 2
     f = Figure()
     ax = Axis(f[1, 1])
-    ziggurat!(ax, x; color = :red)
-    ziggurat!(ax, y; color = :green)
+    ziggurat!(ax, x; color=:red)
+    ziggurat!(ax, y; color=:green)
     display(f)
 end
 
 @testset "Bandwidth plot" begin
-    x = range(-4π, 4π, length = 10000)
+    x = range(-4π, 4π, length=10000)
     y = sinc.(x)
     f = Figure()
     ax = Axis(f[1, 1])
-    bandwidth!(ax, x, y; linewidth = range(0.001, 0.05, length = length(x)))
+    bandwidth!(ax, x, y; linewidth=range(0.001, 0.05, length=length(x)))
     display(f)
 end
 
 @testset "Kinetic plot" begin
-    x = range(-4π, 4π, length = 10000)
+    x = range(-4π, 4π, length=10000)
     y = sinc.(x)
     f = Figure()
     ax = Axis(f[1, 1])
-    kinetic!(ax, x, y; linewidthscale = 0.5, linewidth = :curv)
+    kinetic!(ax, x, y; linewidthscale=0.5, linewidth=:curv)
     display(f)
 end
 
 @testset "Polar histogram" begin
-    x = [rand(Distributions.VonMises(-3, 10), 100); rand(VonMises(0, 10), 100)]
+    x = [rand(Distributions.VonMises(-3, 10), 10000); rand(VonMises(1, 10), 10000)]
 
     f = Figure()
     ax = PolarAxis(f[1, 1])
-    polarhist!(ax, x; bins = 100)
+    polarhist!(ax, x; bins=100, strokewidth=0)
     display(f)
 
     f = Figure()
     ax = PolarAxis(f[1, 1])
-    polardensity!(ax, x; strokewidth = 5, strokecolor = :crimson)
+    polardensity!(ax, x; strokewidth=5, strokecolor=:crimson)
     display(f)
 
     f = Figure()
     ax = PolarAxis(f[1, 1])
-    polardensity!(ax, x; bins = 100, strokewidth = 5, strokecolor = :angle)
+    polardensity!(ax, x; bins=100, strokewidth=5, strokecolor=:angle, strokecolormap=cyclic)
     display(f)
 end
 
@@ -90,7 +90,7 @@ end
     @test_nowarn display(f)
 
     f = Foresight.demofigure()
-    @test_nowarn addlabels!(f; dims = 1)
+    @test_nowarn addlabels!(f; dims=1)
     @test_nowarn display(f)
 
     f = Foresight.demofigure()
@@ -106,29 +106,29 @@ end
     @test_nowarn Makie.set_theme!(foresight())
     f = Foresight.demofigure()
     addlabels!(f)
-    save("./demos/demo.png", f, px_per_unit = 5)
+    save("./demos/demo.png", f, px_per_unit=5)
 
     @test_nowarn Makie.set_theme!(foresight(:dark))
     f = Foresight.demofigure()
     addlabels!(f)
-    save("./demos/dark.png", f, px_per_unit = 5)
+    save("./demos/dark.png", f, px_per_unit=5)
 
     @test_nowarn Makie.set_theme!(foresight(:dark, :transparent))
     f = Foresight.demofigure()
     addlabels!(f)
-    save("./demos/transparent.png", f, px_per_unit = 5)
+    save("./demos/transparent.png", f, px_per_unit=5)
 
     Makie.set_theme!(foresight(:serif))
     f = Foresight.demofigure()
     addlabels!(f)
-    save("./demos/serif.png", f, px_per_unit = 5)
+    save("./demos/serif.png", f, px_per_unit=5)
 
     Makie.set_theme!(foresight(:physics))
     f = Foresight.demofigure()
     addlabels!(f)
-    save("./demos/physics.png", f, px_per_unit = 5)
+    save("./demos/physics.png", f, px_per_unit=5)
 
-    save("./palette.svg", cgrad(first.(Foresight.palette[1]), categorical = true))
+    save("./palette.svg", cgrad(first.(Foresight.palette[1]), categorical=true))
 
     for (name, c) in Foresight.foresight_colormaps
         save("./colormaps/$name.svg", c)
@@ -151,75 +151,75 @@ end
         randn(1000, 4) *
         [1.0 0.04 0.09 0.4; 0.04 1.0 0.01 0.1; 0.09 0.01 1.0 0.2; 0.4 0.1 0.2 1.0]
     z = [x y]
-    Σ² = cov(z; dims = 1)
+    Σ² = cov(z; dims=1)
     # heatmap(Σ²; colormap=:binary)
 
     @test_nowarn H = prism(Σ²)
 
-    xs = 0:0.001:(π * 1.5)
+    xs = 0:0.001:(π*1.5)
     ys = [sin.(xs .+ i) for i in 0.1:0.1:(2π)]
     ys = hcat(ys...)
     ys = ys + randn(size(ys)) ./ 10
-    Σ² = cov(ys; dims = 1)
-    H = prism(Σ²; palette = [cornflowerblue, crimson])
+    Σ² = cov(ys; dims=1)
+    H = prism(Σ²; palette=[cornflowerblue, crimson])
 
     Makie.set_theme!(foresight())
     f = OnePanel()
     limits = (0, maximum(abs.(Σ²)))
-    g, ax = prismplot!(f[1, 1], H; limits, colorbarlabel = "Covariance magnitude")
+    g, ax = prismplot!(f[1, 1], H; limits, colorbarlabel="Covariance magnitude")
     axislegend(ax,
-               [
-                   PolyElement(color = (cornflowerblue, 0.7)),
-                   PolyElement(color = (crimson, 0.7))
-               ],
-               ["PC 1", "PC 2"], position = :lt)
+        [
+            PolyElement(color=(cornflowerblue, 0.7)),
+            PolyElement(color=(crimson, 0.7))
+        ],
+        ["PC 1", "PC 2"], position=:lt)
     ax.xlabel = ax.ylabel = "Variable"
     f
-    save("./recipes/prism_light.png", f; px_per_unit = 5)
+    save("./recipes/prism_light.png", f; px_per_unit=5)
 
     Makie.set_theme!(foresight(:dark, :transparent))
     f = OnePanel()
     limits = (0, maximum(abs.(Σ²)))
-    g, ax = prismplot!(f[1, 1], H; limits, colorbarlabel = "Covariance magnitude")
+    g, ax = prismplot!(f[1, 1], H; limits, colorbarlabel="Covariance magnitude")
     axislegend(ax,
-               [
-                   PolyElement(color = (cornflowerblue, 0.7)),
-                   PolyElement(color = (crimson, 0.7))
-               ],
-               ["PC 1", "PC 2"], position = :lt)
+        [
+            PolyElement(color=(cornflowerblue, 0.7)),
+            PolyElement(color=(crimson, 0.7))
+        ],
+        ["PC 1", "PC 2"], position=:lt)
     ax.xlabel = ax.ylabel = "Variable"
     f
-    save("./recipes/prism_dark.png", f; px_per_unit = 5)
+    save("./recipes/prism_dark.png", f; px_per_unit=5)
 end
 
 @testset "covellipse" begin
     x = randn(10000)
     y = x .+ 0.5 .* randn(10000)
     xy = hcat(x, y)
-    μ = mean(xy, dims = 1)
+    μ = mean(xy, dims=1)
     Σ² = cov(xy)
 
     Makie.set_theme!(foresight())
     f = Figure()
-    ax = Axis(f[1, 1]; xlabel = "x", ylabel = "y")
-    @test_nowarn covellipse!(ax, μ, Σ², color = (cornflowerblue, 0.1),
-                             strokecolor = cornflowerblue,
-                             strokewidth = 5, scale = 2)
-    scatter!(ax, x, y; markersize = 2, color = (cornflowerblue, 0.42))
-    save("./recipes/covellipse_light.png", f; px_per_unit = 5)
+    ax = Axis(f[1, 1]; xlabel="x", ylabel="y")
+    @test_nowarn covellipse!(ax, μ, Σ², color=(cornflowerblue, 0.1),
+        strokecolor=cornflowerblue,
+        strokewidth=5, scale=2)
+    scatter!(ax, x, y; markersize=2, color=(cornflowerblue, 0.42))
+    save("./recipes/covellipse_light.png", f; px_per_unit=5)
 
     Makie.set_theme!(foresight(:dark, :transparent))
     f = Figure()
-    ax = Axis(f[1, 1]; xlabel = "x", ylabel = "y")
-    @test_nowarn covellipse!(ax, μ, Σ², color = (cornflowerblue, 0.1),
-                             strokecolor = cornflowerblue,
-                             strokewidth = 5, scale = 2)
-    scatter!(ax, x, y; markersize = 2, color = (cornflowerblue, 0.42))
-    save("./recipes/covellipse_dark.png", f; px_per_unit = 5)
+    ax = Axis(f[1, 1]; xlabel="x", ylabel="y")
+    @test_nowarn covellipse!(ax, μ, Σ², color=(cornflowerblue, 0.1),
+        strokecolor=cornflowerblue,
+        strokewidth=5, scale=2)
+    scatter!(ax, x, y; markersize=2, color=(cornflowerblue, 0.42))
+    save("./recipes/covellipse_dark.png", f; px_per_unit=5)
 end
 
 @testset "Importall" begin # Keep this at the end
     @test all(isnothing.(eval.(importall(Foresight))))
     Makie.set_theme!(foresight())
-    save("./demos/default.png", demofigure(), px_per_unit = 5)
+    save("./demos/default.png", demofigure(), px_per_unit=5)
 end

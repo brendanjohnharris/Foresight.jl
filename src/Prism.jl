@@ -50,14 +50,24 @@ function prism(Σ̂²;
         if colormode === :top # * Color by the number of PC's given by the length of the color palette
             P = P[:, 1:N]
             P̂ = P .^ 2.0 ./ sum(P .^ 2.0, dims = 2)
-            # Square the loadings, since they are added in quadrature. Maybe not a completely faithful representation of the PC proportions, but should get the job done.
-            𝑓′ = parse.(Colors.XYZ, palette[1:N]) .|> Colors.XYZ
+            # Square the loadings, since they are added in quadrature. Maybe not a
+            # completely faithful representation of the PC proportions, but should get the
+            # job done.
+            if eltype(palette) <: Colors.Color
+                𝑓′ = convert.(Colors.XYZ, palette[1:N])
+            else
+                𝑓′ = parse.(Colors.XYZ, palette[1:N]) .|> Colors.XYZ
+            end
         elseif colormode === :all # * Color by all PC's. This can end up very brown
             Σ̂′² = Diagonal(abs.(λ))
             P̂ = P .^ 2.0 ./ sum(P .^ 2.0, dims = 2)
             p = fill(:black, size(P, 2))
             p[1:N] = palette[1:N]
-            𝑓′ = parse.(Colors.XYZ, p) .|> Colors.XYZ
+            if eltype(palette) <: Colors.Color
+                𝑓′ = convert.(Colors.XYZ, palette[1:N])
+            else
+                𝑓′ = parse.(Colors.XYZ, p) .|> Colors.XYZ
+            end
             [𝑓′[i] = Σ̂′²[i, i] * 𝑓′[i] for i in 1:length(𝑓′)]
         end
         𝑓 = Vector{eltype(𝑓′)}(undef, size(P̂, 1))
