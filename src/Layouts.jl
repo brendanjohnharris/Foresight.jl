@@ -83,7 +83,7 @@ function addlabels!(gridpositions, f::Figure = first(gridpositions).layout.paren
     if text isa Function
         text = text.(1:n)
     end
-    if length(text) != n
+    if length(text) < n
         error("Number of labels does not match the number of valid blocks")
     end
 

@@ -638,9 +638,4 @@ if haskey(ENV, "FORESIGHT_PATCHES")
     include(joinpath(@__DIR__, "Patches.jl"))
 end
 
-# * For extensions
-function drawonto end
-function gtkshow end
-export drawonto, gtkshow
-
 end

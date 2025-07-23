@@ -1,162 +1,150 @@
+import Makie: mixin_generic_plot_attributes, mixin_colormap_attributes,
+              documented_attributes, attribute_names, DocumentedAttributes, automatic
 
-@recipe(Ziggurat, values) do scene
-    Attributes(bins = 15, # Common attributes
-               filternan = true,
-               weights = automatic,
-               cycle = [:color => :patchcolor],
-               scale_to = nothing,
-               normalization = :none,
-               fillcolor = automatic, # Hist attributes
-               strokewidth = 0.0,
-               strokecolor = theme(scene, :patchstrokecolor),
-               label_color = theme(scene, :textcolor),
-               label_offset = 5,
-               label_font = theme(scene, :font),
-               label_size = 20,
-               label_formatter = bar_label_formatter,
-               linestyle = :solid, # Stephist attributes
-               color = theme(scene, :patchcolor),
-               linewidth = theme(scene, :linewidth),
-               fillalpha = 0.2)
+function get_attrs(P::Type{<:Plot})
+    # Makie.attribute_default_expressions(P)
+    Makie.documented_attributes(P)
+end
+function drop_attrs(attrs::DocumentedAttributes, keys)
+    attrs = deepcopy(attrs)
+    map(collect(keys)) do key
+        if haskey(attrs.d, key)
+            delete!(attrs.d, key)
+        end
+    end
+    return attrs
+end
+function get_drop_attrs(P::Type{<:Plot}, keys)
+    attrs = get_attrs(P)
+    return drop_attrs(attrs, keys)
 end
 
-function Makie.plot!(plot::Ziggurat)
-    fillcolor = lift(plot.attributes[:fillcolor], plot.attributes[:color],
-                     plot.attributes[:fillalpha]) do x, y, a
-        x = x == automatic ? y : x
-        isnothing(a) ? x : (x, a)
+@recipe Ziggurat (x,) begin
+    cycle = :color => :patchcolor
+
+    "Color of the histogram steps"
+    linecolor = automatic
+
+    "Color of the histogram fill"
+    color = @inherit patchcolor
+
+    "Transparency of the histogram fill"
+    fillalpha = 0.5
+
+    "Whether to remove NaN values"
+    filternan = true
+
+    get_drop_attrs(Hist, [:cycle, :color, :linecolor])...
+    get_drop_attrs(StepHist, attribute_names(Hist))...
+    mixin_generic_plot_attributes()...
+end
+
+function Makie.plot!(plot::Ziggurat{<:Tuple{AbstractVector{<:Real}}})
+    # * Stroke color is the same as fill color if left automatic
+    map!(plot.attributes, [:color, :linecolor], :real_linecolor) do color, linecolor
+        return Makie.to_color(linecolor === automatic ? color : linecolor)
     end
-    values = lift(plot.attributes[:filternan], plot.values) do filternan, v
+
+    map!(plot.attributes, [:x, :filternan], :values) do v, filternan
         filternan ? filter(!isnan, v) : v
     end
-    histattr = [
-        :bins,
-        :weights,
-        :cycle,
-        :scale_to,
-        :normalization,
-        :strokewidth,
-        :strokecolor,
-        :label_color,
-        :label_offset,
-        :label_font,
-        :label_size,
-        :label_formatter,
-        :scale_to
-    ]
-    stepattr = [
-        :bins,
-        :weights,
-        :cycle,
-        :scale_to,
-        :normalization,
-        :linestyle,
-        :color,
-        :linewidth
-    ]
-    hist!(plot, values; color = fillcolor, [h => plot.attributes[h] for h in histattr]...)
-    stephist!(plot, values; [h => plot.attributes[h] for h in stepattr]...)
+    map!(plot.attributes, [:color, :fillalpha], :fillcoloralpha) do c, a
+        Makie.to_color(isnothing(a) ? c : (c, a))
+    end
+
+    hist!(plot, plot.attributes, plot.x; color = plot.fillcoloralpha)
+    stephist!(plot, plot.attributes, plot.x; color = plot.real_linecolor)
     plot
 end
 
-@recipe(Hill, values) do scene
-    Attributes(color = theme(scene, :patchcolor),
-               colormap = theme(scene, :colormap),
-               colorscale = identity,
-               colorrange = Makie.automatic,
-               strokecolor = Makie.automatic,
-               strokewidth = theme(scene, :linewidth),
-               linestyle = nothing,
-               strokearound = false,
-               npoints = 200,
-               offset = 0.0,
-               direction = :x,
-               boundary = automatic,
-               bandwidth = automatic,
-               weights = automatic,
-               cycle = [:color => :patchcolor],
-               inspectable = theme(scene, :inspectable),
-               fillalpha = 0.2,
-               filternan = true)
+@recipe Hill (x,) begin
+    cycle = :color => :patchcolor
+
+    "Transparency of the fill patch"
+    fillalpha = 0.5
+
+    "Whether to remove NaN values"
+    filternan = true
+
+    "Color of the density fill"
+    color = @inherit patchcolor
+
+    "Color of the density stroke"
+    strokecolor = automatic
+
+    strokewidth = @inherit linewidth
+
+    get_drop_attrs(Density, [:cycle, :color, :strokecolor, :strokewidth])...
 end
 
-function Makie.plot!(plot::Hill)
-    strokecolor = lift(plot.attributes[:strokecolor], plot.attributes[:color]) do x, y
-        x == automatic ? y : x
+function Makie.plot!(plot::Hill{<:Tuple{AbstractVector{<:Real}}})
+    # * Stroke color is the same as fill color if left automatic
+    map!(plot.attributes, [:color, :strokecolor], :real_strokecolor) do color, strokecolor
+        return Makie.to_color(strokecolor === automatic ? color : strokecolor)
     end
-    fillcolor = lift(plot.attributes[:color],
-                     plot.attributes[:fillalpha]) do x, a
-        isnothing(a) ? x : (x, a)
-    end
-    values = lift(plot.attributes[:filternan], plot.values) do filternan, v
+
+    map!(plot.attributes, [:x, :filternan], :values) do v, filternan
         filternan ? filter(!isnan, v) : v
     end
-    colorrange = lift(plot.attributes[:colorrange], values) do c, x
-        c == Makie.automatic ? extrema(x) : c
+    map!(plot.attributes, [:color, :fillalpha], :fillcoloralpha) do c, a
+        Makie.to_color(isnothing(a) ? c : (c, a))
     end
-    densatts = [:colorscale, :colormap,
-        :strokewidth, :linestyle, :strokearound, :npoints, :offset, :direction, :boundary,
-        :bandwidth, :weights, :cycle, :inspectable]
-    density!(plot, values; color = fillcolor, strokecolor, colorrange,
-             [h => plot.attributes[h] for h in densatts]...)
+    density!(plot, plot.attributes, plot.x; color = plot.fillcoloralpha,
+             strokecolor = plot.real_strokecolor)
     plot
 end
 
-@recipe(Kinetic, x, y) do scene
-    Attributes(color = theme(scene, :color),
-               colormap = theme(scene, :colormap),
-               colorscale = identity,
-               colorrange = Makie.automatic,
-               linestyle = nothing,
-               cycle = [:color],
-               inspectable = theme(scene, :inspectable),
-               linewidth = :curv,
-               linewidthscale = 1,
-               spacing = 1)
+@recipe Kinetic (x, y) begin
+    cycle = :color
+    color = @inherit linecolor
+    linewidth = :curv
+    linewidthscale = 1
+    spacing = 1
+
+    get_drop_attrs(Density, [:cycle, :color, :linewidth])...
 end
 
-function Makie.plot!(p::Kinetic)
-    x = p.x
-    y = p.y
-    function interleave(x)
-        x = [collect(x[i:(i + 1)]) for i in eachindex(x)[1:(end - 1)]]
-        # append!.(x, NaN)
-        vcat(x...)
-    end
-    function minter(x)
-        l = map(eachindex(x)) do i
-            if i == 1
-                x[1]
-            else
-                mean(x[(i - 1):i])
-            end
+function interleave(x)
+    x = [collect(x[i:(i + 1)]) for i in eachindex(x)[1:(end - 1)]]
+    # append!.(x, NaN)
+    vcat(x...)
+end
+function minter(x)
+    l = map(eachindex(x)) do i
+        if i == 1
+            x[1]
+        else
+            mean(x[(i - 1):i])
         end
-        l = l .- minimum(l)
-        l = l ./ maximum(l)
-        l .*= 10
-        l .+= 1
-        return l[2:end]
     end
+    l = l .- minimum(l)
+    l = l ./ maximum(l)
+    l .*= 10
+    l .+= 1
+    return l[2:end]
+end
 
-    function difter(x)
-        l = map(eachindex(x)) do i
-            if i < 2
-                x[3] - 2 * x[2] + x[1]
-            elseif i > length(x) - 1
-                x[end - 2] - 2 * x[end - 1] + x[end]
-            else
-                x[i + 1] - 2 * x[i] + x[i - 1]
-            end
+function difter(x)
+    l = map(eachindex(x)) do i
+        if i < 2
+            x[3] - 2 * x[2] + x[1]
+        elseif i > length(x) - 1
+            x[end - 2] - 2 * x[end - 1] + x[end]
+        else
+            x[i + 1] - 2 * x[i] + x[i - 1]
         end
-        l = exp.(-abs.(l) .^ 2)
-        l = l .- minimum(l)
-        l = l ./ maximum(l)
-        l .*= 10
-        l .+= 1
-        return l[2:end]
     end
+    l = exp.(-abs.(l) .^ 2)
+    l = l .- minimum(l)
+    l = l ./ maximum(l)
+    l .*= 10
+    l .+= 1
+    return l[2:end]
+end
 
-    linewidth = lift(p.attributes[:linewidth], x, y) do l, x, y
+function Makie.plot!(plot::Kinetic{<:Tuple{AbstractVector{<:Real}, AbstractVector{<:Real}}})
+    map!(plot.attributes, [:linewidth, :x, :y, :linewidthscale],
+         :linewidths) do l, x, y, lscale
         if l isa Number
             l = fill(l, length(x) - 1)
         elseif l === :x
@@ -165,61 +153,43 @@ function Makie.plot!(p::Kinetic)
             l = minter(y)
         elseif l === :curv
             l = difter(y)
-        else
-            l
         end
+        [x for x in l for _ in 1:2] .* lscale
     end
-    x = lift(interleave, x)
-    y = lift(interleave, y)
-    linewidth = lift(linewidth) do linewidth
-        linewidth = [[l, l] for l in linewidth]
-        linewidth = vcat(linewidth...)
-    end
-    linewidth = lift((x, y) -> x .* y, linewidth, p.attributes[:linewidthscale])
 
-    lineatts = [
-        :color,
-        :colormap,
-        :colorscale,
-        :colorrange,
-        :linestyle,
-        :cycle,
-        :inspectable
-    ]
-    linesegments!(p, x, y; linewidth, [h => p.attributes[h] for h in lineatts]...)
-    # scatter!(p, x, y; p.attributes, markersize =linewidth)
+    map!(plot.attributes, [:x, :y], :xy) do x, y
+        map(Point2f, zip(interleave(x), interleave(y)))
+    end
+
+    linesegments!(plot, plot.attributes, plot.xy; linewidth = plot.attributes[:linewidths])
+    # Rework this to use bandwidth plot...
 end
 
-@recipe(Bandwidth, x, y) do scene
-    Attributes(color = theme(scene, :color),
-               colormap = theme(scene, :colormap),
-               colorscale = identity,
-               colorrange = Makie.automatic,
-               cycle = [:color],
-               inspectable = theme(scene, :inspectable),
-               linewidth = 1, # * In data space
-               kernelwidth = 1)
+@recipe Bandwidth (x, y) begin
+    cycle = :color
+
+    "Vertical width of the band in data space"
+    bandwidth = 1
+    "The direction of the band"
+    direction = :x
+
+    get_drop_attrs(Band, [:cycle, :direction])...
 end
-
-function Makie.plot!(p::Bandwidth)
-    x = p.x
-    _y = p.y
-    linewidth = p.attributes[:linewidth]
-    yu = lift(_y, linewidth) do _y, l
-        _y .+ l
+function Makie.plot!(plot::Bandwidth{<:Tuple{AbstractVector{<:Real},
+                                             AbstractVector{<:Real}}})
+    map!(plot.attributes, [:x, :y, :bandwidth, :direction], [:xx, :yl, :yu]) do x, y, l, d
+        if d === :y
+            x, y = y, x
+        end
+        if eltype(l) <: Number
+            yl = y .- (l / 2)
+            yu = y .+ (l / 2)
+        else
+            yl = y .- (first(l) / 2)
+            yu = y .+ (last(l) / 2)
+        end
+        return x, yl, yu
     end
-    yl = lift(_y, linewidth) do _y, l
-        _y .- l
-    end
-    bandatts = [
-        :color,
-        :colormap,
-        :colorscale,
-        :colorrange,
-        :cycle,
-        :inspectable
-    ]
-    band!(p, x, yl, yu; [h => p.attributes[h] for h in bandatts]...)
+    band!(plot, plot.attributes, plot.attributes[:xx], plot.attributes[:yl],
+          plot.attributes[:yu])
 end
-
-
