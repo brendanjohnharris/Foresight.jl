@@ -8,6 +8,7 @@ using ImageClipboard
 using FileIO
 using Preferences
 using Makie.LaTeXStrings
+import Makie.IntervalSets: Interval
 
 export foresight, importall, freeze!, clip, hidexaxis!, hideyaxis!, axiscolorbar,
        reverselegend!,
@@ -103,6 +104,7 @@ function widen(x, δ = 0.05)
     Δ = diff(x |> collect)[1]
     return x .+ δ * Δ .* [-1, 1]
 end
+widen(i::Interval, args...) = Interval(widen(extrema(i), args...)...)
 
 """
     @default_theme!(thm)
@@ -249,6 +251,12 @@ function beep()
     end
 end
 
+"""
+    reverselegend!(l::Legend)
+
+Reverse the order of the legend entries in an Axis object. This is useful when you want to
+change the order of the legend entries without changing the order of the plotted data.
+"""
 function reverselegend!(l::Legend)
     entrygroups = l.entrygroups[]
     entrygroups[1][2] .= entrygroups[1][2] |> reverse
@@ -270,20 +278,6 @@ function importall(mdl)
     fullname = Symbol(mdl)
     exp = names(eval(mdl), all = true)
     return [:(import $fullname.$e) for e in exp]
-end
-
-function hidexaxis!(ax::Axis)
-    ax.xticksvisible = false
-    ax.xminorticksvisible = false
-    ax.xticklabelsvisible = false
-    ax.xlabelvisible = false
-end
-
-function hideyaxis!(ax::Axis)
-    ax.yticksvisible = false
-    ax.yminorticksvisible = false
-    ax.yticklabelsvisible = false
-    ax.ylabelvisible = false
 end
 
 """
@@ -363,11 +357,13 @@ x = Lscientific(1/123.456, 2) # L"8.10 \\times 10^{-3}"
 """
 Lscientific(args...) = LaTeXString(lscientific(args...))
 
-colororder = [(cornflowerblue, 0.7),
-    (crimson, 0.7),
-    (cucumber, 0.7),
-    (california, 0.7),
-    (juliapurple, 0.7)]
+"""
+The Foresight colors: `cornflowerblue`, `crimson`, `cucumber`, `california`, `juliapurple`.
+"""
+colors = cgrad([cornflowerblue, crimson, cucumber, california, juliapurple],
+               categorical = true)
+
+colororder = [(c, 0.7) for c in colors]
 palette = (patchcolor = colororder,
            color = colororder,
            strokecolor = colororder)

@@ -1,3 +1,7 @@
+# ? Format recipe docstrings
+using Makie.DocStringExtensions
+import Makie: DocThemer, ATTRIBUTES, DocInstances, INSTANCES
+
 import Makie: mixin_generic_plot_attributes, mixin_colormap_attributes,
               documented_attributes, attribute_names, DocumentedAttributes, automatic
 
@@ -19,6 +23,20 @@ function get_drop_attrs(P::Type{<:Plot}, keys)
     return drop_attrs(attrs, keys)
 end
 
+"""
+    ziggurat(x; kwargs...)
+
+Plots a histogram with a transparent fill.
+
+## Key attributes:
+`linecolor` = `automatic`: Sets the color of the step outline.
+
+`color` = `@inherit patchcolor`: Color of the interior fill.
+
+`fillalpha` = `0.5`: Transparency of the interior fill.
+
+`filternan` = `true`: Whether to remove NaN values from the data before plotting.
+"""
 @recipe Ziggurat (x,) begin
     cycle = :color => :patchcolor
 
@@ -57,6 +75,22 @@ function Makie.plot!(plot::Ziggurat{<:Tuple{AbstractVector{<:Real}}})
     plot
 end
 
+"""
+    hill(x; kwargs...)
+
+Plots a density with a transparent fill.
+
+## Key attributes:
+`color` = `@inherit patchcolor`: Color of the interior fill.
+
+`fillalpha` = `0.5`: Transparency of the interior fill.
+
+`filternan` = `true`: Whether to remove NaN values from the data before plotting.
+
+`strokecolor` = `automatic`: Color of the outline stroke.
+
+`strokewidth` = `1`: Width of the outline stroke.
+"""
 @recipe Hill (x,) begin
     cycle = :color => :patchcolor
 
@@ -94,12 +128,32 @@ function Makie.plot!(plot::Hill{<:Tuple{AbstractVector{<:Real}}})
     plot
 end
 
+"""
+    kinetic(x, y; kwargs...)
+
+Plots a line with a varying width.
+
+## Key attribtues:
+
+`linewidth` = `:curv`:
+
+Sets the algorithm for determining the line width.
+
+- `:curv` - Width is determined by the velocity
+
+- `:x` - Width is determined by the x-coordinate
+
+- `:y` - Width is determined by the y-coordinate
+
+- `<: Number` - Width is set to a constant value
+
+`linewidthscale` = `1`: Scale factor for the line width.
+"""
 @recipe Kinetic (x, y) begin
     cycle = :color
     color = @inherit linecolor
     linewidth = :curv
     linewidthscale = 1
-    spacing = 1
 
     get_drop_attrs(Density, [:cycle, :color, :linewidth])...
 end
@@ -165,6 +219,16 @@ function Makie.plot!(plot::Kinetic{<:Tuple{AbstractVector{<:Real}, AbstractVecto
     # Rework this to use bandwidth plot...
 end
 
+"""
+    bandwidth(x, y; kwargs...)
+
+Plots a band of a certain width about a center line.
+
+## Key attributes:
+`bandwidth` = `1`: Vertical width of the band in data space. Can be a vector of `length(x)`.
+
+`direction` = `:x`: The direction of the band, either `:x` or `:y`.
+"""
 @recipe Bandwidth (x, y) begin
     cycle = :color
 

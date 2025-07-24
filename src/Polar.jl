@@ -31,6 +31,11 @@ function hist_center_weights(values, edges, normalization, scale_to, wgts)
     return centers, weights
 end
 
+"""
+    polarhist(x; kwargs...)
+
+Plots a polar histogram of the values in `x`. Attributes are shared with `Makie.Hist` and `Makie.Poly`.
+"""
 @recipe PolarHist (x,) begin
     bins = 15
     normalization = :none
@@ -86,14 +91,38 @@ function default_bandwidth_circular(data, alpha::Float64 = 0.09)
     return alpha * width * ndata^(-0.2)
 end
 
+"""
+    polardensity(x; kwargs...)
+
+Plots a polar density plot of the values in `x`.
+
+## Key attributes:
+`bandwidth` = `default_bandwidth_circular(x)`: The bandwidth of the kernel density
+estimate.
+
+`strokecolor` = `:density`:
+
+Sets the color of the stroke around the density band. Can be a color, or one of the
+following color modes:
+
+* `:density` uses the density values as the color.
+* `:angle` or `:phase` uses the angle of the values as the color.
+* `:transparent` uses a transparent color.
+"""
 @recipe PolarDensity (x,) begin
     bandwidth = default_bandwidth_circular
-    color = :density
-    strokecolormap = :viridis
-    strokecolor = @inherit color
-    strokewidth = @inherit linewidth
+    color = @inherit color
+    strokecolor = :density
 
-    get_drop_attrs(Band, [:color, :strokecolormap])...
+    strokewidth = @inherit linewidth
+    strokecolormap = cyclic
+    strokecolorrange = automatic
+    strokecolorscale = identity
+    strokelowclip = automatic
+    strokehighclip = automatic
+    strokenan_color = :transparent
+
+    get_drop_attrs(Band, [:color])...
     get_drop_attrs(Lines, [attribute_names(Band)..., :linewidth])...
 end
 
@@ -106,47 +135,71 @@ function polarkde(vals; bandwidth = default_bandwidth_circular(vals), kwargs...)
     return p
 end
 
-function _color(C, color, xs, ps)
-    C = cgrad(C)
-    nm = xs -> (xs .- minimum(xs)) ./ (maximum(xs) - minimum(xs))
-    if color === :phase || color === :angle
-        return C[nm(xs)]
-    elseif color === :density
-        return C[nm(ps)]
-    elseif color isa Vector
-        return C[nm(color)]
-    elseif color isa Tuple && isnothing(first(color))
+"""
+Return computed color values based on the colormode.
+"""
+function _color(colormode, xs, ps)
+    # nm = xs -> (xs .- minimum(xs)) ./ (maximum(xs) - minimum(xs))
+    if colormode === :phase || colormode === :angle
+        return xs
+    elseif colormode === :density
+        return ps
+    elseif colormode isa Tuple && isnothing(first(colormode))
         return :transparent
-    elseif isnothing(color)
+    elseif isnothing(colormode)
         return :transparent
     else
-        return color
+        return colormode
     end
 end
 
-function Makie.plot!(plot::PolarDensity{<:Tuple{AbstractVector{<:Real}}}) # Set PolarAxis(; theta_as_x=false)
+function Makie.plot!(plot::PolarDensity{<:Tuple{AbstractVector{<:Real}}})
     map!(plot.attributes, [:x, :bandwidth], [:xs, :zs, :ps, :points]) do x, b
         pdf = polarkde(x; bandwidth = b)
         xs = getfield(pdf, :x) |> collect
         ps = getfield(pdf, :density) |> collect
         push!(xs, first(xs)) # close the shape
-        zs = zeros(length(xs))
         push!(ps, first(ps)) # close the shape
+        zs = zeros(length(xs))
         points = Point2f[zip(xs, ps)...]
         return xs, zs, ps, points
     end
 
-    map!(plot.attributes, [:color, :strokecolor, :colormap, :strokecolormap, :xs, :ps],
-         [:real_color, :real_strokecolor]) do color, strokecolor, colormap, strokecolormap,
-                                              xs, ps
-        real_color = _color(colormap, color, xs, ps)
-        real_strokecolor = _color(strokecolormap, strokecolor, xs, ps)
-        return real_color, real_strokecolor
+    map!(plot.attributes, [:strokecolor, :xs, :ps],
+         [:real_strokecolor]) do strokecolormode, xs, ps
+        real_strokecolor = _color(strokecolormode, xs, ps)
+        return (real_strokecolor,)
     end
-    band!(plot, plot.attributes, plot.xs, plot.zs, plot.ps; color = plot.real_color,
-          colormap = plot.colormap)
-    lines!(plot, plot.attributes, plot.points; color = plot.real_strokecolor,
-           colormap = plot.strokecolormap, linewidth = plot.strokewidth)
+
+    map!(plot.attributes,
+         [:color, :xs, :ps],
+         [:real_color]) do colormode, xs, ps
+        real_color = _color(colormode, xs, ps)
+        # if colormap isa Makie.PlotUtils.ColorGradient
+        #     colormap = colormap[0:0.01:1]
+        # end
+        # colormap = convert(Vector{RGBAf}, collect(colormap))
+        # if real_color isa AbstractVector{<:Number}
+        #     real_color = Makie.numbers_to_colors(real_color, colormap, colorscale,
+        #                                          Vec2(colorrange), lowclip,
+        #                                          highclip, Makie.to_color(nan_color),
+        #                                          interpolate)
+        # end
+        # return (real_color,)
+        return (real_color,)
+    end
+
+    band!(plot, plot.attributes, plot.xs, plot.zs, plot.ps; color = plot.real_color)
+
+    lines!(plot, plot.attributes, plot.points;
+           linewidth = plot.strokewidth,
+           color = plot.real_strokecolor,
+           colormap = plot.strokecolormap,
+           colorrange = plot.strokecolorrange,
+           colorscale = plot.strokecolorscale,
+           lowclip = plot.strokelowclip,
+           highclip = plot.strokehighclip,
+           nan_color = plot.strokenan_color)
     plot
 end
 Makie.preferred_axis_type(plot::PolarDensity) = Makie.PolarAxis

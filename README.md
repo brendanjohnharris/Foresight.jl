@@ -114,25 +114,15 @@ freeze!(ax)
 
 Copies a Makie figure to the clipboard.
 ```julia
-fig = Figure()
-scatter!(fig[1, 1], rand(10), rand(10))
+fig, ax, plt = scatter(rand(10), rand(10))
 clip(fig)
 ```
 
-### @importall
+### importall
 
 Imports all symbols from a module into the current scope. Use with caution.
 ```julia
-@importall(Foresight) .|> eval
-```
-
-### hidexaxis! and hideyaxis!
-
-Hides the x-axis or y-axis, respectively, of a given axis object.
-```julia
-fig, ax, plt = scatter(rand(10), rand(10))
-hidexaxis!(ax)
-hideyaxis!(ax)
+importall(Foresight) .|> eval
 ```
 
 # Colors
@@ -161,23 +151,13 @@ It also provides the following colormaps:
 # Recipes
 The following recipes are exported:
 
-### ziggurat
+- `polarhist`
+- `polardensity`
+- `covellipse`
+- `prism`
+- `ziggurat`
+- `hill`
+- `kinetic`
+- `bandwidth`
 
-A transparent stepped histogram, shown in the demo figure above.
-
-### hill
-
-A transparent kernel density plot, shown in the demo figure above.
-
-### prism
-
-Colors a positive definite matrix according to its eigendecomposition.
-![prism](test/recipes/prism_light.png#gh-light-mode-only)
-![prism](test/recipes/prism_dark.png#gh-dark-mode-only)
-
-### covellipse
-
-Plot an ellipse representing a given covariance matrix.
-![prism](test/recipes/covellipse_light.png#gh-light-mode-only)
-![prism](test/recipes/covellipse_dark.png#gh-dark-mode-only)
-
+Details and examples can be found in the [recipes docs](https://brendanjohnharris.github.io/Foresight.jl/dev/recipes/).

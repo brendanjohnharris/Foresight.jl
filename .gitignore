@@ -41,3 +41,5 @@ LocalPreferences.toml
 lcov.info
 
 **/index.html
+
+node_modules/
