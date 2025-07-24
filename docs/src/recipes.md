@@ -99,11 +99,9 @@ xy = randn(100, 2) * [1 1; 0 0.5]
 μ = mean(xy, dims = 1)
 Σ² = cov(xy)
 
-f = Figure()
-ax = Axis(f[1, 1]; xlabel = "x", ylabel = "y")
-covellipse!(ax, μ, Σ²)
+fig, ax, plt = covellipse(ax, μ, Σ²)
 scatter!(ax, xy)
-f
+fig
 ```
 
 ## prism
