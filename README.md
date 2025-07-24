@@ -6,6 +6,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14511387.svg)](https://doi.org/10.5281/zenodo.14511387)
 
 A Makie theme and some utilities.
+
 # Usage
 ```Julia
 using CairoMakie
