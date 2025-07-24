@@ -16,11 +16,6 @@
 
 :root {
     --vp-c-bg: #282c34;
-    /* Dark grey for the main background */
-    --vp-c-bg-alt: #3E4451;
-    /* Slightly lighter dark for content areas */
-    --vp-c-bg-soft: #cccccc;
-    /* Medium dark grey */
 }
 
 /* Component: Docstring Custom Block */

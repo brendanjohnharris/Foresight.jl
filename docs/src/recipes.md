@@ -99,7 +99,7 @@ xy = randn(100, 2) * [1 1; 0 0.5]
 μ = mean(xy, dims = 1)
 Σ² = cov(xy)
 
-fig, ax, plt = covellipse(ax, μ, Σ²)
+fig, ax, plt = covellipse(μ, Σ²)
 scatter!(ax, xy)
 fig
 ```
