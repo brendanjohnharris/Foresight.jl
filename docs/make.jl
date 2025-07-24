@@ -11,19 +11,15 @@ using Markdown
 
 include("docs_blocks.jl")
 
-# DocMeta.setdocmeta!(Foresight, :DocTestSetup, :(using CairoMakie; using Foresight); recursive=true)
+format = DocumenterVitepress.MarkdownVitepress(;
+                                               repo = "github.com/brendanjohnharris/Foresight.jl",
+                                               devbranch = "main",
+                                               devurl = "dev")
 
 makedocs(;
-         #  modules = [Foresight],
          authors = "brendanjohnharris <brendanjohnharris@gmail.com> and contributors",
-         repo = "https://github.com/brendanjohnharris/Foresight.jl/blob/{commit}{path}#{line}",
-         sitename = "Foresight.jl",
-         doctest = true,
-         warnonly = :doctest,
-         format = DocumenterVitepress.MarkdownVitepress(repo = "github.com/brendanjohnharris/Foresight.jl",
-                                                        devbranch = "main",
-                                                        devurl = "dev",
-                                                        deploy_url = "brendanjohnharris.github.io/Foresight.jl"),
+         sitename = "Foresight",
+         format,
          pages = ["Home" => "index.md",
              "Colormaps" => "colors.md",
              "Utilities" => "utilities.md",
@@ -39,12 +35,9 @@ makedocs(;
                  "CovEllipse" => "reference/covellipse.md"
              ]])
 
-# deploydocs(;
-#            repo = "github.com/brendanjohnharris/Foresight.jl",
-#            devbranch = "main",)
 DocumenterVitepress.deploydocs(;
                                repo = "github.com/brendanjohnharris/Foresight.jl",
-                               target = "build",
+                               target = "build", # this is where Vitepress stores its output
                                branch = "gh-pages",
                                devbranch = "main",
                                push_preview = true)
