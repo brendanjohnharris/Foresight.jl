@@ -41,18 +41,6 @@ hill(x)
 ```
 
 
-## [kinetic](@ref)
-
-```@shortdocs; canonical=false
-kinetic
-```
-
-```@example foresight
-x = -π:0.1:π
-kinetic(x, sin.(x), linewidth=:curv)
-```
-
-
 ## [bandwidth](@ref)
 
 ```@shortdocs; canonical=false

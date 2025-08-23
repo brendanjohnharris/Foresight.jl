@@ -28,7 +28,6 @@ makedocs(;
              "Reference" => ["Hill" => "reference/hill.md",
                  "Ziggurat" => "reference/ziggurat.md",
                  "Bandwidth" => "reference/bandwidth.md",
-                 "Kinetic" => "reference/kinetic.md",
                  "PolarHist" => "reference/polarhist.md",
                  "PolarDensity" => "reference/polardensity.md",
                  "Prism" => "reference/prism.md",

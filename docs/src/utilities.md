@@ -74,6 +74,39 @@ Lscientific(1/123.456, 3)
 Lscientific
 ```
 
+
+## tick formatting
+
+Format tick labels to be as compact as possible:
+
+```@example foresight
+lines(0:sqrt(2)/100:sqrt(2), sqrt; axis=(;xtickformat=terseticks))
+```
+
+```@docs
+terseticks
+```
+
+Or, format proportion values as percentages:
+
+```@example foresight
+lines(0:0.01:1, sqrt; axis=(;xtickformat=percentageticks))
+```
+
+```@docs
+percentageticks
+```
+
+
+## reverse legend
+
+Reverses the order of legend entries
+
+```@docs
+reverselegend!
+```
+
+
 ## brighten and darken
 
 Brighten a color by a given factor by blending it with white:

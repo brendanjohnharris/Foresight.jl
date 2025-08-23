@@ -12,7 +12,12 @@ import Makie.IntervalSets: Interval
 
 export foresight, importall, freeze!, clip, hidexaxis!, hideyaxis!, axiscolorbar,
        reverselegend!,
-       scientific, lscientific, Lscientific
+       scientific, lscientific, Lscientific,
+       percentageticks, terseticks
+
+function __init__()
+    ENV["UNITFUL_FANCY_EXPONENTS"] = true
+end
 
 """
     seethrough(C::ContinuousColorGradient, start=0.0, stop=1.0)
@@ -624,6 +629,34 @@ function axiscolorbar(ax, args...; position = :rt, kwargs...)
         ax.alignmode = Mixed(right = 75)
     end
 end
+
+# * Tick formatting
+"""
+    percentageticks(x)
+Return an array of strings representing the values in `x` as percentages, rounded to the
+nearest integer.
+"""
+function percentageticks(x)
+    return map(string ∘ Base.Fix1(round, Int), x .* 100)
+end
+
+"""
+    terseticks(x::Real; sigdigits=5, kwargs...)
+Return a string representation of a number `x` with trailing zeros removed, rounded to the
+specified number of significant digits. The `kwargs` argument is passed to the `round`
+function.
+"""
+function terseticks(x::Real; sigdigits = 5, kwargs...)
+    y = round(x; sigdigits, kwargs...)
+    s = string(y)
+    if occursin(".", s)
+        s = replace(s, r"(\.\d*?)0+$" => s"\1")
+        s = replace(s, r"\.$" => "")
+    end
+    return s
+end
+terseticks(x; kwargs...) = terseticks.(x; kwargs...)
+terseticks(; kwargs...) = x -> terseticks(x; kwargs...)
 
 include("RedBlue.jl")
 include("Polar.jl")

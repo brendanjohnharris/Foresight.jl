@@ -61,14 +61,7 @@ end
     display(f)
 end
 
-@testitem "Kinetic plot" setup=[Setup] begin
-    x = range(-4π, 4π, length = 10000)
-    y = sinc.(x)
-    f = Figure()
-    ax = Axis(f[1, 1])
-    kinetic!(ax, x, y; linewidthscale = 0.5, linewidth = :curv)
-    display(f)
-end
+
 
 @testitem "Bandwidth plot" setup=[Setup] begin
     x = range(-4π, 4π, length = 1000)

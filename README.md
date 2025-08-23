@@ -157,7 +157,6 @@ The following recipes are exported:
 - `prism`
 - `ziggurat`
 - `hill`
-- `kinetic`
 - `bandwidth`
 
 Details and examples can be found in the [recipes docs](https://brendanjohnharris.github.io/Foresight.jl/dev/recipes/).
