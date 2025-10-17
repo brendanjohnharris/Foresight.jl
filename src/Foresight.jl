@@ -382,7 +382,7 @@ function _foresight(; globalfonts = foresightfonts(), globalfontsize = foresight
           font = :regular,
           fonts = globalfonts,
           palette,
-          linewidth = 5.0,
+          linewidth = 3.0,
           patchstrokewidth = 0.0,
           markersize = 15,
           fontsize = globalfontsize,

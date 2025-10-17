@@ -39,7 +39,6 @@ display(f)
 """
 function subdivide(f, nrows::Int, ncols::Int)
     grid = [f[i, j] for i in 1:nrows, j in 1:ncols]
-    return permutedims(grid, (2, 1))
 end
 function subdivide(f, sz::Tuple{Int, Int})
     nrows, ncols = sz
@@ -49,8 +48,7 @@ end
 """
     addlabels!(gridpositions, f::Figure, [text]; dims=2, kwargs...)
 
-Add labels to a provided grid layout. The labels are incremented in the linear order of the
-grid positions.
+Add labels to a provided grid layout. The labels are incremented in the linear order of the grid positions.
 
 ## Arguments
 - `gridpositions`: An iterator of `GridPosition`s as produced by e.g. [`subdivide`](@ref).

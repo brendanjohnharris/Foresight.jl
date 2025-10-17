@@ -61,8 +61,6 @@ end
     display(f)
 end
 
-
-
 @testitem "Bandwidth plot" setup=[Setup] begin
     x = range(-4π, 4π, length = 1000)
     y = sinc.(x)
