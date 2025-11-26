@@ -188,8 +188,8 @@ function Makie.plot!(plot::PolarDensity{<:Tuple{AbstractVector{<:Real}}})
         # return (real_color,)
         return (real_color,)
     end
-
-    band!(plot, plot.attributes, plot.xs, plot.zs, plot.ps; color = plot.real_color)
+    band!(plot, plot.attributes, plot.xs, plot.zs, plot.ps; color = plot.real_color,
+          strokecolor = nothing)
 
     lines!(plot, plot.attributes, plot.points;
            linewidth = plot.strokewidth,

@@ -57,7 +57,8 @@ function brighten(c::T, β::AbstractFloat) where {T}
 end
 
 function lighten(c, a)
-    c = parse(RGB, c)
+    c = Makie.to_color(c)
+    c = convert(RGB, c)
     return RGB((1 - a) + a * c.r), RGB((1 - a) + a * c.g), RGB((1 - a) + a * c.b)
 end
 
@@ -99,7 +100,7 @@ function foresightfonts(font = foresightfont)
                :bold_italic => font * " Bold Italic")
 end
 
-foresightfontsize() = 18
+foresightfontsize() = 14
 
 """
 Slightly widen an interval by a fraction δ
@@ -410,6 +411,8 @@ function _foresight(; globalfonts = foresightfonts(), globalfontsize = foresight
                   yminorticksvisible = false,
                   xticksvisible = false,
                   yticksvisible = false,
+                  #   xtickformat = terseticks(; sigdigits = 2),
+                  #   ytickformat = terseticks(; sigdigits = 2),
                   spinewidth = 1,
                   xticklabelcolor = :black,
                   yticklabelcolor = :black,
@@ -424,7 +427,9 @@ function _foresight(; globalfonts = foresightfonts(), globalfontsize = foresight
                   ylabelpadding = 3,
                   palette,
                   titlefont = :bold, # "times serif bold",
-                  titlesize = globalfontsize * 10 / 9),
+                  titlesize = globalfontsize * 1.25,
+                  xlabelsize = globalfontsize * 1.25,
+                  ylabelsize = globalfontsize * 1.25),
           Legend = (;
                     framevisible = false,
                     padding = (1, 1, 1, 1),
@@ -445,7 +450,10 @@ function _foresight(; globalfonts = foresightfonts(), globalfontsize = foresight
                    yticksvisible = false,
                    zticksvisible = false,
                    titlefont = :bold,
-                   titlesize = globalfontsize * 10 / 9,
+                   titlesize = globalfontsize * 1.25,
+                   xlabelsize = globalfontsize * 1.25,
+                   ylabelsize = globalfontsize * 1.25,
+                   zlabelsize = globalfontsize * 1.25,
                    palette),
           Colorbar = (;
                       spinecolor = :gray88,
@@ -463,7 +471,7 @@ function _foresight(; globalfonts = foresightfonts(), globalfontsize = foresight
           Density = (; strokewidth = 5,
                      cycle = Cycle([:color, :strokecolor], covary = true)),
           Label = (; valign = :top, halign = :left, font = :bold,
-                   fontsize = globalfontsize * 4 / 3))
+                   fontsize = globalfontsize * 1.25))
 end
 
 """

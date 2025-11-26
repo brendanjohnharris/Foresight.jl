@@ -2,7 +2,7 @@ export addlabels!, OnePanel, TwoPanel, FourPanel, SixPanel, subdivide
 import Makie.GridLayoutBase.GridContent
 
 # * A set of consistent figure layouts
-function _panels(args...; size = (720, 270), scale = 1.25, kwargs...)
+function _panels(args...; size = (720, 270), scale = 1.0, kwargs...)
     f = Figure(args...; size = size .* scale, kwargs...)
     return f
 end
@@ -23,6 +23,33 @@ function SixPanel(args...; kwargs...)
     return f
 end
 
+struct SubdivideArray{T, N, A <: AbstractArray{T, N}} <: AbstractArray{T, N}
+    parent::A
+end
+
+# Define array interface
+Base.size(A::SubdivideArray) = size(A.parent)
+Base.IndexStyle(::Type{<:SubdivideArray}) = IndexLinear()
+
+# Cartesian indexing - works normally
+Base.getindex(A::SubdivideArray, i::Int, j::Int) = A.parent[i, j]
+Base.setindex!(A::SubdivideArray, v, i::Int, j::Int) = (A.parent[i, j] = v)
+
+# Linear indexing - row-major order
+function Base.getindex(A::SubdivideArray, i::Int)
+    nrows, ncols = size(A)
+    row = div(i - 1, ncols) + 1
+    col = mod(i - 1, ncols) + 1
+    A.parent[row, col]
+end
+
+function Base.setindex!(A::SubdivideArray, v, i::Int)
+    nrows, ncols = size(A)
+    row = div(i - 1, ncols) + 1
+    col = mod(i - 1, ncols) + 1
+    A.parent[row, col] = v
+end
+
 """
     subdivide(f, nrows::Int, ncols::Int)::Matrix{GridPosition}
 
@@ -38,7 +65,7 @@ display(f)
 ```
 """
 function subdivide(f, nrows::Int, ncols::Int)
-    grid = [f[i, j] for i in 1:nrows, j in 1:ncols]
+    grid = [f[i, j] for i in 1:nrows, j in 1:ncols] |> SubdivideArray
 end
 function subdivide(f, sz::Tuple{Int, Int})
     nrows, ncols = sz

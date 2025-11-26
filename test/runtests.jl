@@ -94,7 +94,7 @@ end
     f = Figure()
     ax = PolarAxis(f[1, 1])
     polardensity!(ax, x; strokewidth = 5, strokecolor = :angle,
-                  strokecolormap = cyclic)
+                  strokecolormap = cyclic, alpha = 0.5)
     display(f)
 end
 
