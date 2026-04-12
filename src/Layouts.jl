@@ -2,28 +2,28 @@ export addlabels!, OnePanel, TwoPanel, FourPanel, SixPanel, subdivide
 import Makie.GridLayoutBase.GridContent
 
 # * A set of consistent figure layouts
-function _panels(args...; size = (720, 270), scale = 1.0, kwargs...)
-    f = Figure(args...; size = size .* scale, kwargs...)
+function _panels(args...; size=(720, 270), scale=1.0, kwargs...)
+    f = Figure(args...; size=size .* scale, kwargs...)
     return f
 end
 function OnePanel(args...; kwargs...)
-    f = _panels(args...; size = (360, 270), kwargs...)
+    f = _panels(args...; size=(360, 270), kwargs...)
     return f
 end
 function TwoPanel(args...; kwargs...)
-    f = _panels(args...; size = (720, 270), kwargs...)
+    f = _panels(args...; size=(720, 270), kwargs...)
     return f
 end
 function FourPanel(args...; kwargs...)
-    f = _panels(args...; size = (720, 540), kwargs...)
+    f = _panels(args...; size=(720, 540), kwargs...)
     return f
 end
 function SixPanel(args...; kwargs...)
-    f = _panels(args...; size = (720, 810), kwargs...)
+    f = _panels(args...; size=(720, 810), kwargs...)
     return f
 end
 
-struct SubdivideArray{T, N, A <: AbstractArray{T, N}} <: AbstractArray{T, N}
+struct SubdivideArray{T,N,A<:AbstractArray{T,N}} <: AbstractArray{T,N}
     parent::A
 end
 
@@ -67,7 +67,7 @@ display(f)
 function subdivide(f, nrows::Int, ncols::Int)
     grid = [f[i, j] for i in 1:nrows, j in 1:ncols] |> SubdivideArray
 end
-function subdivide(f, sz::Tuple{Int, Int})
+function subdivide(f, sz::Tuple{Int,Int})
     nrows, ncols = sz
     subdivide(f, nrows, ncols)
 end
@@ -93,8 +93,8 @@ addlabels!(gs)
 display(f)
 ```
 """
-function addlabels!(gridpositions, f::Figure = first(gridpositions).layout.parent,
-                    text = nothing; kwargs...)
+function addlabels!(gridpositions, f::Figure=first(gridpositions).layout.parent,
+    text=nothing; kwargs...)
     if !(eltype(gridpositions) <: GridPosition)
         throw(TypeError(:addlabels!, "Foresight", GridPosition, first(gridpositions)))
     end
@@ -113,9 +113,9 @@ function addlabels!(gridpositions, f::Figure = first(gridpositions).layout.paren
     end
 
     for (i, l) in enumerate(gridpositions)
-        Label(l[1, 1, TopLeft()], halign = :left, valign = :bottom,
-              text = text[i],
-              fontsize = 22, padding = (-5, 0, 5, 0), kwargs...)
+        Label(l[1, 1, TopLeft()], halign=:left, valign=:bottom,
+            text=text[i],
+            fontsize=22, padding=(-5, 0, 5, 0), kwargs...)
     end
 end
 
@@ -146,10 +146,10 @@ display(f)
 ```
 See also: [`addlabels!`](@ref)
 """
-function addlabels!(f::Figure, text = nothing;
-                    dims = 2,
-                    allowedblocks = [Axis, Axis3, PolarAxis],
-                    recurse = [GridContent, GridLayout], kwargs...)
+function addlabels!(f::Figure, text=nothing;
+    dims=2,
+    allowedblocks=[Axis, Axis3, PolarAxis],
+    recurse=[GridContent, GridLayout], kwargs...)
     content = [Vector{Any}(f.layout.content)]
     function isinrecurse(x)
         types = typeof.(x)
@@ -169,26 +169,39 @@ function addlabels!(f::Figure, text = nothing;
     content = filter(content) do x
         any(isa.([x], allowedblocks))
     end
+    function absolute_span(b)
+        row = b.span.rows.start
+        col = b.span.cols.start
+        parent = b.parent
+        while parent isa Makie.GridLayoutBase.GridLayout && !isnothing(parent.parent)
+            gc = parent.layoutobservables.gridcontent[]
+            isnothing(gc) && break
+            row += gc.span.rows.start - 1
+            col += gc.span.cols.start - 1
+            parent = gc.parent
+        end
+        return (row, col)
+    end
     content = map(content) do x
         b = x.layoutobservables.gridcontent[]
         c = b.parent[b.span.rows, b.span.cols]
-        p = x.layoutobservables.computedbbox[].origin .* [1, -1]
+        p = absolute_span(b)
         return c, p
     end
     position = last.(content)
-    if dims == 2
-        position = reverse.(position)
-    end
     content = first.(content)
-    content = unique(content)
+    content = unique(content) # * Gets the grid layouts for each block
 
     idxs = indexin(unique(content), content)
     content = content[idxs]
     position = position[idxs]
 
-    idxs = sortperm(position)
+    if dims == 2
+        idxs = sortperm(position; by=p -> (p[1], p[2]))  # row-major
+    else
+        idxs = sortperm(position; by=p -> (p[2], p[1]))  # column-major
+    end
     content = content[idxs]
     position = position[idxs]
-
     addlabels!(content, f, text; kwargs...)
 end

@@ -1,0 +1,34 @@
+cornflowerblue:
+  base: "#6495ED"
+  light: "#a5c2f5"
+  dark: "#144caf"
+
+crimson:
+  base: "#DC143C"
+  light: "#f26f8a"
+  dark: "#800c23"
+
+cucumber:
+  base: "#77ab58"
+  light: "#b0ce9e"
+  dark: "#456432"
+
+california:
+  base: "#EF9901"
+  light: "#fec663"
+  dark: "#8b5901"
+
+juliapurple:
+  base: "#9558b2"
+  light: "#c29ed2"
+  dark: "#57316a"
+
+greyseas:
+  base: "#cccccc"
+  light: "#e1e1e1"
+  dark: "#767676"
+
+darkbg:
+  base: "#282C34"
+  light: "#768196"
+  dark: "#101215"

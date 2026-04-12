@@ -7,10 +7,11 @@ using Random
 using ImageClipboard
 using FileIO
 using Preferences
+using YAML
 using Makie.LaTeXStrings
 import Makie.IntervalSets: Interval
 
-export foresight, importall, freeze!, clip, hidexaxis!, hideyaxis!, axiscolorbar,
+export foresight, importall, freeze!, clip, axiscolorbar,
        reverselegend!,
        scientific, lscientific, Lscientific,
        percentageticks, terseticks

@@ -14,6 +14,10 @@ Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
 Preferences = "21216c6a-2e73-6563-6e65-726566657250"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Requires = "ae029012-a4dd-5104-9daa-d747884805df"
+YAML = "ddb6d928-2868-570f-bddf-ab3f9cf99eb6"
+
+[workspace]
+projects = ["test"]
 
 [compat]
 Clustering = "0.13, 0.14, 0.15"
@@ -24,4 +28,5 @@ ImageClipboard = "0.1"
 Makie = "0.24"
 Preferences = "1"
 Requires = "1"
+YAML = "0.4"
 julia = "1.10"

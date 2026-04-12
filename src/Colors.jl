@@ -1,39 +1,44 @@
-const cornflowerblue = colorant"#6495ED"
-export cornflowerblue
-const _cornflowerblue = colorant"#3676E8"
-export _cornflowerblue
-const crimson = colorant"#DC143C"
-export crimson
-const _crimson = colorant"#ED365B"
-export _crimson
-const cucumber = colorant"#77ab58"
-export cucumber
-const _cucumber = colorant"#5F8A46"
-export _cucumber
-const california = colorant"#EF9901"
-export california
-const _california = colorant"#FEB025"
-export _california
-const copper = colorant"#c37940"
-export copper
-const _copper = colorant"#9E6132"
-export _copper
-const juliapurple = colorant"#9558b2"
-export juliapurple
-const _juliapurple = colorant"#7A4493"
-export _juliapurple
-const keppel = colorant"#46AF98"
-export keppel
-const _keppel = colorant"#66C2AE"
-export _keppel
-const darkbg = colorant"#282C34"
-export darkbg
-const _darkbg = colorant"#3E4451"
-export _darkbg
-const greyseas = colorant"#cccccc"
-export greyseas
-const _greyseas = colorant"#eeeeee"
-export _greyseas
+const _yaml_colors = YAML.load_file(joinpath(@__DIR__, "colors.yaml"))
+
+function yaml_color(name::AbstractString, shade::AbstractString = "base")
+    parse(Colorant, _yaml_colors[name][shade])
+end
+
+const cornflowerblue = yaml_color("cornflowerblue")
+const cornflowerblue_light = yaml_color("cornflowerblue", "light")
+const cornflowerblue_dark = yaml_color("cornflowerblue", "dark")
+export cornflowerblue, cornflowerblue_light, cornflowerblue_dark
+
+const crimson = yaml_color("crimson")
+const crimson_light = yaml_color("crimson", "light")
+const crimson_dark = yaml_color("crimson", "dark")
+export crimson, crimson_light, crimson_dark
+
+const cucumber = yaml_color("cucumber")
+const cucumber_light = yaml_color("cucumber", "light")
+const cucumber_dark = yaml_color("cucumber", "dark")
+export cucumber, cucumber_light, cucumber_dark
+
+const california = yaml_color("california")
+const california_light = yaml_color("california", "light")
+const california_dark = yaml_color("california", "dark")
+export california, california_light, california_dark
+
+const juliapurple = yaml_color("juliapurple")
+const juliapurple_light = yaml_color("juliapurple", "light")
+const juliapurple_dark = yaml_color("juliapurple", "dark")
+export juliapurple, juliapurple_light, juliapurple_dark
+
+const greyseas = yaml_color("greyseas")
+const greyseas_light = yaml_color("greyseas", "light")
+const greyseas_dark = yaml_color("greyseas", "dark")
+export greyseas, greyseas_light, greyseas_dark
+
+const darkbg = yaml_color("darkbg")
+const darkbg_light = yaml_color("darkbg", "light")
+const darkbg_dark = yaml_color("darkbg", "dark")
+export darkbg, darkbg_light, darkbg_dark
+
 __crimson = brighten(crimson, 0.1)
 __california = darken(california, 0.1)
 
